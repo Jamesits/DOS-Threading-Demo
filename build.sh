@@ -13,8 +13,7 @@ del *.EXE
 del *.OBJ
 del *.MAP
 set PATH=D:\TC\BIN
-MAKE HELLO.EXE
-HELLO
+MAKE thread.exe
 EOF
 
 open -a /Applications/DOSBox.app MAKE.BAT
