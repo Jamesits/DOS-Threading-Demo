@@ -9,8 +9,11 @@ mount -u d
 mount d $DOSROOT
 D:
 cd src
+del *.EXE
+del *.OBJ
+del *.MAP
 set PATH=D:\TC\BIN
-CALL MAKE
+MAKE HELLO.EXE
 HELLO
 EOF
 
