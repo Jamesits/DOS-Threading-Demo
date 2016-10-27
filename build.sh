@@ -9,7 +9,9 @@ mount -u d
 mount d $DOSROOT
 D:
 cd src
-
+set PATH=D:\TC\BIN
+CALL MAKE
+HELLO
 EOF
 
 open -a /Applications/DOSBox.app MAKE.BAT

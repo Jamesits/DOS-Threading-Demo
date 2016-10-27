@@ -4,3 +4,4 @@ dosroot/TC
 .DS_Store
 *.MAP
 *.OBJ
+*.EXE
