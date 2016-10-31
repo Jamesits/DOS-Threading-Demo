@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <string.h>
 
+/* consts */
 /* 0x1C is usable */
 #define TIME_INT 0x08
 #define NTCB 32
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
+/* thread control block */
 typedef struct TCB{
     unsigned char *stack;       /* thread stack start ptr */
     unsigned ss;                /* stack segment */
@@ -15,14 +17,17 @@ typedef struct TCB{
     char name[32];
 } s_TCB;
 
+/* stack initializer */
 struct int_regs {
     unsigned bp,di,si,ds,es,dx,cx,bx,ax,ip,cs,flags,off,seg;
 };
 
+/* thread caller function type */
+typedef int (far *func)(void);
+
+/* variables */
 s_TCB tcb[NTCB];
 int tcb_count = 0;
-
-typedef int (far *func)(void);
 void interrupt (*oldtimeslicehandler)(void);
 
 /* function declaration */
@@ -37,6 +42,7 @@ void print_tcb();
 int get_last_running_thread_id();
 int get_next_running_thread_id();
 
+/* function definition */
 int get_last_running_thread_id() {
     int i;
     for (i = 0; i < tcb_count; ++i) {
