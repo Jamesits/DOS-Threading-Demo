@@ -1,6 +1,5 @@
 *.BAT
 TURBOC*
-dosroot/TC
 .DS_Store
 *.MAP
 *.OBJ
