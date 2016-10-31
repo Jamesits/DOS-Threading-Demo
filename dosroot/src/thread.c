@@ -184,6 +184,8 @@ void interrupt timeslicehandler(void) {
     int last_running_thread;
     int next_running_thread;
     disable();
+    last_running_thread = get_last_running_thread_id();
+    next_running_thread = get_next_running_thread_id();
 #ifdef DEBUG
     printf("Time slice reached.\n");
     print_tcb();
@@ -191,20 +193,20 @@ void interrupt timeslicehandler(void) {
     oldtimeslicehandler();
     if (!DosBusy()) {
         /* context switching */
-        if ((last_running_thread = get_last_running_thread_id()) >= 0) {
+        if (last_running_thread >= 0) {
             tcb[last_running_thread].state = READY;
             tcb[last_running_thread].ss = _SS;
             tcb[last_running_thread].sp = _SP;
         } else { /* remember when threads start */
-            printf("No thread has ever been runned.\n");
+            // printf("No thread has ever been runned.\n");
             /*
             ss = _SS;
             sp = _SP;
             */
         }
-        if ((next_running_thread = get_next_running_thread_id()) >= 0) {
-            print_tcb();
-            printf("Switching to thread #%d: %s\n", next_running_thread, tcb[next_running_thread].name);
+        if (next_running_thread >= 0) {
+            // print_tcb();
+            // printf("Switching to thread #%d: %s\n", next_running_thread, tcb[next_running_thread].name);
             tcb[next_running_thread].state = RUNNING;
             _SS = tcb[next_running_thread].ss;
             _SP = tcb[next_running_thread].sp;
@@ -269,11 +271,11 @@ int DosBusy(void)
 
 
 int far fp1() {
-    int i = 3000;
+    int i = 20;
     int j = 1;
     enable();
     while(--i) {
-        // fprintf(stderr, "This is fp1\n");
+        fprintf(stderr, "This is fp1\n");
         j += 1;
         delay(1);
     }
@@ -281,11 +283,11 @@ int far fp1() {
 }
 
 int far fp2() {
-    int i = 3000;
+    int i = 20;
     int j = 1;
     enable();
     while(--i) {
-        // fprintf(stderr, "This is fp2\n");
+        fprintf(stderr, "This is fp2\n");
         j -= 1;
         delay(1);
     }
