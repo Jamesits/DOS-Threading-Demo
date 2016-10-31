@@ -2,11 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define DEBUG
+// #define DEBUG
 
 /* consts */
 /* 0x1C is usable */
-#define TIME_INT 0x1C
+#define TIME_INT 0x08
 #define NTCB 32
 #define TCB_NAME_LEN 32
 #define GET_INDOS 0x34
@@ -104,9 +104,9 @@ void print_tcb() {
     int i;
     printf(">>>> TCB status\n");
     printf("Last running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
-    printf("ID\tName\tStack\tState\n");
+    printf("ID\tName\tStack\tSS\tSP\tState\n");
     for (i = 0; i < tcb_count; ++i) {
-        printf("%d\t%s\t0x%X\t%d\n", i, tcb[i].name, tcb[i].stack, tcb[i].state);
+        printf("%d\t%s\t0x%X\t0x%X\t0x%X\t%d\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, tcb[i].state);
     }
 }
 
@@ -135,9 +135,9 @@ int create(char *name, func thread_function, size_t stacklen) {
         printf("TCB stack full");
         return -1;
     }
-    tcb[tcb_count].stack = malloc(stacklen);
+    tcb[tcb_count].stack = (unsigned char *)malloc(stacklen);
     tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
-    tcb[tcb_count].sp = FP_OFF(tcb[tcb_count].stack);
+    tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
     tcb[tcb_count].state = READY;
     regs.cs = FP_SEG(thread_function);
     regs.ip = FP_OFF(thread_function);
@@ -146,12 +146,13 @@ int create(char *name, func thread_function, size_t stacklen) {
     regs.seg = FP_SEG(thread_end_trigger);
     regs.off = FP_OFF(thread_end_trigger);
     regs.flags = 200;
-    memcpy(tcb[tcb_count].stack, &regs, sizeof(regs));
+    memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     strcpy(tcb[tcb_count].name, name);
     ++tcb_count;
 #ifdef DEBUG
     print_tcb();
     printf("Creating thread %s finished.\n", name);
+    // exit(0);
 #endif
     enable();
     return tcb_count;
@@ -173,7 +174,7 @@ int destroy(int id) {
     --tcb_count;
 #ifdef DEBUG
     print_tcb();
-    printf("Thread %s destoried.\n", tcb[id].name);
+    printf("Thread destoried.\n", tcb[id].name);
 #endif
     enable();
     return 0;
@@ -187,31 +188,36 @@ void interrupt timeslicehandler(void) {
     printf("Time slice reached.\n");
     print_tcb();
 #endif
-    /* context switching */
-    if ((last_running_thread = get_last_running_thread_id()) >= 0) {
-        tcb[last_running_thread].state = READY;
-        tcb[last_running_thread].ss = _SS;
-        tcb[last_running_thread].sp = _SP;
-    } else { /* remember when threads start */
-        printf("No thread has ever been runned.\n");
-        /*
-        ss = _SS;
-        sp = _SP;
-        */
-    }
-    if ((next_running_thread = get_next_running_thread_id()) >= 0) {
-        tcb[next_running_thread].state = RUNNING;
-        _SS = tcb[next_running_thread].ss;
-        _SP = tcb[next_running_thread].sp;
-    } else { /* remember when threads end */
-        printf("All threads have an end.\n");
-        tcb_count = 0;
-        setvect(TIME_INT, oldtimeslicehandler);
-        print_tcb();
-        _SS = ss;
-        _SP = sp;
-        _DS = ds;
-        _CS = cs + 1;
+    oldtimeslicehandler();
+    if (!DosBusy()) {
+        /* context switching */
+        if ((last_running_thread = get_last_running_thread_id()) >= 0) {
+            tcb[last_running_thread].state = READY;
+            tcb[last_running_thread].ss = _SS;
+            tcb[last_running_thread].sp = _SP;
+        } else { /* remember when threads start */
+            printf("No thread has ever been runned.\n");
+            /*
+            ss = _SS;
+            sp = _SP;
+            */
+        }
+        if ((next_running_thread = get_next_running_thread_id()) >= 0) {
+            print_tcb();
+            printf("Switching to thread #%d: %s\n", next_running_thread, tcb[next_running_thread].name);
+            tcb[next_running_thread].state = RUNNING;
+            _SS = tcb[next_running_thread].ss;
+            _SP = tcb[next_running_thread].sp;
+        } else { /* remember when threads end */
+            printf("All threads have an end.\n");
+            tcb_count = 0;
+            setvect(TIME_INT, oldtimeslicehandler);
+            print_tcb();
+            _SS = ss;
+            _SP = sp;
+            _DS = ds;
+            _CS = cs + 1;
+        }
     }
 #ifdef DEBUG
     printf("Time slice started again.\n");
@@ -263,17 +269,25 @@ int DosBusy(void)
 
 
 int far fp1() {
-    int i = 32767;
+    int i = 3000;
+    int j = 1;
+    enable();
     while(--i) {
-        if (i % 10000) printf("This is fp1\n");
+        // fprintf(stderr, "This is fp1\n");
+        j += 1;
+        delay(1);
     }
     return 0;
 }
 
 int far fp2() {
-    int i = 32767;
+    int i = 3000;
+    int j = 1;
+    enable();
     while(--i) {
-        if (i % 10000) printf("This is fp2\n");
+        // fprintf(stderr, "This is fp2\n");
+        j -= 1;
+        delay(1);
     }
     return 0;
 }
@@ -285,15 +299,20 @@ int main() {
     disable();
     oldtimeslicehandler = getvect(TIME_INT);
     setvect(TIME_INT, timeslicehandler);
-    // timeslicehandler();
+    timeslicehandler();
     ss = _SS;
     sp = _SP;
     ds = _DS;
     cs = _CS;
     enable();
 
-    while(!tcb_count) { printf("Main thread waiting for thread creation.\n"); }
-    while(tcb_count) { printf("Main thread waiting for thread end.\n"); }
+    while(!tcb_count) {
+        // printf("Main thread waiting for thread creation.\n");
+    }
+    while(tcb_count) {
+        // printf("Main thread waiting for thread end.\n");
+    }
+
     setvect(TIME_INT, oldtimeslicehandler);
     return 0;
 }
