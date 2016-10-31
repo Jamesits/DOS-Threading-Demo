@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#define DEBUG
+
 /* consts */
 /* 0x1C is usable */
-#define TIME_INT 0x08
+#define TIME_INT 0x1C
 #define NTCB 32
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
@@ -58,7 +60,9 @@ int get_next_running_thread_id() {
     int i;
     if (last == -1) { /* system idle */
         if (tcb_count == 0) { /* no threads waiting */
+#ifdef DEBUG
             printf("System idle.\n");
+#endif
             return -1;
         } else {
             for (i = 0; i < tcb_count; ++i) {
@@ -66,7 +70,9 @@ int get_next_running_thread_id() {
                     return i;
                 }
             }
+#ifdef DEBUG
             printf("All threads blocked.\n");
+#endif
             return -1;
         }
     } else { /* context switching */
@@ -80,7 +86,9 @@ int get_next_running_thread_id() {
                 return i;
             }
         }
+#ifdef DEBUG
         printf("All threads blocked.\n");
+#endif
         return -1;
     }
 }
@@ -98,11 +106,15 @@ void print_tcb() {
 int far thread_end_trigger() {
     int last;
     disable();
+#ifdef DEBUG
     print_tcb();
+#endif
     last = get_last_running_thread_id();
     printf("Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
+#ifdef DEBUG
     printf("Thread end trigger finished.\n");
+#endif
     timeslicehandler();
     enable();
     return 0;
@@ -129,13 +141,16 @@ int create(char *name, func thread_function, size_t stacklen) {
     memcpy(tcb[tcb_count].stack, &regs, sizeof(regs));
     strcpy(tcb[tcb_count].name, name);
     ++tcb_count;
+#ifdef DEBUG
     print_tcb();
     printf("Creating thread %s finished.\n", name);
+#endif
     enable();
     return tcb_count;
 };
 
 int destroy(int id) {
+    int i;
     disable();
     if (id >= NTCB) {
         printf("Cannot destory thread #%d", id);
@@ -143,11 +158,15 @@ int destroy(int id) {
     }
     printf("Destoring thread %s\n", tcb[id].name);
     tcb[id].state = FINISHED;
-    // free(tcb[id].stack);
-    // memcpy(tcb + id * sizeof(s_TCB), tcb + (id + 1) * sizeof(s_TCB), (NTCB - id - 1) * sizeof(s_TCB));
-    // --tcb_count;
+    free(tcb[id].stack);
+    for (i = id + 1; i < NTCB - id; ++i) {
+        memcpy(tcb + i - 1, tcb + i, sizeof(s_TCB));
+    }
+    --tcb_count;
+#ifdef DEBUG
     print_tcb();
     printf("Thread %s destoried.\n", tcb[id].name);
+#endif
     enable();
     return 0;
 };
@@ -156,8 +175,10 @@ void interrupt timeslicehandler(void) {
     int last_running_thread;
     int next_running_thread;
     disable();
+#ifdef DEBUG
     printf("Time slice reached.\n");
     print_tcb();
+#endif
     /* context switching */
     if ((last_running_thread = get_last_running_thread_id()) >= 0) {
         tcb[last_running_thread].state = READY;
@@ -165,8 +186,10 @@ void interrupt timeslicehandler(void) {
         tcb[last_running_thread].sp = _SP;
     } else { /* remember when threads start */
         printf("No thread has ever been runned.\n");
+        /*
         ss = _SS;
         sp = _SP;
+        */
     }
     if ((next_running_thread = get_next_running_thread_id()) >= 0) {
         tcb[next_running_thread].state = RUNNING;
@@ -177,10 +200,12 @@ void interrupt timeslicehandler(void) {
         _SS = ss;
         _SP = sp;
         tcb_count = 0;
-        setvect(TIME_INT, oldtimeslicehandler);
+        /* setvect(TIME_INT, oldtimeslicehandler); */
     }
+#ifdef DEBUG
     printf("Time slice started again.\n");
     print_tcb();
+#endif
     enable();
 }
 
@@ -203,11 +228,19 @@ int far fp2() {
 }
 
 int main() {
-    oldtimeslicehandler = getvect(TIME_INT);
-    setvect(TIME_INT, timeslicehandler);
     create("FP1", (func)fp1, 1024);
     create("FP2", (func)fp2, 1024);
+    disable();
+    ss = _SS;
+    sp = _SP;
+    oldtimeslicehandler = getvect(TIME_INT);
+    setvect(TIME_INT, timeslicehandler);
+    timeslicehandler();
+    enable();
+
     while(!tcb_count) { printf("Main thread waiting for thread creation.\n"); }
     while(tcb_count) { printf("Main thread waiting for thread end.\n"); }
+    
+    setvect(TIME_INT, oldtimeslicehandler);
     return 0;
 }
