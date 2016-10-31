@@ -2,26 +2,38 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NTCB 20
+#define NTCB 32
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
 typedef struct TCB{
-    unsigned char *stack;  /* 线程堆栈的起始地址 */
-    unsigned ss;  /* 堆栈段址 */
-    unsigned sp;  /* 堆栈指针 */
-    char state;  /* 线程状态 ，取值可以是FINISHED、RUNNING、READY、BLOCKED*/
-    char name[10]; /* 线程的外部标识符 */
+    unsigned char *stack;       /* thread stack start ptr */
+    unsigned ss;                /* stack segment */
+    unsigned sp;                /* thread in-stack offset */
+    enum THREAD_STATUS state;
+    char name[32];
 } s_TCB;
 
 struct int_regs {
     unsigned bp,di,si,ds,es,dx,cx,bx,ax,ip,cs,flags,off,seg;
 };
 
-s_TCB tcb[NTCB];      /*NTCB是系统允许的最多任务数*/
+s_TCB tcb[NTCB];
 int tcb_count = 0;
 
-typedef int (far *codeptr)(void); /*定义了一个函数指针类型*/
-int create(char *name, codeptr code, int stck);
+typedef int (far *func)(void);
+int create(char *name, func thread_function, size_t stacklen) {
+    if (tcb_count >= NTCB) {
+        printf("TCB stack full");
+        return -1;
+    }
+    tcb[tcb_count].stack = malloc(stacklen);
+    tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
+    tcb[tcb_count].sp = FP_OFF(tcb[tcb_count].stack);
+    tcb[tcb_count].state = READY;
+    strcpy(tcb[tcb_count].name, name);
+    ++tcb_count;
+};
+
 int destroy();
 
 void interrupt (*oldtimeslicehandler)(void);
