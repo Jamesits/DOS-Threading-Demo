@@ -1,3 +1,0 @@
-.autodepend
-.c.exe:
-	TCC {$< }

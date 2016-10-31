@@ -1,5 +1,6 @@
 #include <DOS.h>
 #include <stdio.h>
+#include <string.h>
 
 #define NTCB 20
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
@@ -17,6 +18,7 @@ struct int_regs {
 };
 
 s_TCB tcb[NTCB];      /*NTCB是系统允许的最多任务数*/
+int tcb_count = 0;
 
 typedef int (far *codeptr)(void); /*定义了一个函数指针类型*/
 int create(char *name, codeptr code, int stck);
@@ -28,7 +30,6 @@ int fuck = 0;
 
 void interrupt timeslicehandler(void) {
     fuck++;
-    /* setvect(0x1C, oldtimeslicehandler); */
 }
 
 int main() {
@@ -36,6 +37,14 @@ int main() {
     oldtimeslicehandler = getvect(0x1C);
     setvect(0x1C, timeslicehandler);
     while (i--) {printf("%d\n", fuck);};
+    setvect(0x1C, oldtimeslicehandler);
+    return 0;
+}
+
+int create(char *name, codeptr code, int stck) {
+    tcb_count++;
+    tcb[tcb_count].stack = malloc(stck);
+    /* memcpy(tcb[tcb_count].stack, struct int_regs, sizeof(struct int_regs)); */
 
     return 0;
 }
