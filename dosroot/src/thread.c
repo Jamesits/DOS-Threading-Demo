@@ -275,7 +275,7 @@ int far fp1() {
     int j = 1;
     enable();
     while(--i) {
-        fprintf(stderr, "This is fp1\n");
+        // fprintf(stderr, "This is fp1\n");
         j += 1;
         delay(1);
     }
@@ -287,7 +287,7 @@ int far fp2() {
     int j = 1;
     enable();
     while(--i) {
-        fprintf(stderr, "This is fp2\n");
+        // fprintf(stderr, "This is fp2\n");
         j -= 1;
         delay(1);
     }
@@ -315,6 +315,7 @@ int main() {
         // printf("Main thread waiting for thread end.\n");
     }
 
+    printf("resetting time handler\n");
     setvect(TIME_INT, oldtimeslicehandler);
     return 0;
 }
