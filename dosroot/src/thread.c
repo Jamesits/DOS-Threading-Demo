@@ -13,6 +13,10 @@
 #define GET_CRIT_ERR 0x5d06
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
+#define PrintRegs() { \
+    printf("AX=%04x BX=%04x CX=%04x DX=%04x CS=%04x DS=%04x SS=%04x ES=%04x SP=%04x BP=%04x\n", _AX, _BX, _CX, _DX, _CS, _DS, _SS, _ES, _SP, _BP); \
+}
+
 /* thread control block */
 typedef struct TCB {
     unsigned char *stack;       /* thread stack start ptr */
@@ -34,7 +38,7 @@ typedef int (far *func)(void);
 s_TCB tcb[NTCB];
 int tcb_count = 0;
 void interrupt (*oldtimeslicehandler)(void);
-int ss, sp, cs, ds;
+int ss, sp, cs, ds, es, bp;
 char far *indos_ptr = 0;  /*该指针变量存放INDOS标志的地址*/
 char far *crit_err_ptr = 0;  /*该指针变量存放严重错误标志的地址*/
 
@@ -145,7 +149,7 @@ int create(char *name, func thread_function, size_t stacklen) {
     regs.es = FP_SEG(tcb[tcb_count].stack);
     regs.seg = FP_SEG(thread_end_trigger);
     regs.off = FP_OFF(thread_end_trigger);
-    regs.flags = 200;
+    regs.flags = 0x200;
     memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     strcpy(tcb[tcb_count].name, name);
     ++tcb_count;
@@ -218,7 +222,12 @@ void interrupt timeslicehandler(void) {
             _SS = ss;
             _SP = sp;
             _DS = ds;
-            _CS = cs + 1;
+            _ES = es;
+            _BP = bp;
+            PrintRegs();
+            fflush(stdout);
+            fflush(stderr);
+            // exit(0);
         }
     }
 #ifdef DEBUG
@@ -301,19 +310,24 @@ int main() {
     disable();
     oldtimeslicehandler = getvect(TIME_INT);
     setvect(TIME_INT, timeslicehandler);
-    timeslicehandler();
+    // timeslicehandler();
+    bp = _BP;
     ss = _SS;
     sp = _SP;
     ds = _DS;
     cs = _CS;
+    es = _ES;
+    PrintRegs();
     enable();
 
     while(!tcb_count) {
-        // printf("Main thread waiting for thread creation.\n");
+    // printf("Main thread waiting for thread creation.\n");
     }
     while(tcb_count) {
         // printf("Main thread waiting for thread end.\n");
     }
+    // for(;;) {
+    // }
 
     printf("resetting time handler\n");
     setvect(TIME_INT, oldtimeslicehandler);
