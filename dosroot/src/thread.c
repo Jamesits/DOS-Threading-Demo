@@ -38,12 +38,12 @@ typedef int (far *func)(void);
 s_TCB tcb[NTCB];
 int tcb_count = 0;
 void interrupt (*oldtimeslicehandler)(void);
-int ss, sp, cs, ds, es, bp;
+int ss, sp, cs, ds, es, bp, ip;
 char far *indos_ptr = 0;  /*该指针变量存放INDOS标志的地址*/
 char far *crit_err_ptr = 0;  /*该指针变量存放严重错误标志的地址*/
 
 /* function declaration */
-int create(char *name, func thread_function, size_t stacklen);
+int create(char far *name, func thread_function, size_t stacklen);
 int destroy(int id);
 int far thread_end_trigger();
 void interrupt timeslicehandler(void);
@@ -131,7 +131,7 @@ int far thread_end_trigger() {
     return 0;
 }
 
-int create(char *name, func thread_function, size_t stacklen) {
+int create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
     disable();
     printf("Creating thread %s\n", name);
@@ -217,17 +217,16 @@ void interrupt timeslicehandler(void) {
         } else { /* remember when threads end */
             printf("All threads have an end.\n");
             tcb_count = 0;
-            setvect(TIME_INT, oldtimeslicehandler);
+#ifdef DEBUG
             print_tcb();
-            _SS = ss;
-            _SP = sp;
-            _DS = ds;
-            _ES = es;
-            _BP = bp;
             PrintRegs();
+#endif
+            printf("resetting time handler\n");
+            setvect(TIME_INT, oldtimeslicehandler);
             fflush(stdout);
             fflush(stderr);
-            // exit(0);
+            enable();
+            exit(0);
         }
     }
 #ifdef DEBUG
@@ -280,11 +279,12 @@ int DosBusy(void)
 
 
 int far fp1() {
-    int i = 20;
+    int i = 2000;
     int j = 1;
     enable();
     while(--i) {
-        // fprintf(stderr, "This is fp1\n");
+        fprintf(stderr, "This is fp1\n");
+        fflush(stderr);
         j += 1;
         delay(1);
     }
@@ -292,11 +292,12 @@ int far fp1() {
 }
 
 int far fp2() {
-    int i = 20;
+    int i = 2000;
     int j = 1;
     enable();
     while(--i) {
-        // fprintf(stderr, "This is fp2\n");
+        fprintf(stderr, "This is fp2\n");
+        fflush(stderr);
         j -= 1;
         delay(1);
     }
@@ -310,26 +311,11 @@ int main() {
     disable();
     oldtimeslicehandler = getvect(TIME_INT);
     setvect(TIME_INT, timeslicehandler);
-    // timeslicehandler();
-    bp = _BP;
-    ss = _SS;
-    sp = _SP;
-    ds = _DS;
-    cs = _CS;
-    es = _ES;
+#ifdef DEBUG
     PrintRegs();
+#endif
     enable();
-
-    while(!tcb_count) {
-    // printf("Main thread waiting for thread creation.\n");
+    for(;;) {
+        asm { hlt }
     }
-    while(tcb_count) {
-        // printf("Main thread waiting for thread end.\n");
-    }
-    // for(;;) {
-    // }
-
-    printf("resetting time handler\n");
-    setvect(TIME_INT, oldtimeslicehandler);
-    return 0;
 }
