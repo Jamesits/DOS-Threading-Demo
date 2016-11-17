@@ -43,6 +43,6 @@ int get_last_running_thread_id();
 int get_next_running_thread_id();
 
 /* variables */
-extern s_TCB tcb[NTCB];
+extern s_TCB tcb[MAX_THREAD_COUNT];
 extern int tcb_count;
 #endif
