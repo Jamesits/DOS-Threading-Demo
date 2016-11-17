@@ -26,6 +26,7 @@ int main() {
     disable();
     oldtimeslicehandler = getvect(TIME_INT);
     setvect(TIME_INT, timeslicehandler);
+    lprintf(INFO, "Previous interrupt: 0x%X, custom interrupt: 0x%X, current interrupt: 0x%X\n", oldtimeslicehandler, timeslicehandler, getvect(TIME_INT));
     enable();
     lprintf(INFO, "Starting user program...\n");
     usermain();
