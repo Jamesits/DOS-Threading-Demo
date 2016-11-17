@@ -3,6 +3,7 @@
 /* variables */
 s_TCB tcb[NTCB];
 int tcb_count = 0;
+int current_thread = 0;
 void interrupt (*oldtimeslicehandler)(void);
 char far *indos_ptr = 0;  /*该指针变量存放INDOS标志的地址*/
 char far *crit_err_ptr = 0;  /*该指针变量存放严重错误标志的地址*/
@@ -10,13 +11,14 @@ int time_slice_counter = TIME_SLICE_MULTIPLER;
 
 /* function definition */
 int get_last_running_thread_id() {
-    int i;
-    for (i = 0; i < tcb_count; ++i) {
-        if (tcb[i].state == RUNNING) {
-            return i;
-        }
-    }
-    return -1;
+    // int i;
+    // for (i = 0; i < tcb_count; ++i) {
+    //     if (tcb[i].state == RUNNING) {
+    //         return i;
+    //     }
+    // }
+    // return -1;
+    return current_thread;
 }
 int get_next_running_thread_id() {
     int last = get_last_running_thread_id();
@@ -70,7 +72,7 @@ int far thread_end_trigger() {
     int last;
     disable();
 #ifdef DEBUG
-    print_tcb();
+    // print_tcb();
 #endif
     last = get_last_running_thread_id();
 #ifdef DEBUG
@@ -78,7 +80,7 @@ int far thread_end_trigger() {
 #endif
     if (last >= 0) destroy(last);
 #ifdef DEBUG
-    printf("Thread end trigger finished.\n");
+    // printf("Thread end trigger finished.\n");
 #endif
     timeslicehandler();
     enable();
@@ -171,6 +173,7 @@ void interrupt timeslicehandler(void) {
             tcb[next_running_thread].state = RUNNING;
             _SS = tcb[next_running_thread].ss;
             _SP = tcb[next_running_thread].sp;
+            current_thread = next_running_thread;
         } else { /* when threads end */
 #ifdef DEBUG
             printf("All threads have an end.\n");

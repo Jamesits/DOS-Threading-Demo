@@ -5,7 +5,7 @@
 #include <string.h>
 #include "usercode.h"
 
-// #define DEBUG
+#define DEBUG
 
 /* consts */
 /* 0x1C is usable */

@@ -1,10 +1,8 @@
-#include "thread.h"
 #include "usercode.h"
 
 int far usermain() {
     create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
     create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE);
-
     return 0;
 }
 
