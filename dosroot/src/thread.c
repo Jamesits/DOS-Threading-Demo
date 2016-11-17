@@ -88,6 +88,7 @@ int create(char far *name, func thread_function, size_t stacklen) {
     strcpy(tcb[tcb_count].name, (char *)name);
     ++tcb_count;
     lprintf(INFO, "Creating thread %s finished.\n", name);
+    print_tcb();
     enable();
     return tcb_count;
 };
@@ -107,6 +108,7 @@ int destroy(int id) {
     }
     --tcb_count;
     lprintf(INFO, "Thread destoried.\n", tcb[id].name);
+    print_tcb();
     enable();
     return 0;
 };
@@ -123,6 +125,7 @@ void interrupt timeslicehandler(void) {
         lprintf(INFO, "Time slice reached.\n");
     };
     disable();
+    print_tcb();
     last_running_thread = get_last_running_thread_id();
     next_running_thread = get_next_running_thread_id();
     if (!DosBusy()) {
@@ -143,6 +146,7 @@ void interrupt timeslicehandler(void) {
             cleanup();
         }
     }
+    print_tcb();
     lprintf(INFO, "Time slice handler finished.\n");
     enable();
 }
