@@ -29,6 +29,7 @@ typedef struct TCB {
     unsigned ss;                /* stack segment */
     unsigned sp;                /* thread in-stack offset */
     enum THREAD_STATUS state;
+    struct TCB *next;
     char name[TCB_NAME_LEN];
 } s_TCB;
 

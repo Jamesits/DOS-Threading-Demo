@@ -190,8 +190,7 @@ void interrupt timeslicehandler(void) {
     enable();
 }
 
-void cleanup()
-{
+void cleanup() {
 #ifdef DEBUG
     printf("resetting time handler\n");
 #endif
@@ -203,8 +202,7 @@ void cleanup()
 }
 
 /* get INDOS bit and critical error bit addresses */
-void InitDos(void)
-{
+void InitDos(void) {
     union REGS regs;
     struct SREGS segregs;
 
@@ -225,8 +223,7 @@ void InitDos(void)
 }
 
 /* get if DOS is working or critical error happened */
-int DosBusy(void)
-{
+int DosBusy(void) {
     if (indos_ptr && crit_err_ptr) {
         return (*indos_ptr || *crit_err_ptr);
     } else {
