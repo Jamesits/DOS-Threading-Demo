@@ -73,7 +73,9 @@ int far thread_end_trigger() {
     print_tcb();
 #endif
     last = get_last_running_thread_id();
+#ifdef DEBUG
     printf("Thread #%d end.\n", last);
+#endif
     if (last >= 0) destroy(last);
 #ifdef DEBUG
     printf("Thread end trigger finished.\n");
@@ -121,8 +123,10 @@ int destroy(int id) {
         printf("Cannot destory thread #%d", id);
         return -1;
     }
+#ifdef DEBUG
     printf("Destoring thread %s\n", tcb[id].name);
     fflush(stdout);
+#endif
     tcb[id].state = FINISHED;
     free(tcb[id].stack);
     for (i = id + 1; i < NTCB - id; ++i) {
@@ -161,32 +165,22 @@ void interrupt timeslicehandler(void) {
             tcb[last_running_thread].state = READY;
             tcb[last_running_thread].ss = _SS;
             tcb[last_running_thread].sp = _SP;
-        } else { /* remember when threads start */
-            // printf("No thread has ever been runned.\n");
-            /*
-            ss = _SS;
-            sp = _SP;
-            */
+        } else { /* when threads start */
         }
         if (next_running_thread >= 0) {
-            // print_tcb();
-            // printf("Switching to thread #%d: %s\n", next_running_thread, tcb[next_running_thread].name);
             tcb[next_running_thread].state = RUNNING;
             _SS = tcb[next_running_thread].ss;
             _SP = tcb[next_running_thread].sp;
-        } else { /* remember when threads end */
+        } else { /* when threads end */
+#ifdef DEBUG
             printf("All threads have an end.\n");
+#endif
             tcb_count = 0;
 #ifdef DEBUG
             print_tcb();
             PrintRegs();
 #endif
-            printf("resetting time handler\n");
-            setvect(TIME_INT, oldtimeslicehandler);
-            fflush(stdout);
-            fflush(stderr);
-            enable();
-            exit(0);
+            cleanup();
         }
     }
 #ifdef DEBUG
@@ -194,6 +188,18 @@ void interrupt timeslicehandler(void) {
     print_tcb();
 #endif
     enable();
+}
+
+void cleanup()
+{
+#ifdef DEBUG
+    printf("resetting time handler\n");
+#endif
+    setvect(TIME_INT, oldtimeslicehandler);
+    fflush(stdout);
+    fflush(stderr);
+    enable();
+    exit(0);
 }
 
 /* get INDOS bit and critical error bit addresses */

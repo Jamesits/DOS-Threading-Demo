@@ -43,6 +43,7 @@ typedef int (far *func)(void);
 /* function declaration */
 int create(char far *name, func thread_function, size_t stacklen);
 int destroy(int id);
+void cleanup();
 int far thread_end_trigger();
 void interrupt timeslicehandler(void);
 int main();
