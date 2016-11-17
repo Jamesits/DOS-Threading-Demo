@@ -1,4 +1,5 @@
 #include "sem.h"
+#include "debug.h"
 
 void block(s_TCB **qp, int thread);
 void wakeup_head(s_TCB **qp);

@@ -1,11 +1,10 @@
 #include "thread.h"
+#include "debug.h"
 
 /* variables */
 s_TCB tcb[NTCB];
 int tcb_count = 0;
 void interrupt (*oldtimeslicehandler)(void);
-char far *indos_ptr = 0;  /*该指针变量存放INDOS标志的地址*/
-char far *crit_err_ptr = 0;  /*该指针变量存放严重错误标志的地址*/
 int time_slice_counter = TIME_SLICE_MULTIPLER;
 
 /* function definition */
@@ -18,6 +17,7 @@ int get_last_running_thread_id() {
     }
     return -1;
 }
+
 int get_next_running_thread_id() {
     int last = get_last_running_thread_id();
     int i;
@@ -53,16 +53,6 @@ int get_next_running_thread_id() {
         printf("All threads blocked.\n");
 #endif
         return -1;
-    }
-}
-
-void print_tcb() {
-    int i;
-    printf(">>>> TCB status\n");
-    printf("Last running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
-    printf("ID\tName\tStack\tSS\tSP\tState\n");
-    for (i = 0; i < tcb_count; ++i) {
-        printf("%d\t%s\t0x%X\t0x%X\t0x%X\t%d\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, tcb[i].state);
     }
 }
 
@@ -200,36 +190,6 @@ print_tcb();
     fflush(stderr);
     enable();
     exit(0);
-}
-
-/* get INDOS bit and critical error bit addresses */
-void InitDos(void) {
-    union REGS regs;
-    struct SREGS segregs;
-
-    regs.h.ah = GET_INDOS;
-    /* invoke INT21H */
-    intdosx(&regs, &regs, &segregs);
-    indos_ptr = MK_FP(segregs.es, regs.x.bx);
-    /* get critical error bit address */
-    if (_osmajor < 3) {
-        crit_err_ptr = indos_ptr + 1;
-    } else if (_osmajor == 3 && _osminor == 0) {
-        crit_err_ptr = indos_ptr - 1;
-    } else {
-        regs.x.ax = GET_CRIT_ERR;
-        intdosx(&regs, &regs, &segregs);
-        crit_err_ptr = MK_FP(segregs.ds, regs.x.si);
-    }
-}
-
-/* get if DOS is working or critical error happened */
-int DosBusy(void) {
-    if (indos_ptr && crit_err_ptr) {
-        return (*indos_ptr || *crit_err_ptr);
-    } else {
-        return(-1);    /* InitDos() hasn't been called */
-    }
 }
 
 int main() {
