@@ -194,6 +194,7 @@ void cleanup() {
 #ifdef DEBUG
     printf("resetting time handler\n");
 #endif
+print_tcb();
     setvect(TIME_INT, oldtimeslicehandler);
     fflush(stdout);
     fflush(stderr);

@@ -2,7 +2,7 @@
 #define __SEM_H__
 #include "thread.h"
 
-// #define DEBUG_SEM
+#define DEBUG_SEM
 
 typedef struct semaphore{
     int status;
