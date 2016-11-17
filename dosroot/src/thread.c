@@ -1,60 +1,11 @@
-#include <DOS.h>
-#include <stdio.h>
-#include <string.h>
-
-// #define DEBUG
-
-/* consts */
-/* 0x1C is usable */
-#define TIME_INT 0x08
-#define NTCB 32
-#define TCB_NAME_LEN 32
-#define GET_INDOS 0x34
-#define GET_CRIT_ERR 0x5d06
-enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
-
-#define PrintRegs() { \
-    printf("AX=%04x BX=%04x CX=%04x DX=%04x CS=%04x DS=%04x SS=%04x ES=%04x SP=%04x BP=%04x\n", _AX, _BX, _CX, _DX, _CS, _DS, _SS, _ES, _SP, _BP); \
-}
-
-/* thread control block */
-typedef struct TCB {
-    unsigned char *stack;       /* thread stack start ptr */
-    unsigned ss;                /* stack segment */
-    unsigned sp;                /* thread in-stack offset */
-    enum THREAD_STATUS state;
-    char name[TCB_NAME_LEN];
-} s_TCB;
-
-/* stack initializer */
-struct int_regs {
-    unsigned bp,di,si,ds,es,dx,cx,bx,ax,ip,cs,flags,off,seg;
-};
-
-/* thread caller function type */
-typedef int (far *func)(void);
+#include "thread.h"
 
 /* variables */
 s_TCB tcb[NTCB];
 int tcb_count = 0;
 void interrupt (*oldtimeslicehandler)(void);
-int ss, sp, cs, ds, es, bp, ip;
 char far *indos_ptr = 0;  /*该指针变量存放INDOS标志的地址*/
 char far *crit_err_ptr = 0;  /*该指针变量存放严重错误标志的地址*/
-
-/* function declaration */
-int create(char far *name, func thread_function, size_t stacklen);
-int destroy(int id);
-int far thread_end_trigger();
-void interrupt timeslicehandler(void);
-int far fp1();
-int far fp2();
-int main();
-void print_tcb();
-int get_last_running_thread_id();
-int get_next_running_thread_id();
-void InitDos(void);
-int DosBusy(void);
 
 /* function definition */
 int get_last_running_thread_id() {
@@ -236,38 +187,29 @@ void interrupt timeslicehandler(void) {
     enable();
 }
 
-/* InitDos()函数：功能是获得INDOS标志的地址和严重错误标志的地址 */
+/* get INDOS bit and critical error bit addresses */
 void InitDos(void)
 {
     union REGS regs;
     struct SREGS segregs;
 
-    /* 获得 INDOS 标志的地址 */
-    regs.h.ah=GET_INDOS;
-    /* intdosx() ：Turbo C的库函数，其功能是调用DOS的INT21H中断*/
-    intdosx(&regs,&regs,&segregs);
-    /* MK_FP()：不是一个函数，只是一个宏。*/
-    /*其功能是做段基址加上偏移地址的运算，也就是取实际地址。 */
-    indos_ptr=MK_FP(segregs.es,regs.x.bx);
-
-    /*获得严重错误标志的地址 */
-    /*代码中用到的_osmajor、_osminor是Turbo C的全程变量，其中前者为*/
-    /*DOS版本号的主要部分，后者为版本号的次要部分。*/
-    if (_osmajor<3) {
-        crit_err_ptr=indos_ptr+1;
-    } else if (_osmajor==3 && _osminor==0) {
-        crit_err_ptr=indos_ptr-1;
+    regs.h.ah = GET_INDOS;
+    /* invoke INT21H */
+    intdosx(&regs, &regs, &segregs);
+    indos_ptr = MK_FP(segregs.es, regs.x.bx);
+    /* get critical error bit address */
+    if (_osmajor < 3) {
+        crit_err_ptr = indos_ptr + 1;
+    } else if (_osmajor == 3 && _osminor == 0) {
+        crit_err_ptr = indos_ptr - 1;
     } else {
-    regs.x.ax=GET_CRIT_ERR;
-    intdosx(&regs,&regs,&segregs);
-    crit_err_ptr=MK_FP(segregs.ds,regs.x.si);
-  }
+        regs.x.ax = GET_CRIT_ERR;
+        intdosx(&regs, &regs, &segregs);
+        crit_err_ptr = MK_FP(segregs.ds, regs.x.si);
+    }
 }
 
-/* DosBusy()：函数功能是获得Indos标志及严重错误标志的值，判断是否dos忙：*/
-/* 如果返回值是1，表示dos忙；*/
-/* 如果返回值是0，表示dos不忙；*/
-/* 如果返回值是-1，表示还没有调用InitDos() */
+/* get if DOS is working or critical error happened */
 int DosBusy(void)
 {
     if (indos_ptr && crit_err_ptr) {
@@ -277,37 +219,8 @@ int DosBusy(void)
     }
 }
 
-
-int far fp1() {
-    int i = 2000;
-    int j = 1;
-    enable();
-    while(--i) {
-        fprintf(stderr, "This is fp1\n");
-        fflush(stderr);
-        j += 1;
-        delay(1);
-    }
-    return 0;
-}
-
-int far fp2() {
-    int i = 2000;
-    int j = 1;
-    enable();
-    while(--i) {
-        fprintf(stderr, "This is fp2\n");
-        fflush(stderr);
-        j -= 1;
-        delay(1);
-    }
-    return 0;
-}
-
 int main() {
     InitDos();
-    create("FP1", (func)fp1, 1024);
-    create("FP2", (func)fp2, 1024);
     disable();
     oldtimeslicehandler = getvect(TIME_INT);
     setvect(TIME_INT, timeslicehandler);
@@ -315,6 +228,7 @@ int main() {
     PrintRegs();
 #endif
     enable();
+    usermain();
     for(;;) {
         asm { hlt }
     }
