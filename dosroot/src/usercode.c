@@ -2,8 +2,8 @@
 #include "usercode.h"
 
 int far usermain() {
-    create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE, DEFAULT_TIME_SLICE_PRIORITY);
-    create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE, DEFAULT_TIME_SLICE_PRIORITY);
+    create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
+    create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE);
 
     return 0;
 }

@@ -15,7 +15,7 @@
 #define GET_INDOS 0x34
 #define GET_CRIT_ERR 0x5d06
 
-#define DEFAULT_TIME_SLICE_PRIORITY 1
+#define TIME_SLICE_MULTIPLER 2
 #define DEFAULT_THREAD_STACK_SIZE 1024
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
@@ -28,8 +28,6 @@ typedef struct TCB {
     unsigned char *stack;       /* thread stack start ptr */
     unsigned ss;                /* stack segment */
     unsigned sp;                /* thread in-stack offset */
-    int time_slice_count;
-    int time_slice_priority;
     enum THREAD_STATUS state;
     char name[TCB_NAME_LEN];
 } s_TCB;
@@ -43,7 +41,7 @@ struct int_regs {
 typedef int (far *func)(void);
 
 /* function declaration */
-int create(char far *name, func thread_function, size_t stacklen, int time_slice_priority);
+int create(char far *name, func thread_function, size_t stacklen);
 int destroy(int id);
 int far thread_end_trigger();
 void interrupt timeslicehandler(void);

@@ -6,6 +6,7 @@ int tcb_count = 0;
 void interrupt (*oldtimeslicehandler)(void);
 char far *indos_ptr = 0;  /*该指针变量存放INDOS标志的地址*/
 char far *crit_err_ptr = 0;  /*该指针变量存放严重错误标志的地址*/
+int time_slice_counter = TIME_SLICE_MULTIPLER;
 
 /* function definition */
 int get_last_running_thread_id() {
@@ -82,7 +83,7 @@ int far thread_end_trigger() {
     return 0;
 }
 
-int create(char far *name, func thread_function, size_t stacklen, int time_slice_priority) {
+int create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
     disable();
     printf("Creating thread %s\n", name);
@@ -93,8 +94,6 @@ int create(char far *name, func thread_function, size_t stacklen, int time_slice
     tcb[tcb_count].stack = (unsigned char *)malloc(stacklen);
     tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
     tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
-    tcb[tcb_count].time_slice_priority = time_slice_priority;
-    tcb[tcb_count].time_slice_count = time_slice_priority;
     tcb[tcb_count].state = READY;
     regs.cs = FP_SEG(thread_function);
     regs.ip = FP_OFF(thread_function);
@@ -103,8 +102,8 @@ int create(char far *name, func thread_function, size_t stacklen, int time_slice
     regs.seg = FP_SEG(thread_end_trigger);
     regs.off = FP_OFF(thread_end_trigger);
     regs.flags = 0x200;
-    memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
-    strcpy(tcb[tcb_count].name, name);
+    memcpy((void *)MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
+    strcpy(tcb[tcb_count].name, (char *)name);
     ++tcb_count;
 #ifdef DEBUG
     print_tcb();
@@ -142,6 +141,7 @@ void interrupt timeslicehandler(void) {
     int last_running_thread;
     int next_running_thread;
 
+    oldtimeslicehandler();
     if (DosBusy()) {
 #ifdef DEBUG
         printf("Time slice reached and DOS busy.\n");
@@ -155,13 +155,6 @@ void interrupt timeslicehandler(void) {
     printf("Time slice reached.\n");
     print_tcb();
 #endif
-    oldtimeslicehandler();
-    // --(tcb[last_running_thread].time_slice_count);
-    // if (tcb[last_running_thread].state != FINISHED && tcb[last_running_thread].time_slice_count > 0) {
-    //     next_running_thread = last_running_thread;
-    // } else {
-    //     tcb[last_running_thread].time_slice_count = tcb[last_running_thread].time_slice_priority;
-    // }
     if (!DosBusy()) {
         /* context switching */
         if (last_running_thread >= 0) {
