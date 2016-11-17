@@ -82,7 +82,7 @@ int far thread_end_trigger() {
     return 0;
 }
 
-int create(char far *name, func thread_function, size_t stacklen) {
+int create(char far *name, func thread_function, size_t stacklen, int time_slice_priority) {
     struct int_regs regs;
     disable();
     printf("Creating thread %s\n", name);
@@ -93,6 +93,8 @@ int create(char far *name, func thread_function, size_t stacklen) {
     tcb[tcb_count].stack = (unsigned char *)malloc(stacklen);
     tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
     tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
+    tcb[tcb_count].time_slice_priority = time_slice_priority;
+    tcb[tcb_count].time_slice_count = time_slice_priority;
     tcb[tcb_count].state = READY;
     regs.cs = FP_SEG(thread_function);
     regs.ip = FP_OFF(thread_function);
@@ -121,6 +123,7 @@ int destroy(int id) {
         return -1;
     }
     printf("Destoring thread %s\n", tcb[id].name);
+    fflush(stdout);
     tcb[id].state = FINISHED;
     free(tcb[id].stack);
     for (i = id + 1; i < NTCB - id; ++i) {
@@ -138,6 +141,13 @@ int destroy(int id) {
 void interrupt timeslicehandler(void) {
     int last_running_thread;
     int next_running_thread;
+
+    if (DosBusy()) {
+#ifdef DEBUG
+        printf("Time slice reached and DOS busy.\n");
+#endif
+        return;
+    };
     disable();
     last_running_thread = get_last_running_thread_id();
     next_running_thread = get_next_running_thread_id();
@@ -146,6 +156,12 @@ void interrupt timeslicehandler(void) {
     print_tcb();
 #endif
     oldtimeslicehandler();
+    // --(tcb[last_running_thread].time_slice_count);
+    // if (tcb[last_running_thread].state != FINISHED && tcb[last_running_thread].time_slice_count > 0) {
+    //     next_running_thread = last_running_thread;
+    // } else {
+    //     tcb[last_running_thread].time_slice_count = tcb[last_running_thread].time_slice_priority;
+    // }
     if (!DosBusy()) {
         /* context switching */
         if (last_running_thread >= 0) {

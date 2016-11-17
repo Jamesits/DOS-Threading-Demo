@@ -2,8 +2,8 @@
 #include "usercode.h"
 
 int far usermain() {
-    create("FP1", (func)fp1, 1024);
-    create("FP2", (func)fp2, 1024);
+    create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE, DEFAULT_TIME_SLICE_PRIORITY);
+    create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE, DEFAULT_TIME_SLICE_PRIORITY);
 
     return 0;
 }
@@ -13,7 +13,7 @@ int far fp1() {
     int j = 1;
     enable();
     while(--i) {
-        printf("This is fp1\n");
+        printf("a");
         fflush(stdout);
         j += 1;
         delay(1);
@@ -26,7 +26,7 @@ int far fp2() {
     int j = 1;
     enable();
     while(--i) {
-        printf("This is fp2\n");
+        printf("b");
         fflush(stdout);
         j -= 1;
         delay(1);
