@@ -2,10 +2,7 @@ SRCS=$(wildcard $(SRCDIR)/*.c)
 OBJS=$(SRCS:.c=.OBJ)
 EXE=THREAD
 
-#SHELL="./fakeshell.sh"
-#SHELL="echo"
 DOSBOX_APP=./DOSBox.app
-#DOSBOX=open -a $(DOSBOX_APP)
 DOSBOX=$(DOSBOX_APP)/Contents/MacOS/DOSBox
 DOSROOT=dosroot
 DOS_BUILD_SCRIPT=$(DOSROOT)/BUILD.BAT
@@ -58,4 +55,4 @@ batch-clean: $(BATCH_MAKER)
 	./dos.sh del *.MAP
 
 clean: batch-reset
-	rm -f $(SRCS:.c=.MAP) $(OBJS) $(SRCDIR)/$(EXE).EXE $(BATCH_MAKER)
+	rm -f $(SRCS:.c=.MAP) $(SRCDIR)/$(EXE).EXE $(BATCH_MAKER) $(SRCDIR)/*.LOG $(SRCDIR)/*.OBJ
