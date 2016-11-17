@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <time.h>
 #include "debug.h"
 #include "thread.h"
 
@@ -31,7 +32,7 @@ int lprintf(loglevel level, const char *format, ...)
     int ret;
 
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
-    if (loglevel_text[level]) fprintf(debug_file, "[%s] ", loglevel_text[level]);
+    if (loglevel_text[level]) fprintf(debug_file, "[%u][%s] ", (unsigned)time(NULL), loglevel_text[level]);
     va_start(args, format);
     ret = vfprintf(debug_file, format, args);
     va_end(args);

@@ -10,12 +10,16 @@ void cleanup() {
     lprintf(INFO, "Resetting time handler\n");
     setvect(TIME_INT, oldtimeslicehandler);
     enable();
+    PrintRegs();
+    lprintf(INFO, "Finished...\n");
     end_dbg();
     exit(0);
 }
 
 int main() {
     init_dbg();
+    lprintf(INFO, "Starting...\n");
+    PrintRegs();
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
     lprintf(INFO, "Getting INT08h...\n");
