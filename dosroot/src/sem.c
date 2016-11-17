@@ -5,9 +5,7 @@ void block(s_TCB **qp, int thread);
 void wakeup_head(s_TCB **qp);
 
 void init_semaphore(semaphore *s, int count) {
-#ifdef DEBUG_SEM
-    printf("Initializing semaphore with count %d\n", count);
-#endif
+    lprintf(DEBUG, "Initializing semaphore with count %d\n", count);
     s->status = count;
     s->wait_queue = NULL;
 }
@@ -20,10 +18,7 @@ void wait(semaphore *sem) {
         qp = &( sem -> wait_queue );
         block(qp, get_last_running_thread_id());
     }
-#ifdef DEBUG_SEM
-    printf("Semaphore waited, count left %d\n", sem -> status);
-    print_tcb();
-#endif
+    lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
     enable();
 }
 
@@ -36,10 +31,7 @@ void signal(semaphore *sem)
     if( sem -> status <=0 ) {
         wakeup_head(qp);
     }
-#ifdef DEBUG_SEM
-    printf("Semaphore signaled, count left %d\n", sem -> status);
-    print_tcb();
-#endif
+    lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);
     enable();
 }
 

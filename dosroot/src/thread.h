@@ -6,8 +6,6 @@
 #include "usercode.h"
 
 /* consts */
-/* 0x1C is usable */
-#define TIME_INT 0x08
 #define NTCB 32
 #define TCB_NAME_LEN 32
 

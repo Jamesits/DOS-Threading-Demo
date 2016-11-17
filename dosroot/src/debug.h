@@ -4,11 +4,13 @@
 // #define DEBUG
 #define DEBUG_SEM
 
+#define DEBUG_ENABLE_FILE_REDIRECTION
+#define DEBUG_FILE "debug.log"
 #define DEBUG_LOG_LEVEL DEBUG
 #define DEBUG_OUTPUT_FILE stderr
 #define DEBUG_FLUSH_BUFFER
 
-typedef enum loglevel {DEBUG, INFO, WARNING, ERROR, CRITICAL, PROMPT} loglevel;
+typedef enum loglevel {INFO, DEBUG, WARNING, ERROR, CRITICAL, PROMPT} loglevel;
 extern const char *loglevel_text[];
 
 #define PrintRegs() { \
@@ -17,5 +19,7 @@ extern const char *loglevel_text[];
 
 void print_tcb();
 int lprintf(loglevel level, const char *format, ...);
+void init_dbg();
+void end_dbg();
 
 #endif

@@ -1,10 +1,10 @@
 #include "thread.h"
 #include "debug.h"
+#include "main.h"
 
 /* variables */
 s_TCB tcb[NTCB];
 int tcb_count = 0;
-void interrupt (*oldtimeslicehandler)(void);
 int time_slice_counter = TIME_SLICE_MULTIPLER;
 
 /* function definition */
@@ -23,9 +23,7 @@ int get_next_running_thread_id() {
     int i;
     if (last == -1) { /* system idle */
         if (tcb_count == 0) { /* no threads waiting */
-#ifdef DEBUG
-            printf("System idle.\n");
-#endif
+            lprintf(WARNING, "System idle.\n");
             return -1;
         } else {
             for (i = 0; i < tcb_count; ++i) {
@@ -33,9 +31,7 @@ int get_next_running_thread_id() {
                     return i;
                 }
             }
-#ifdef DEBUG
-            printf("All threads blocked.\n");
-#endif
+            lprintf(DEBUG, "All threads blocked at pos 0.\n");
             return -1;
         }
     } else { /* context switching */
@@ -49,9 +45,7 @@ int get_next_running_thread_id() {
                 return i;
             }
         }
-#ifdef DEBUG
-        printf("All threads blocked.\n");
-#endif
+        lprintf(DEBUG, "All threads blocked at pos 1.\n");
         return -1;
     }
 }
@@ -63,13 +57,9 @@ int far thread_end_trigger() {
     // print_tcb();
 #endif
     last = get_last_running_thread_id();
-#ifdef DEBUG
-    printf("Thread #%d end.\n", last);
-#endif
+    lprintf(DEBUG, "Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
-#ifdef DEBUG
-    // printf("Thread end trigger finished.\n");
-#endif
+    lprintf(INFO, "Thread end trigger finished.\n");
     timeslicehandler();
     enable();
     return 0;
@@ -78,9 +68,9 @@ int far thread_end_trigger() {
 int create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
     disable();
-    printf("Creating thread %s\n", name);
+    lprintf(DEBUG, "Creating thread %s\n", name);
     if (tcb_count >= NTCB) {
-        printf("TCB stack full");
+        lprintf(CRITICAL, "TCB stack full");
         return -1;
     }
     tcb[tcb_count].stack = (unsigned char *)malloc(stacklen);
@@ -97,11 +87,7 @@ int create(char far *name, func thread_function, size_t stacklen) {
     memcpy((void *)MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     strcpy(tcb[tcb_count].name, (char *)name);
     ++tcb_count;
-#ifdef DEBUG
-    print_tcb();
-    printf("Creating thread %s finished.\n", name);
-    // exit(0);
-#endif
+    lprintf(INFO, "Creating thread %s finished.\n", name);
     enable();
     return tcb_count;
 };
@@ -110,23 +96,17 @@ int destroy(int id) {
     int i;
     disable();
     if (id >= NTCB) {
-        printf("Cannot destory thread #%d", id);
+        lprintf(CRITICAL, "Cannot destory thread #%d", id);
         return -1;
     }
-#ifdef DEBUG
-    printf("Destoring thread %s\n", tcb[id].name);
-    fflush(stdout);
-#endif
+    lprintf(DEBUG, "Destoring thread %s\n", tcb[id].name);
     tcb[id].state = FINISHED;
     free(tcb[id].stack);
     for (i = id + 1; i < NTCB - id; ++i) {
         memcpy(tcb + i - 1, tcb + i, sizeof(s_TCB));
     }
     --tcb_count;
-#ifdef DEBUG
-    print_tcb();
-    printf("Thread destoried.\n", tcb[id].name);
-#endif
+    lprintf(INFO, "Thread destoried.\n", tcb[id].name);
     enable();
     return 0;
 };
@@ -137,18 +117,14 @@ void interrupt timeslicehandler(void) {
 
     oldtimeslicehandler();
     if (DosBusy()) {
-#ifdef DEBUG
-        printf("Time slice reached and DOS busy.\n");
-#endif
+        lprintf(INFO, "Time slice reached and DOS busy, skipping.\n");
         return;
+    } else {
+        lprintf(INFO, "Time slice reached.\n");
     };
     disable();
     last_running_thread = get_last_running_thread_id();
     next_running_thread = get_next_running_thread_id();
-#ifdef DEBUG
-    printf("Time slice reached.\n");
-    print_tcb();
-#endif
     if (!DosBusy()) {
         /* context switching */
         if (last_running_thread >= 0) {
@@ -162,47 +138,11 @@ void interrupt timeslicehandler(void) {
             _SS = tcb[next_running_thread].ss;
             _SP = tcb[next_running_thread].sp;
         } else { /* when threads end */
-#ifdef DEBUG
-            printf("All threads have an end.\n");
-#endif
+            lprintf(INFO, "All threads have an end.\n");
             tcb_count = 0;
-#ifdef DEBUG
-            print_tcb();
-            PrintRegs();
-#endif
             cleanup();
         }
     }
-#ifdef DEBUG
-    printf("Time slice started again.\n");
-    print_tcb();
-#endif
+    lprintf(INFO, "Time slice handler finished.\n");
     enable();
-}
-
-void cleanup() {
-#ifdef DEBUG
-    printf("resetting time handler\n");
-#endif
-print_tcb();
-    setvect(TIME_INT, oldtimeslicehandler);
-    fflush(stdout);
-    fflush(stderr);
-    enable();
-    exit(0);
-}
-
-int main() {
-    InitDos();
-    disable();
-    oldtimeslicehandler = getvect(TIME_INT);
-    setvect(TIME_INT, timeslicehandler);
-#ifdef DEBUG
-    PrintRegs();
-#endif
-    enable();
-    usermain();
-    for(;;) {
-        asm { hlt }
-    }
 }

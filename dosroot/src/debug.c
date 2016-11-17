@@ -1,10 +1,28 @@
 #include <DOS.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include "debug.h"
 #include "thread.h"
 
-const char *loglevel_text[] = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", 0};
+const char *loglevel_text[] = {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL", 0};
+#ifdef DEBUG_ENABLE_FILE_REDIRECTION
+FILE *debug_file;
+#endif
+
+void init_dbg() {
+#ifdef DEBUG_ENABLE_FILE_REDIRECTION
+    debug_file = fopen(DEBUG_FILE, "w+");
+    if (!debug_file) {
+        fprintf(stderr, "Error opening file %s\n", DEBUG_FILE);
+        exit(-1);
+    }
+#endif
+}
+
+void end_dbg() {
+    fclose(debug_file);
+}
 
 void print_tcb() {
     int i;
@@ -20,6 +38,15 @@ int lprintf(loglevel level, const char *format, ...)
 {
     va_list args;
     int ret;
+    
+#ifdef DEBUG_ENABLE_FILE_REDIRECTION
+    if (loglevel_text[level]) fprintf(debug_file, "[%s] ", loglevel_text[level]);
+    va_start(args, format);
+    ret = vfprintf(debug_file, format, args);
+    va_end(args);
+    fflush(debug_file);
+#endif
+
     if (DEBUG_LOG_LEVEL > level) return 0;
     if (loglevel_text[level]) fprintf(DEBUG_OUTPUT_FILE, "[%s] ", loglevel_text[level]);
     va_start(args, format);
