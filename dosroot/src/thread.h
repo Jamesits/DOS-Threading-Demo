@@ -5,7 +5,7 @@
 #include <string.h>
 #include "usercode.h"
 
-#define DEBUG
+// #define DEBUG
 
 /* consts */
 /* 0x1C is usable */
@@ -53,4 +53,7 @@ int get_last_running_thread_id();
 int get_next_running_thread_id();
 void InitDos(void);
 int DosBusy(void);
+
+/* variables */
+extern s_TCB tcb[NTCB];
 #endif
