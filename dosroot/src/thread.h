@@ -6,7 +6,7 @@
 #include "usercode.h"
 
 /* consts */
-#define NTCB 32
+#define MAX_THREAD_COUNT 32
 #define TCB_NAME_LEN 32
 
 #define TIME_SLICE_MULTIPLER 2

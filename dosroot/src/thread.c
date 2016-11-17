@@ -2,12 +2,9 @@
 #include "debug.h"
 #include "main.h"
 
-/* variables */
-s_TCB tcb[NTCB];
+s_TCB tcb[MAX_THREAD_COUNT];
 int tcb_count = 0;
-int time_slice_counter = TIME_SLICE_MULTIPLER;
 
-/* function definition */
 int get_last_running_thread_id() {
     int i;
     for (i = 0; i < tcb_count; ++i) {
@@ -53,13 +50,11 @@ int get_next_running_thread_id() {
 int far thread_end_trigger() {
     int last;
     disable();
-#ifdef DEBUG
-    // print_tcb();
-#endif
     last = get_last_running_thread_id();
     lprintf(DEBUG, "Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
     lprintf(INFO, "Thread end trigger finished.\n");
+    print_tcb();
     timeslicehandler();
     enable();
     return 0;
@@ -69,7 +64,7 @@ int create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
     disable();
     lprintf(DEBUG, "Creating thread %s\n", name);
-    if (tcb_count >= NTCB) {
+    if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(CRITICAL, "TCB stack full");
         return -1;
     }
@@ -96,14 +91,14 @@ int create(char far *name, func thread_function, size_t stacklen) {
 int destroy(int id) {
     int i;
     disable();
-    if (id >= NTCB) {
+    if (id >= MAX_THREAD_COUNT) {
         lprintf(CRITICAL, "Cannot destory thread #%d", id);
         return -1;
     }
     lprintf(DEBUG, "Destoring thread %s\n", tcb[id].name);
     tcb[id].state = FINISHED;
     free(tcb[id].stack);
-    for (i = id + 1; i < NTCB - id; ++i) {
+    for (i = id + 1; i < MAX_THREAD_COUNT - id; ++i) {
         memcpy(tcb + i - 1, tcb + i, sizeof(s_TCB));
     }
     --tcb_count;
