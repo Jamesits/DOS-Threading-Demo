@@ -59,7 +59,7 @@ void far print_tcb() {
     lprintf(INFO, "\tLast running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
     lprintf(INFO, "\tID\tName\tStack\tSS:SP\t\tState\n");
     for (i = 0; i < tcb_count; ++i) {
-        lprintf(INFO, "\t%d\t%s\t0x%X\t0x%X:0x%X\t%d:%s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, tcb[i].state, tcb_status_text[tcb[i].state]);
+        lprintf(INFO, "\t%d\t%s\t0x%04X\t0x%04X:0x%04X\t%d:%s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, tcb[i].state, tcb_status_text[tcb[i].state]);
     }
 #endif
 }
