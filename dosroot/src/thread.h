@@ -25,9 +25,9 @@ typedef struct TCB {
 } s_TCB;
 
 /* stack initializer */
-struct int_regs {
+typedef struct int_regs {
     unsigned bp, di, si, ds, es, dx, cx, bx, ax, ip, cs, flags, off, seg;
-};
+} int_regs;
 
 /* thread caller function type */
 typedef int (far *func)(void);

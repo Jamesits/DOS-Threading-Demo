@@ -63,31 +63,35 @@ int far thread_end_trigger() {
 }
 
 int far create(char far *name, func thread_function, size_t stacklen) {
-    struct int_regs regs;
+    int_regs far *regs;
     begin_transaction();
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(ERROR, "TCB stack full!");
+        end_transaction();
         return -1;
     }
-    tcb[tcb_count].stack = (unsigned char*)malloc(stacklen);
+    tcb[tcb_count].stack = malloc(stacklen);
     if (!tcb[tcb_count].stack) {
             lprintf(ERROR, "Thread stack memory allocation failed!\n");
+            end_transaction();
             return -1;
     }
-    tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
-    tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
+    regs = (int_regs far *)((unsigned far *)tcb[tcb_count].stack + stacklen);
+    regs--;
+    tcb[tcb_count].ss = FP_SEG(regs);
+    tcb[tcb_count].sp = FP_OFF(regs);
     tcb[tcb_count].state = READY;
     strcpy(tcb[tcb_count].name, (char *)name);
     lprintf(INFO, "TCB: %d\t%s\t0x%Fp\t0x%Np:0x%Np\t%d\n", tcb_count, tcb[tcb_count].name, tcb[tcb_count].stack, tcb[tcb_count].ss, tcb[tcb_count].sp, tcb[tcb_count].state);
-    regs.cs = FP_SEG(thread_function);
-    regs.ip = FP_OFF(thread_function);
-    regs.ds = FP_SEG(tcb[tcb_count].stack);
-    regs.es = FP_SEG(tcb[tcb_count].stack);
-    regs.seg = FP_SEG(thread_end_trigger);
-    regs.off = FP_OFF(thread_end_trigger);
-    regs.flags = DEFAULT_CPU_FLAGS;
-    movedata(FP_SEG(&regs), FP_OFF(&regs), tcb[tcb_count].ss, tcb[tcb_count].sp, sizeof(regs));
+    regs->cs = FP_SEG(thread_function);
+    regs->ip = FP_OFF(thread_function);
+    regs->ds = _DS;
+    regs->es = _ES;
+    regs->seg = FP_SEG(thread_end_trigger);
+    regs->off = FP_OFF(thread_end_trigger);
+    regs->flags = DEFAULT_CPU_FLAGS;
+    // movedata(FP_SEG(&regs), FP_OFF(&regs), tcb[tcb_count].ss, tcb[tcb_count].sp, sizeof(regs));
     // memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     ++tcb_count;
     lprintf(INFO, "Creating thread %s finished.\n", name);
@@ -101,6 +105,7 @@ int far destroy(int id) {
     begin_transaction();
     if (id >= MAX_THREAD_COUNT) {
         lprintf(CRITICAL, "Cannot destroy thread #%d", id);
+        end_transaction();
         return -1;
     }
     lprintf(DEBUG, "Destroing thread %s\n", tcb[id].name);
@@ -156,6 +161,7 @@ void interrupt timeslicehandler(void) {
         } else { /* when threads end */
             lprintf(INFO, "All threads have an end.\n");
             tcb_count = 0;
+            end_transaction();
             cleanup();
         }
     }
