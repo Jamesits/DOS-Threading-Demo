@@ -6,6 +6,7 @@
 
 s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;
+int schedule_reent = 0;
 
 int far get_last_running_thread_id() {
     int i;
@@ -33,6 +34,8 @@ int far get_next_running_thread_id() {
             lprintf(WARNING, "All threads blocked at pos 0.\n");
             return -1;
         }
+    } else if (tcb_count == 1) { /* only one thread */
+        return 1;
     } else { /* context switching */
         for (i = last; i < tcb_count; ++i) {
             if (tcb[i].state == READY) {
@@ -68,14 +71,12 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(ERROR, "TCB stack full!");
-        end_transaction();
-        return -1;
+        goto exit_create;
     }
     tcb[tcb_count].stack = malloc(stacklen);
     if (!tcb[tcb_count].stack) {
             lprintf(ERROR, "Thread stack memory allocation failed!\n");
-            end_transaction();
-            return -1;
+            goto exit_create;
     }
     regs = (int_regs far *)((unsigned far *)tcb[tcb_count].stack + stacklen);
     regs--;
@@ -91,10 +92,9 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     regs->seg = FP_SEG(thread_end_trigger);
     regs->off = FP_OFF(thread_end_trigger);
     regs->flags = DEFAULT_CPU_FLAGS;
-    // movedata(FP_SEG(&regs), FP_OFF(&regs), tcb[tcb_count].ss, tcb[tcb_count].sp, sizeof(regs));
-    // memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     ++tcb_count;
     lprintf(INFO, "Creating thread %s finished.\n", name);
+exit_create:
     print_tcb();
     end_transaction();
     return tcb_count;
@@ -133,6 +133,10 @@ void interrupt timeslicehandler(void) {
         lprintf(INFO, "Time slice reached.\n");
     }
     begin_transaction();
+    if(schedule_reent) {
+        goto exit_scheduler;
+    }
+    schedule_reent = 1;
     print_tcb();
     last_running_thread = get_last_running_thread_id();
     next_running_thread = get_next_running_thread_id();
@@ -167,5 +171,7 @@ void interrupt timeslicehandler(void) {
     }
     print_tcb();
     lprintf(INFO, "Time slice handler finished.\n");
+    schedule_reent = 0;
+exit_scheduler:
     end_transaction();
 }
