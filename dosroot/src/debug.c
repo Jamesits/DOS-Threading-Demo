@@ -23,7 +23,9 @@ void init_dbg() {
 }
 
 void end_dbg() {
+#ifdef DEBUG_ENABLE_FILE_REDIRECTION
     fclose(debug_file);
+#endif
 }
 
 int lprintf(loglevel level, const char *format, ...)
