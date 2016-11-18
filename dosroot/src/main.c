@@ -9,6 +9,8 @@ void far cleanup() {
     lprintf(DEBUG, "Cleaning up...\n");
     lprintf(INFO, "Resetting time handler\n");
     setvect(TIME_INT, oldtimeslicehandler);
+    lprintf(INFO, "System interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", getvect(TIME_INT), oldtimeslicehandler);
+    lprintf(INFO, "Force enabling interrupt...\n");
     enable();
     PrintRegs();
     lprintf(INFO, "Finished...\n");
@@ -23,20 +25,12 @@ int main() {
     PrintRegs();
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
-
-    lprintf(DEBUG, "Testing malloc()...\n");
-    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
-    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
-    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
-    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
-    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
-
     lprintf(INFO, "Getting INT08h...\n");
     begin_transaction();
     oldtimeslicehandler = getvect(TIME_INT);
-    lprintf(INFO, "System interrupt: 0x%X, Current interrupt: 0x%X\n", getvect(TIME_INT), oldtimeslicehandler);
+    lprintf(INFO, "System interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", getvect(TIME_INT), oldtimeslicehandler);
     setvect(TIME_INT, timeslicehandler);
-    lprintf(INFO, "Object interrupt: 0x%X, Current interrupt: 0x%X\n", timeslicehandler, getvect(TIME_INT));
+    lprintf(INFO, "Object interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", timeslicehandler, getvect(TIME_INT));
     end_transaction();
     lprintf(INFO, "Starting user program...\n");
     usermain();

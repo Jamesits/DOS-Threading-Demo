@@ -73,11 +73,11 @@ void far print_tcb() {
     begin_transaction();
     lprintf(INFO, ">>>> TCB status\n");
     lprintf(INFO, "\tLast running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
-    lprintf(INFO, "\tID\tName\tStack\tSS:SP\t\tState\n");
+    lprintf(INFO, "\tID\tName\t\tStack\t\tSS:SP\t\tState\n");
     for (i = 0; i < tcb_count; ++i) {
         current_thread_state = tcb[i].state;
         if (current_thread_state < 0 || current_thread_state > 3) current_thread_state = 4;
-        lprintf(INFO, "\t%d\t%s\t0x%04x\t0x%04x:0x%04x\t%d %s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, current_thread_state, tcb_status_text[0]);
+        lprintf(INFO, "\t%d\t%s\t\t0x%Fp\t0x%Np:0x%Np\t%d %s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, current_thread_state, tcb_status_text[current_thread_state]);
     }
     end_transaction();
 #endif

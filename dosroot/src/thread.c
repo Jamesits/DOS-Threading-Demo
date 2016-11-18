@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <alloc.h>
 #include "thread.h"
 #include "debug.h"
 #include "main.h"
@@ -76,7 +78,8 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
     tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
     tcb[tcb_count].state = READY;
-    lprintf(INFO, "TCB: %d\t%s\t0x%04x\t0x%04x:0x%04x\t%d\n", tcb_count, tcb[tcb_count].name, tcb[tcb_count].stack, tcb[tcb_count].ss, tcb[tcb_count].sp, tcb[tcb_count].state);
+    strcpy(tcb[tcb_count].name, (char *)name);
+    lprintf(INFO, "TCB: %d\t%s\t0x%Fp\t0x%Np:0x%Np\t%d\n", tcb_count, tcb[tcb_count].name, tcb[tcb_count].stack, tcb[tcb_count].ss, tcb[tcb_count].sp, tcb[tcb_count].state);
     regs.cs = FP_SEG(thread_function);
     regs.ip = FP_OFF(thread_function);
     regs.ds = FP_SEG(tcb[tcb_count].stack);
@@ -86,7 +89,6 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     regs.flags = DEFAULT_CPU_FLAGS;
     movedata(FP_SEG(&regs), FP_OFF(&regs), tcb[tcb_count].ss, tcb[tcb_count].sp, sizeof(regs));
     // memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
-    strcpy(tcb[tcb_count].name, (char *)name);
     ++tcb_count;
     lprintf(INFO, "Creating thread %s finished.\n", name);
     print_tcb();
