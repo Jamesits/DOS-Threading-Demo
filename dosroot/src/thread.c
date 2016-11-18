@@ -83,7 +83,8 @@ int create(char far *name, func thread_function, size_t stacklen) {
     regs.seg = FP_SEG(thread_end_trigger);
     regs.off = FP_OFF(thread_end_trigger);
     regs.flags = DEFAULT_CPU_FLAGS;
-    memcpy((void *)MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
+    movedata(FP_SEG(&regs), FP_OFF(&regs), tcb[tcb_count].ss, tcb[tcb_count].sp, sizeof(regs));
+    // memcpy(MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     strcpy(tcb[tcb_count].name, (char *)name);
     ++tcb_count;
     lprintf(INFO, "Creating thread %s finished.\n", name);

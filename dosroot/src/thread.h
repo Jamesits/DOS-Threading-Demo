@@ -16,7 +16,7 @@ enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
 /* thread control block */
 typedef struct TCB {
-    unsigned char *stack;       /* thread stack start ptr */
+    void far *stack;       /* thread stack start ptr */
     unsigned ss;                /* stack segment */
     unsigned sp;                /* thread in-stack offset */
     enum THREAD_STATUS state;
