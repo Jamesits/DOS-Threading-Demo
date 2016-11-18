@@ -23,6 +23,14 @@ int main() {
     PrintRegs();
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
+
+    lprintf(DEBUG, "Testing malloc()...\n");
+    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
+    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
+    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
+    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
+    lprintf(DEBUG, "0x%x\n", malloc(DEFAULT_THREAD_STACK_SIZE));
+
     lprintf(INFO, "Getting INT08h...\n");
     begin_transaction();
     oldtimeslicehandler = getvect(TIME_INT);
@@ -31,8 +39,8 @@ int main() {
     lprintf(INFO, "Object interrupt: 0x%X, Current interrupt: 0x%X\n", timeslicehandler, getvect(TIME_INT));
     end_transaction();
     lprintf(INFO, "Starting user program...\n");
-    // usermain();
-    create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
+    usermain();
+    //create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
     while(tcb_count > 0) lprintf(INFO, "main() waiting for child to end...\n");;
 
     lprintf(INFO, "main() finished.\n");

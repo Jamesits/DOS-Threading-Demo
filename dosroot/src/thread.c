@@ -76,6 +76,7 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
     tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
     tcb[tcb_count].state = READY;
+    lprintf(INFO, "TCB: %d\t%s\t0x%04x\t0x%04x:0x%04x\t%d\n", tcb_count, tcb[tcb_count].name, tcb[tcb_count].stack, tcb[tcb_count].ss, tcb[tcb_count].sp, tcb[tcb_count].state);
     regs.cs = FP_SEG(thread_function);
     regs.ip = FP_OFF(thread_function);
     regs.ds = FP_SEG(tcb[tcb_count].stack);
@@ -132,8 +133,8 @@ void interrupt timeslicehandler(void) {
         /* context switching */
         if (last_running_thread >= 0) {
             tcb[last_running_thread].state = READY;
-            tcb[last_running_thread].ss = _SS;
-            tcb[last_running_thread].sp = _SP;
+            //tcb[last_running_thread].ss = _SS;
+            //tcb[last_running_thread].sp = _SP;
         } else { /* when threads start */
         }
         if (next_running_thread >= 0) {

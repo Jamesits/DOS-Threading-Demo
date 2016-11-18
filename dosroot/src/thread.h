@@ -12,16 +12,16 @@
 #define TIME_SLICE_MULTIPLER 2
 #define DEFAULT_THREAD_STACK_SIZE 1024
 #define DEFAULT_CPU_FLAGS 0x200
-enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
+typedef enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED} THREAD_STATUS;
 
 /* thread control block */
 typedef struct TCB {
     void far *stack;       /* thread stack start ptr */
-    unsigned far ss;                /* stack segment */
-    unsigned far sp;                /* thread in-stack offset */
-    enum THREAD_STATUS far state;
-    struct TCB * far next;
-    char far name[TCB_NAME_LEN];
+    unsigned ss;                /* stack segment */
+    unsigned sp;                /* thread in-stack offset */
+    enum THREAD_STATUS state;
+    struct TCB * next;
+    char name[TCB_NAME_LEN];
 } s_TCB;
 
 /* stack initializer */

@@ -1,8 +1,8 @@
 *.BAT
 TURBOC*
 .DS_Store
-*.MAP
-*.OBJ
-*.EXE
-TC*.SWP
-*.LOG
+dosroot/src/*.MAP
+dosroot/src/*.OBJ
+dosroot/src/*.EXE
+dosroot/src/TC*.SWP
+dosroot/src/*.LOG
