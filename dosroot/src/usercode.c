@@ -6,15 +6,20 @@ semaphore s;
 
 int far forever() {
     int i = 60;
-    while(i--) delay(1); // {i++; lprintf(PROMPT, "%d", i);}
+    // getchar();
+    //cleanup();
+    // while(i--) delay(1); // {i++; lprintf(PROMPT, "%d", i);}
     return 0;
 }
 
 int far usermain() {
     lprintf(PROMPT, "DEMO multi-threading: \n");
-    create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
+    // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
     create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
     create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE);
+    //tcb[0].state = INIT_BLOCKED;
+    //timeslicehandler();
+    //cleanup();
 
     // lprintf(PROMPT, "DEMO multi-threading with semaphore: \n");
     // init_semaphore(&s, 0);
@@ -30,7 +35,7 @@ int far fp1() {
     while(--i) {
         putchar('a');
         j += 1;
-        //delay(1);
+        delay(1);
     }
     return 0;
 }
@@ -42,7 +47,7 @@ int far fp2() {
         // lprintf(PROMPT, "b");
         putchar('b');
         j -= 1;
-        //delay(1);
+        delay(1);
     }
     return 0;
 }

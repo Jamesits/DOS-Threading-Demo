@@ -6,7 +6,7 @@
 #include "debug.h"
 #include "thread.h"
 
-const char *tcb_status_text[] = {"FINISHED", "RUNNING", "READY", "BLOCKED", "ERROR"};
+const char *tcb_status_text[] = {"FINISHED", "RUNNING", "READY", "BLOCKED", "INIT_BLOCKED", "ERROR"};
 const char *loglevel_text[] = {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL", 0};
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
 FILE *debug_file;
@@ -26,7 +26,8 @@ void far init_dbg() {
 
 void far end_dbg() {
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
-    fclose(debug_file);
+    fflush(debug_file);
+    // fclose(debug_file);
 #endif
 }
 
@@ -77,7 +78,7 @@ void far print_tcb() {
     lprintf(INFO, "\tID\tName\t\tStack\t\tSS:SP\t\tState\n");
     for (i = 0; i < tcb_count; ++i) {
         current_thread_state = tcb[i].state;
-        if (current_thread_state < 0 || current_thread_state > 3) current_thread_state = 4;
+        if (current_thread_state < 0 || current_thread_state > 4) current_thread_state = 5;
         lprintf(INFO, "\t%d\t%s\t\t0x%Fp\t0x%Np:0x%Np\t%d %s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, current_thread_state, tcb_status_text[current_thread_state]);
     }
     //end_transaction();

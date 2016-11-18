@@ -14,14 +14,14 @@ void far cleanup() {
     enable();
     PrintRegs();
     lprintf(INFO, "Finished...\n");
+    // destroy(0);
     end_dbg();
     exit(0);
 }
 
 int main() {
     init_dbg();
-    tconvert("init");
-    lprintf(INFO, "Starting...\n");
+    lprintf(INFO, "Starting main()...\n");
     PrintRegs();
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
@@ -31,13 +31,11 @@ int main() {
     lprintf(INFO, "System interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", getvect(TIME_INT), oldtimeslicehandler);
     setvect(TIME_INT, timeslicehandler);
     lprintf(INFO, "Object interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", timeslicehandler, getvect(TIME_INT));
-    end_transaction();
+    // tconvert("init");
     lprintf(INFO, "Starting user program...\n");
     //usermain();
     create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
-    while(tcb_count > 1); //lprintf(INFO, "main() waiting for child to end...\n");;
-
     lprintf(INFO, "main() finished.\n");
-
+    end_transaction();
     return 0;
 }
