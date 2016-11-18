@@ -45,4 +45,23 @@ int get_next_running_thread_id();
 /* variables */
 extern s_TCB tcb[MAX_THREAD_COUNT];
 extern int tcb_count;
+
+#define tconvert(X) \
+        { \
+                disable(); \
+                lprintf(DEBUG, "Converting current process to thread %s\n", (X)); \
+                if (tcb_count >= MAX_THREAD_COUNT) { \
+                    lprintf(CRITICAL, "TCB stack full"); \
+                    return -1; \
+                } \
+                tcb[tcb_count].ss = _SS; \
+                tcb[tcb_count].sp = _SP; \
+                tcb[tcb_count].state = RUNNING; \
+                tcb[tcb_count].stack = MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp); \
+                strcpy(tcb[tcb_count].name, (X)); \
+                ++tcb_count; \
+                lprintf(INFO, "Converting thread %s finished.\n", (X)); \
+                print_tcb(); \
+                enable(); \
+        }
 #endif

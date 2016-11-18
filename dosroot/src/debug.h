@@ -1,8 +1,9 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+#define DEBUG_PRINT_TCB
 #define DEBUG_ENABLE_FILE_REDIRECTION
-#define DEBUG_FILE "debug.log"
+#define DEBUG_FILE "DEBUG.LOG"
 #define DEBUG_LOG_LEVEL WARNING
 #define DEBUG_OUTPUT_FILE stderr
 #define DEBUG_FLUSH_BUFFER

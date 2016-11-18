@@ -18,6 +18,7 @@ void cleanup() {
 
 int main() {
     init_dbg();
+    tconvert("init");
     lprintf(INFO, "Starting...\n");
     PrintRegs();
     lprintf(INFO, "Initializing DOS critical pointers...\n");
@@ -29,9 +30,11 @@ int main() {
     lprintf(INFO, "Previous interrupt: 0x%X, custom interrupt: 0x%X, current interrupt: 0x%X\n", oldtimeslicehandler, timeslicehandler, getvect(TIME_INT));
     enable();
     lprintf(INFO, "Starting user program...\n");
-    usermain();
+    // usermain();
+    create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
+    while(tcb_count > 0) lprintf(INFO, "main() waiting for child to end...\n");;
+
     lprintf(INFO, "main() finished.\n");
-    for(;;) {
-        asm { hlt }
-    }
+
+    return 0;
 }

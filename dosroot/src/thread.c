@@ -65,10 +65,14 @@ int create(char far *name, func thread_function, size_t stacklen) {
     disable();
     lprintf(DEBUG, "Creating thread %s\n", name);
     if (tcb_count >= MAX_THREAD_COUNT) {
-        lprintf(CRITICAL, "TCB stack full");
+        lprintf(ERROR, "TCB stack full!");
         return -1;
     }
     tcb[tcb_count].stack = (unsigned char *)malloc(stacklen);
+    if (!tcb[tcb_count].stack) {
+            lprintf(ERROR, "Thread stack memory allocation failed!\n");
+            return -1;
+    }
     tcb[tcb_count].ss = FP_SEG(tcb[tcb_count].stack);
     tcb[tcb_count].sp = (unsigned)(FP_OFF(tcb[tcb_count].stack) + (stacklen - sizeof(regs)));
     tcb[tcb_count].state = READY;
@@ -92,17 +96,17 @@ int destroy(int id) {
     int i;
     disable();
     if (id >= MAX_THREAD_COUNT) {
-        lprintf(CRITICAL, "Cannot destory thread #%d", id);
+        lprintf(CRITICAL, "Cannot destroy thread #%d", id);
         return -1;
     }
-    lprintf(DEBUG, "Destoring thread %s\n", tcb[id].name);
+    lprintf(DEBUG, "Destroing thread %s\n", tcb[id].name);
     tcb[id].state = FINISHED;
     free(tcb[id].stack);
     for (i = id + 1; i < MAX_THREAD_COUNT - id; ++i) {
         memcpy(tcb + i - 1, tcb + i, sizeof(s_TCB));
     }
     --tcb_count;
-    lprintf(INFO, "Thread destoried.\n", tcb[id].name);
+    lprintf(INFO, "Thread destroied.\n", tcb[id].name);
     print_tcb();
     enable();
     return 0;

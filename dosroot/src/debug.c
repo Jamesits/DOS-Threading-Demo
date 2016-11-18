@@ -51,11 +51,13 @@ int lprintf(loglevel level, const char *format, ...)
 }
 
 void print_tcb() {
+#ifdef DEBUG_PRINT_TCB
     int i;
     lprintf(INFO, ">>>> TCB status\n");
-    lprintf(INFO, "Last running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
-    lprintf(INFO, "ID\tName\tStack\tSS\tSP\tState\n");
+    lprintf(INFO, "\tLast running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
+    lprintf(INFO, "\tID\tName\tStack\tSS:SP\t\tState\n");
     for (i = 0; i < tcb_count; ++i) {
-        lprintf(INFO, "%d\t%s\t0x%X\t0x%X\t0x%X\t%s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, tcb_status_text[tcb[i].state]);
+        lprintf(INFO, "\t%d\t%s\t0x%X\t0x%X:0x%X\t%s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, tcb_status_text[tcb[i].state]);
     }
+#endif
 }
