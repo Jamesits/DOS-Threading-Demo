@@ -1,11 +1,12 @@
 #include "usercode.h"
 #include "sem.h"
 #include "debug.h"
+#include <stdio.h>
 semaphore s;
 
 int far forever() {
-    int i;
-    // while(1) {i++; lprintf(PROMPT, "%d", i);}
+    int i = 60;
+    while(i--) delay(1); // {i++; lprintf(PROMPT, "%d", i);}
     return 0;
 }
 
@@ -24,10 +25,10 @@ int far usermain() {
 }
 
 int far fp1() {
-    int i = 2000;
+    int i = 200;
     int j = 1;
     while(--i) {
-        lprintf(PROMPT, "a");
+        putchar('a');
         j += 1;
         //delay(1);
     }
@@ -35,10 +36,11 @@ int far fp1() {
 }
 
 int far fp2() {
-    int i = 2000;
+    int i = 200;
     int j = 1;
     while(--i) {
-        lprintf(PROMPT, "b");
+        // lprintf(PROMPT, "b");
+        putchar('b');
         j -= 1;
         //delay(1);
     }
