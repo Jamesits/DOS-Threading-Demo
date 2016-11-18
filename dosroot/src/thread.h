@@ -55,7 +55,7 @@ extern int far tcb_count;
                 tcb[tcb_count].ss = _SS; \
                 tcb[tcb_count].sp = _SP; \
                 tcb[tcb_count].state = RUNNING; \
-                tcb[tcb_count].stack = MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp); \
+                tcb[tcb_count].stack = 0; \
                 strcpy(tcb[tcb_count].name, (X)); \
                 ++tcb_count; \
                 lprintf(INFO, "Converting thread %s finished.\n", (X)); \
