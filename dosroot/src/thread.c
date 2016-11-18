@@ -30,7 +30,7 @@ int far get_next_running_thread_id() {
                     return i;
                 }
             }
-            lprintf(DEBUG, "All threads blocked at pos 0.\n");
+            lprintf(WARNING, "All threads blocked at pos 0.\n");
             return -1;
         }
     } else { /* context switching */
@@ -44,7 +44,7 @@ int far get_next_running_thread_id() {
                 return i;
             }
         }
-        lprintf(DEBUG, "All threads blocked at pos 1.\n");
+        lprintf(WARNING, "All threads blocked at pos 1.\n");
         return -1;
     }
 }
@@ -134,12 +134,22 @@ void interrupt timeslicehandler(void) {
     if (!DosBusy()) {
         /* context switching */
         if (last_running_thread >= 0) {
+            lprintf(INFO, "Saving state of thread #%d:%s\n", last_running_thread, tcb[last_running_thread].name);
             tcb[last_running_thread].state = READY;
-            //tcb[last_running_thread].ss = _SS;
-            //tcb[last_running_thread].sp = _SP;
+            lprintf(DEBUG, "SS:SP:\n\tin TCB: %Np:%Np;\n\tCurrent: %Np:%Np\n\tDiff: %d:%d\n",
+                tcb[last_running_thread].ss,
+                tcb[last_running_thread].sp,
+                _SS,
+                _SP,
+                tcb[last_running_thread].ss - _SS,
+                tcb[last_running_thread].sp - _SP
+            );
+            tcb[last_running_thread].ss = _SS;
+            tcb[last_running_thread].sp = _SP;
         } else { /* when threads start */
         }
         if (next_running_thread >= 0) {
+            lprintf(INFO, "Switching to thread #%d:%s\n", next_running_thread, tcb[next_running_thread].name);
             tcb[next_running_thread].state = RUNNING;
             _SS = tcb[next_running_thread].ss;
             _SP = tcb[next_running_thread].sp;

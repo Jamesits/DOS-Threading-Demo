@@ -33,9 +33,9 @@ int main() {
     lprintf(INFO, "Object interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", timeslicehandler, getvect(TIME_INT));
     end_transaction();
     lprintf(INFO, "Starting user program...\n");
-    usermain();
-    //create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
-    while(tcb_count > 0) lprintf(INFO, "main() waiting for child to end...\n");;
+    //usermain();
+    create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
+    while(tcb_count > 1); //lprintf(INFO, "main() waiting for child to end...\n");;
 
     lprintf(INFO, "main() finished.\n");
 

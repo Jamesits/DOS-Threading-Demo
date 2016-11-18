@@ -28,7 +28,7 @@ int far fp1() {
     while(--i) {
         lprintf(PROMPT, "a");
         j += 1;
-        delay(1);
+        //delay(1);
     }
     return 0;
 }
@@ -39,7 +39,7 @@ int far fp2() {
     while(--i) {
         lprintf(PROMPT, "b");
         j -= 1;
-        delay(1);
+        //delay(1);
     }
     return 0;
 }
