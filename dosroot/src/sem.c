@@ -12,27 +12,27 @@ void init_semaphore(semaphore *s, int count) {
 
 void wait(semaphore *sem) {
     s_TCB **qp;
-    disable();
+    begin_transaction();
     sem -> status -= 1;
     if ( sem -> status < 0 ) {
         qp = &( sem -> wait_queue );
         block(qp, get_last_running_thread_id());
     }
     lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
-    enable();
+    end_transaction();
 }
 
 void signal(semaphore *sem)
 {
     s_TCB **qp;
-    disable();
+    begin_transaction();
     qp = &( sem -> wait_queue );
     sem -> status += 1;
     if( sem -> status <=0 ) {
         wakeup_head(qp);
     }
     lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);
-    enable();
+    end_transaction();
 }
 
 void block(s_TCB **qp, int thread) {
