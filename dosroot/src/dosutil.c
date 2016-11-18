@@ -1,8 +1,10 @@
 #include <DOS.h>
 #include "dosutil.h"
+#include "debug.h"
 
 char far *indos_ptr = 0;
 char far *crit_err_ptr = 0;
+unsigned atomic_operation_level = 0;
 
 /* get INDOS bit and critical error bit addresses */
 void far InitDos(void) {
@@ -32,4 +34,27 @@ int far DosBusy(void) {
     } else {
         return(-1);    /* InitDos() hasn't been called */
     }
+}
+
+void far begin_transaction() {
+    // printf("%u ", atomic_operation_level);
+    if (!atomic_operation_level) {
+        lprintf(DEBUG, "Acquiring interrupt lock...\n");
+        disable();
+    }
+    ++atomic_operation_level;
+    lprintf(INFO, "Transaction started, current level %d\n", atomic_operation_level);
+}
+
+void far end_transaction() {
+    --atomic_operation_level;
+    if (!atomic_operation_level) {
+        lprintf(DEBUG, "Releasing interrupt lock...\n");
+        enable();
+    }
+    lprintf(INFO, "Transaction commited, current level %d\n", atomic_operation_level);
+}
+
+unsigned far get_transaction_level() {
+    return atomic_operation_level;
 }

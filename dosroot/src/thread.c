@@ -49,20 +49,20 @@ int far get_next_running_thread_id() {
 
 int far thread_end_trigger() {
     int last;
-    disable();
+    begin_transaction();
     last = get_last_running_thread_id();
     lprintf(DEBUG, "Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
     lprintf(INFO, "Thread end trigger finished.\n");
     print_tcb();
     geninterrupt(TIME_INT);
-    enable();
+    end_transaction();
     return 0;
 }
 
 int far create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
-    disable();
+    begin_transaction();
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(ERROR, "TCB stack full!");
@@ -89,13 +89,13 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     ++tcb_count;
     lprintf(INFO, "Creating thread %s finished.\n", name);
     print_tcb();
-    enable();
+    end_transaction();
     return tcb_count;
 };
 
 int far destroy(int id) {
     int i;
-    disable();
+    begin_transaction();
     if (id >= MAX_THREAD_COUNT) {
         lprintf(CRITICAL, "Cannot destroy thread #%d", id);
         return -1;
@@ -109,7 +109,7 @@ int far destroy(int id) {
     --tcb_count;
     lprintf(INFO, "Thread destroied.\n", tcb[id].name);
     print_tcb();
-    enable();
+    end_transaction();
     return 0;
 };
 
@@ -124,7 +124,7 @@ void interrupt timeslicehandler(void) {
     } else {
         lprintf(INFO, "Time slice reached.\n");
     };
-    disable();
+    begin_transaction();
     print_tcb();
     last_running_thread = get_last_running_thread_id();
     next_running_thread = get_next_running_thread_id();
@@ -148,5 +148,5 @@ void interrupt timeslicehandler(void) {
     }
     print_tcb();
     lprintf(INFO, "Time slice handler finished.\n");
-    enable();
+    end_transaction();
 }

@@ -17,10 +17,10 @@ enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 /* thread control block */
 typedef struct TCB {
     void far *stack;       /* thread stack start ptr */
-    unsigned ss;                /* stack segment */
-    unsigned sp;                /* thread in-stack offset */
-    enum THREAD_STATUS state;
-    struct TCB far *next;
+    unsigned far ss;                /* stack segment */
+    unsigned far sp;                /* thread in-stack offset */
+    enum THREAD_STATUS far state;
+    struct TCB * far next;
     char far name[TCB_NAME_LEN];
 } s_TCB;
 
@@ -46,7 +46,7 @@ extern int far tcb_count;
 
 #define tconvert(X) \
         { \
-                disable(); \
+                begin_transaction(); \
                 lprintf(DEBUG, "Converting current process to thread #%d:%s\n", tcb_count, (X)); \
                 if (tcb_count >= MAX_THREAD_COUNT) { \
                     lprintf(CRITICAL, "TCB stack full"); \
@@ -60,6 +60,6 @@ extern int far tcb_count;
                 ++tcb_count; \
                 lprintf(INFO, "Converting thread %s finished.\n", (X)); \
                 print_tcb(); \
-                enable(); \
+                end_transaction(); \
         }
 #endif

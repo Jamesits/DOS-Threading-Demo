@@ -6,5 +6,8 @@
 
 void far InitDos(void);
 int far DosBusy(void);
+void far begin_transaction();
+void far end_transaction();
+unsigned far get_transaction_level();
 
 #endif

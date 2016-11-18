@@ -21,7 +21,7 @@ export DOS_BUILD_SCRIPT
 
 all: build
 
-exec: clean batch-prepare build
+exec: build
 	./dos.sh $(EXE)
 
 build: $(DOS_BUILD_SCRIPT) $(EXE)

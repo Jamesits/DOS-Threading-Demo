@@ -24,12 +24,12 @@ int main() {
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
     lprintf(INFO, "Getting INT08h...\n");
-    disable();
+    begin_transaction();
     oldtimeslicehandler = getvect(TIME_INT);
     lprintf(INFO, "System interrupt: 0x%X, Current interrupt: 0x%X\n", getvect(TIME_INT), oldtimeslicehandler);
     setvect(TIME_INT, timeslicehandler);
     lprintf(INFO, "Object interrupt: 0x%X, Current interrupt: 0x%X\n", timeslicehandler, getvect(TIME_INT));
-    enable();
+    end_transaction();
     lprintf(INFO, "Starting user program...\n");
     // usermain();
     create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
