@@ -35,9 +35,11 @@ int far lprintf(loglevel level, const char far *format, ...)
     va_list args;
     int ret;
     int i;
-    //begin_transaction();
 #ifdef DEBUG_PERROR
-    if (errno) perror("thread");
+    if (errno) {
+        perror("thread");
+        errno = 0;
+    }
 #endif
 
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
@@ -62,7 +64,6 @@ int far lprintf(loglevel level, const char far *format, ...)
 #ifdef DEBUG_FLUSH_BUFFER
     fflush(DEBUG_OUTPUT_FILE);
 #endif
-    //end_transaction();
     return ret;
 }
 
@@ -70,7 +71,7 @@ void far print_tcb() {
 #ifdef DEBUG_PRINT_TCB
     int i;
     int current_thread_state;
-    //begin_transaction();
+    // begin_transaction();
     lprintf(INFO, ">>>> TCB status\n");
     lprintf(INFO, "\tLast running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
     lprintf(INFO, "\tID\tName\t\tStack\t\tSS:SP\t\tState\n");
