@@ -1,8 +1,10 @@
 *.BAT
 TURBOC*
 .DS_Store
+*.DSK
 dosroot/src/*.MAP
 dosroot/src/*.OBJ
 dosroot/src/*.EXE
 dosroot/src/TC*.SWP
 dosroot/src/*.LOG
+dosroot/src/*.PRJ
