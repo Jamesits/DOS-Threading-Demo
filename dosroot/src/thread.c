@@ -63,7 +63,7 @@ int far thread_end_trigger() {
 int create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
     disable();
-    lprintf(DEBUG, "Creating thread %s\n", name);
+    lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(ERROR, "TCB stack full!");
         return -1;

@@ -50,7 +50,7 @@ extern int tcb_count;
 #define tconvert(X) \
         { \
                 disable(); \
-                lprintf(DEBUG, "Converting current process to thread %s\n", (X)); \
+                lprintf(DEBUG, "Converting current process to thread #%d:%s\n", tcb_count, (X)); \
                 if (tcb_count >= MAX_THREAD_COUNT) { \
                     lprintf(CRITICAL, "TCB stack full"); \
                     return -1; \
