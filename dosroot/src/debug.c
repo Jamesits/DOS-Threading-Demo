@@ -6,13 +6,13 @@
 #include "debug.h"
 #include "thread.h"
 
-const char *tcb_status_text[] = {"FINISHED", "RUNNING", "READY", "BLOCKED"};
-const char *loglevel_text[] = {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL", 0};
+const char far *tcb_status_text[] = {"FINISHED", "RUNNING", "READY", "BLOCKED"};
+const char far *loglevel_text[] = {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL", 0};
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
 FILE *debug_file;
 #endif
 
-void init_dbg() {
+void far init_dbg() {
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
     debug_file = fopen(DEBUG_FILE, "w+");
     if (!debug_file) {
@@ -22,13 +22,13 @@ void init_dbg() {
 #endif
 }
 
-void end_dbg() {
+void far end_dbg() {
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
     fclose(debug_file);
 #endif
 }
 
-int lprintf(loglevel level, const char *format, ...)
+int far lprintf(loglevel level, const char *format, ...)
 {
     va_list args;
     int ret;
@@ -52,7 +52,7 @@ int lprintf(loglevel level, const char *format, ...)
     return ret;
 }
 
-void print_tcb() {
+void far print_tcb() {
 #ifdef DEBUG_PRINT_TCB
     int i;
     lprintf(INFO, ">>>> TCB status\n");

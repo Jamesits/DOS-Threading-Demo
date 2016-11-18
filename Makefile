@@ -9,7 +9,7 @@ DOS_BUILD_SCRIPT=$(DOSROOT)/BUILD.BAT
 BATCH_MAKER=dos.sh
 
 SRCDIR=$(DOSROOT)/src
-CC=TCC /ms
+CC=TCC /ml
 INCLUDES=/I\\TC\\INCLUDE
 LINKER=TLINK
 LIBS=/L\\TC\\LIB\\
@@ -21,7 +21,7 @@ export DOS_BUILD_SCRIPT
 
 all: build
 
-exec: build
+exec: clean batch-prepare build
 	./dos.sh $(EXE)
 
 build: $(DOS_BUILD_SCRIPT) $(EXE)

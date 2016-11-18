@@ -2,10 +2,10 @@
 #include "debug.h"
 #include "main.h"
 
-s_TCB tcb[MAX_THREAD_COUNT];
-int tcb_count = 0;
+s_TCB far tcb[MAX_THREAD_COUNT];
+int far tcb_count = 0;
 
-int get_last_running_thread_id() {
+int far get_last_running_thread_id() {
     int i;
     for (i = 0; i < tcb_count; ++i) {
         if (tcb[i].state == RUNNING) {
@@ -15,7 +15,7 @@ int get_last_running_thread_id() {
     return -1;
 }
 
-int get_next_running_thread_id() {
+int far get_next_running_thread_id() {
     int last = get_last_running_thread_id();
     int i;
     if (last == -1) { /* system idle */
@@ -55,12 +55,12 @@ int far thread_end_trigger() {
     if (last >= 0) destroy(last);
     lprintf(INFO, "Thread end trigger finished.\n");
     print_tcb();
-    timeslicehandler();
+    geninterrupt(TIME_INT);
     enable();
     return 0;
 }
 
-int create(char far *name, func thread_function, size_t stacklen) {
+int far create(char far *name, func thread_function, size_t stacklen) {
     struct int_regs regs;
     disable();
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
@@ -93,7 +93,7 @@ int create(char far *name, func thread_function, size_t stacklen) {
     return tcb_count;
 };
 
-int destroy(int id) {
+int far destroy(int id) {
     int i;
     disable();
     if (id >= MAX_THREAD_COUNT) {

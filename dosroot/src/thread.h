@@ -20,8 +20,8 @@ typedef struct TCB {
     unsigned ss;                /* stack segment */
     unsigned sp;                /* thread in-stack offset */
     enum THREAD_STATUS state;
-    struct TCB *next;
-    char name[TCB_NAME_LEN];
+    struct TCB far *next;
+    char far name[TCB_NAME_LEN];
 } s_TCB;
 
 /* stack initializer */
@@ -33,19 +33,16 @@ struct int_regs {
 typedef int (far *func)(void);
 
 /* function declaration */
-int create(char far *name, func thread_function, size_t stacklen);
-int destroy(int id);
-void cleanup();
+int far create(char far *name, func thread_function, size_t stacklen);
+int far destroy(int id);
 int far thread_end_trigger();
 void interrupt timeslicehandler(void);
-int main();
-void print_tcb();
-int get_last_running_thread_id();
-int get_next_running_thread_id();
+int far get_last_running_thread_id();
+int far get_next_running_thread_id();
 
 /* variables */
-extern s_TCB tcb[MAX_THREAD_COUNT];
-extern int tcb_count;
+extern s_TCB far tcb[MAX_THREAD_COUNT];
+extern int far tcb_count;
 
 #define tconvert(X) \
         { \

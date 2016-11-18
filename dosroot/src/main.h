@@ -7,5 +7,5 @@
 extern void interrupt (*oldtimeslicehandler)(void);
 
 int main();
-void cleanup();
+void far cleanup();
 #endif

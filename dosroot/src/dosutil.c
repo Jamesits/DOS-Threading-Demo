@@ -5,7 +5,7 @@ char far *indos_ptr = 0;
 char far *crit_err_ptr = 0;
 
 /* get INDOS bit and critical error bit addresses */
-void InitDos(void) {
+void far InitDos(void) {
     union REGS regs;
     struct SREGS segregs;
 
@@ -26,7 +26,7 @@ void InitDos(void) {
 }
 
 /* get if DOS is working or critical error happened */
-int DosBusy(void) {
+int far DosBusy(void) {
     if (indos_ptr && crit_err_ptr) {
         return (*indos_ptr || *crit_err_ptr);
     } else {

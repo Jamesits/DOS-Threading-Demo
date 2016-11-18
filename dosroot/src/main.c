@@ -5,7 +5,7 @@
 
 void interrupt (*oldtimeslicehandler)(void);
 
-void cleanup() {
+void far cleanup() {
     lprintf(DEBUG, "Cleaning up...\n");
     lprintf(INFO, "Resetting time handler\n");
     setvect(TIME_INT, oldtimeslicehandler);
