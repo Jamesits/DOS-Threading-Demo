@@ -11,6 +11,7 @@
 
 #define TIME_SLICE_MULTIPLER 2
 #define DEFAULT_THREAD_STACK_SIZE 1024
+#define DEFAULT_CPU_FLAGS 0x200
 enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED};
 
 /* thread control block */
@@ -25,7 +26,7 @@ typedef struct TCB {
 
 /* stack initializer */
 struct int_regs {
-    unsigned bp,di,si,ds,es,dx,cx,bx,ax,ip,cs,flags,off,seg;
+    unsigned bp, di, si, ds, es, dx, cx, bx, ax, ip, cs, flags, off, seg;
 };
 
 /* thread caller function type */

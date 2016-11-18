@@ -68,7 +68,7 @@ int create(char far *name, func thread_function, size_t stacklen) {
         lprintf(ERROR, "TCB stack full!");
         return -1;
     }
-    tcb[tcb_count].stack = (unsigned char *)malloc(stacklen);
+    tcb[tcb_count].stack = (unsigned char*)malloc(stacklen);
     if (!tcb[tcb_count].stack) {
             lprintf(ERROR, "Thread stack memory allocation failed!\n");
             return -1;
@@ -82,7 +82,7 @@ int create(char far *name, func thread_function, size_t stacklen) {
     regs.es = FP_SEG(tcb[tcb_count].stack);
     regs.seg = FP_SEG(thread_end_trigger);
     regs.off = FP_OFF(thread_end_trigger);
-    regs.flags = 0x200;
+    regs.flags = DEFAULT_CPU_FLAGS;
     memcpy((void *)MK_FP(tcb[tcb_count].ss, tcb[tcb_count].sp), &regs, sizeof(regs));
     strcpy(tcb[tcb_count].name, (char *)name);
     ++tcb_count;
