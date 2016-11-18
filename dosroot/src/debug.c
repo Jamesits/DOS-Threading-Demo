@@ -30,7 +30,7 @@ void far end_dbg() {
 #endif
 }
 
-int far lprintf(loglevel level, const char *format, ...)
+int far lprintf(loglevel level, const char far *format, ...)
 {
     va_list args;
     int ret;
@@ -70,7 +70,7 @@ void far print_tcb() {
 #ifdef DEBUG_PRINT_TCB
     int i;
     int current_thread_state;
-    begin_transaction();
+    //begin_transaction();
     lprintf(INFO, ">>>> TCB status\n");
     lprintf(INFO, "\tLast running: %d, Next running: %d, DOS Busy: %d\n", get_last_running_thread_id(), get_next_running_thread_id(), DosBusy());
     lprintf(INFO, "\tID\tName\t\tStack\t\tSS:SP\t\tState\n");
@@ -79,6 +79,6 @@ void far print_tcb() {
         if (current_thread_state < 0 || current_thread_state > 3) current_thread_state = 4;
         lprintf(INFO, "\t%d\t%s\t\t0x%Fp\t0x%Np:0x%Np\t%d %s\n", i, tcb[i].name, tcb[i].stack, tcb[i].ss, tcb[i].sp, current_thread_state, tcb_status_text[current_thread_state]);
     }
-    end_transaction();
+    //end_transaction();
 #endif
 }

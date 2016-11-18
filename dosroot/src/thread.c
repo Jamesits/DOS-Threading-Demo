@@ -127,11 +127,11 @@ void interrupt timeslicehandler(void) {
 
     oldtimeslicehandler();
     if (DosBusy()) {
-        lprintf(INFO, "Time slice reached and DOS busy, skipping.\n");
+        // lprintf(INFO, "Time slice reached and DOS busy, skipping.\n");
         return;
     } else {
         lprintf(INFO, "Time slice reached.\n");
-    };
+    }
     begin_transaction();
     print_tcb();
     last_running_thread = get_last_running_thread_id();

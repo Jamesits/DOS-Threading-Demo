@@ -5,7 +5,8 @@ semaphore s;
 
 int far forever() {
     int i;
-    while(1) {i++; lprintf(PROMPT, "%d", i);}
+    // while(1) {i++; lprintf(PROMPT, "%d", i);}
+    return 0;
 }
 
 int far usermain() {
@@ -23,7 +24,7 @@ int far usermain() {
 }
 
 int far fp1() {
-    int i = 200;
+    int i = 2000;
     int j = 1;
     while(--i) {
         lprintf(PROMPT, "a");
@@ -34,7 +35,7 @@ int far fp1() {
 }
 
 int far fp2() {
-    int i = 200;
+    int i = 2000;
     int j = 1;
     while(--i) {
         lprintf(PROMPT, "b");
