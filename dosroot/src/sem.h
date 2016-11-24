@@ -10,4 +10,8 @@ typedef struct semaphore{
 void init_semaphore(semaphore *s, int count);
 void wait(semaphore *s);
 void signal(semaphore *s);
+
+#define V(X) wait(&(X));
+#define P(X) signal(&(X));
+
 #endif
