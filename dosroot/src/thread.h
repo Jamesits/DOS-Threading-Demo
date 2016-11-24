@@ -2,6 +2,7 @@
 #define __THREAD_H__
 #include <DOS.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "usercode.h"
 
@@ -19,7 +20,7 @@ typedef struct TCB {
     void far *stack;       /* thread stack start ptr */
     unsigned ss;                /* stack segment */
     unsigned sp;                /* thread in-stack offset */
-    enum THREAD_STATUS state;
+    THREAD_STATUS state;
     struct TCB * next;
     char name[TCB_NAME_LEN];
 } s_TCB;
@@ -39,6 +40,8 @@ int far thread_end_trigger();
 void interrupt timeslicehandler(void);
 int far get_last_running_thread_id();
 int far get_next_running_thread_id();
+void far set_thread_state(int id, THREAD_STATUS new_state);
+void far block_myself();
 
 /* variables */
 extern s_TCB far tcb[MAX_THREAD_COUNT];

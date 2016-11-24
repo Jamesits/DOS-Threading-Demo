@@ -6,7 +6,8 @@
 
 s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;
-int schedule_reent = 0;
+char schedule_reent = 0;
+char in_kernel = 0;
 
 int far get_last_running_thread_id() {
     int i;
@@ -55,12 +56,14 @@ int far get_next_running_thread_id() {
 int far thread_end_trigger() {
     int last;
     begin_transaction();
+    in_kernel = 1;
     last = get_last_running_thread_id();
     lprintf(DEBUG, "Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
     lprintf(INFO, "Thread end trigger finished.\n");
     print_tcb();
     geninterrupt(TIME_INT);
+    in_kernel = 0;
     end_transaction();
     return 0;
 }
@@ -68,6 +71,7 @@ int far thread_end_trigger() {
 int far create(char far *name, func thread_function, size_t stacklen) {
     int_regs far *regs;
     begin_transaction();
+    in_kernel = 1;
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(ERROR, "TCB stack full!");
@@ -96,6 +100,7 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     lprintf(INFO, "Creating thread %s finished.\n", name);
 exit_create:
     print_tcb();
+    in_kernel = 0;
     end_transaction();
     return tcb_count;
 };
@@ -103,6 +108,7 @@ exit_create:
 int far destroy(int id) {
     int i;
     begin_transaction();
+    in_kernel = 1;
     if (id >= MAX_THREAD_COUNT) {
         lprintf(CRITICAL, "Cannot destroy thread #%d", id);
         end_transaction();
@@ -117,6 +123,7 @@ int far destroy(int id) {
     --tcb_count;
     lprintf(INFO, "Thread destroied.\n", tcb[id].name);
     print_tcb();
+    in_kernel = 0;
     end_transaction();
     return 0;
 };
@@ -126,14 +133,15 @@ void interrupt timeslicehandler(void) {
     int next_running_thread;
 
     oldtimeslicehandler();
-    if (DosBusy()) {
+    if (DosBusy() || in_kernel) {
         // lprintf(INFO, "Time slice reached and DOS busy, skipping.\n");
         return;
-    } else {
-        lprintf(INFO, "Time slice reached.\n");
     }
     begin_transaction();
+    in_kernel = 1;
+    lprintf(INFO, "Time slice reached.\n");
     if(schedule_reent) {
+        lprintf(WARNING, "Re-entering scheduler, cancelling...\n");
         goto exit_scheduler;
     }
     schedule_reent = 1;
@@ -172,6 +180,17 @@ void interrupt timeslicehandler(void) {
     print_tcb();
     lprintf(INFO, "Time slice handler finished.\n");
     schedule_reent = 0;
+    in_kernel = 0;
 exit_scheduler:
     end_transaction();
+}
+
+void far set_thread_state(int id, THREAD_STATUS new_state) {
+    lprintf(INFO, "Setting thread #%d to new state %d\n", id, new_state);
+    tcb[id].state = new_state;
+}
+
+void far block_myself() {
+    lprintf(WARNING, "Blocking current thread");
+    set_thread_state(get_last_running_thread_id(), BLOCKED);
 }

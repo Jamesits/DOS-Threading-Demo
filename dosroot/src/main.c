@@ -35,7 +35,7 @@ int main() {
     lprintf(INFO, "Starting user program...\n");
     //usermain();
     create("sh", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
-    lprintf(INFO, "main() finished.\n");
+    lprintf(INFO, "main() init part finished.\n");
     end_transaction();
-    return 0;
+    while(1);
 }
