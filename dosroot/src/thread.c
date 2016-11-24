@@ -3,6 +3,7 @@
 #include "thread.h"
 #include "debug.h"
 #include "main.h"
+#include "dosutil.h"
 
 s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;

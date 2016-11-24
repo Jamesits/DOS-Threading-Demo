@@ -1,8 +1,11 @@
 #include "usercode.h"
 #include "sem.h"
 #include "debug.h"
+#include "dosutil.h"
 #include <stdio.h>
 semaphore s;
+
+#define wait_tasks() while (current_tcb_count != tcb_count);
 
 int far forever() {
     // int i = 60;
@@ -14,19 +17,20 @@ int far forever() {
 
 int far usermain() {
     int current_tcb_count = tcb_count;
+    clrscr();
     lprintf(PROMPT, "DEMO multi-threading: \n");
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
     create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
     create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE);
-    while (current_tcb_count != tcb_count);
+    wait_tasks();
     // cleanup();
-
+    // pause();
     lprintf(PROMPT, "DEMO multi-threading with semaphore: \n");
     init_semaphore(&s, 0);
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
     create("FP1_SEM", (func)fp1_sem, DEFAULT_THREAD_STACK_SIZE);
     create("FP2_SEM", (func)fp2_sem, DEFAULT_THREAD_STACK_SIZE);
-    while (current_tcb_count != tcb_count);
+    wait_tasks();
     // return 0;
 }
 

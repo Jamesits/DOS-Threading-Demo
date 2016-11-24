@@ -1,4 +1,5 @@
 #include <DOS.h>
+#include "dosutil.h"
 #include "main.h"
 #include "debug.h"
 #include "thread.h"

@@ -1,6 +1,7 @@
 #include "sem.h"
 #include "thread.h"
 #include "debug.h"
+#include "dosutil.h"
 
 void block(s_TCB **qp, int thread);
 void wakeup_head(s_TCB **qp);
@@ -14,13 +15,14 @@ void init_semaphore(semaphore *s, int count) {
 void wait(semaphore *sem) {
     s_TCB **qp;
     begin_transaction();
-    sem -> status -= 1;
-    if ( sem -> status < 0 ) {
+    (sem -> status) -= 1;
+    if ( (sem -> status) < 0 ) {
         qp = &( sem -> wait_queue );
         block(qp, get_last_running_thread_id());
     }
     lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
     end_transaction();
+    timeslicehandler();
 }
 
 void signal(semaphore *sem)
@@ -28,8 +30,8 @@ void signal(semaphore *sem)
     s_TCB **qp;
     begin_transaction();
     qp = &( sem -> wait_queue );
-    sem -> status += 1;
-    if( sem -> status <=0 ) {
+    (sem -> status) += 1;
+    if( (sem -> status) <=0 ) {
         wakeup_head(qp);
     }
     lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);

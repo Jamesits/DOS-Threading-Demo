@@ -58,3 +58,11 @@ void far end_transaction() {
 unsigned far get_transaction_level() {
     return atomic_operation_level;
 }
+
+void far clrscr() {
+    system("cls");
+}
+
+void far pause() {
+    system("pause");
+}
