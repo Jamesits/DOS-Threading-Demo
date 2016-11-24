@@ -5,7 +5,7 @@
 semaphore s;
 
 int far forever() {
-    int i = 60;
+    // int i = 60;
     // getchar();
     //cleanup();
     // while(i--) delay(1); // {i++; lprintf(PROMPT, "%d", i);}
@@ -13,20 +13,21 @@ int far forever() {
 }
 
 int far usermain() {
+    int current_tcb_count = tcb_count;
     lprintf(PROMPT, "DEMO multi-threading: \n");
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
     create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
     create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE);
-    //tcb[0].state = INIT_BLOCKED;
-    //timeslicehandler();
-    //cleanup();
+    while (current_tcb_count != tcb_count);
+    // cleanup();
 
-    // lprintf(PROMPT, "DEMO multi-threading with semaphore: \n");
-    // init_semaphore(&s, 0);
+    lprintf(PROMPT, "DEMO multi-threading with semaphore: \n");
+    init_semaphore(&s, 0);
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
-    // create("FP1_SEM", (func)fp1_sem, DEFAULT_THREAD_STACK_SIZE);
-    // create("FP2_SEM", (func)fp2_sem, DEFAULT_THREAD_STACK_SIZE);
-    return 0;
+    create("FP1_SEM", (func)fp1_sem, DEFAULT_THREAD_STACK_SIZE);
+    create("FP2_SEM", (func)fp2_sem, DEFAULT_THREAD_STACK_SIZE);
+    while (current_tcb_count != tcb_count);
+    // return 0;
 }
 
 int far fp1() {
@@ -35,8 +36,9 @@ int far fp1() {
     while(--i) {
         putchar('a');
         j += 1;
-        delay(1);
+        //delay(1);
     }
+    lprintf(INFO, "FP1 finished\n");
     return 0;
 }
 
@@ -47,31 +49,34 @@ int far fp2() {
         // lprintf(PROMPT, "b");
         putchar('b');
         j -= 1;
-        delay(1);
+        //delay(1);
     }
+    lprintf(INFO, "FP2 finished\n");
     return 0;
 }
 
 int far fp1_sem() {
     int i = 200;
     int j = 1;
-    wait(&s);
+    P(s);
     while(--i) {
-        lprintf(PROMPT, "a");
+        putchar('a');
         j += 1;
     }
-    signal(&s);
+    V(s);
+    lprintf(INFO, "FP1_sem finished\n");
     return 0;
 }
 
 int far fp2_sem() {
     int i = 200;
     int j = 1;
-    wait(&s);
+    P(s);
     while(--i) {
-        lprintf(PROMPT, "b");
+        putchar('b');
         j -= 1;
     }
-    signal(&s);
+    V(s);
+    lprintf(INFO, "FP2_sem finished\n");
     return 0;
 }

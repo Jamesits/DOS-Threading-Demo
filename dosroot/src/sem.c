@@ -1,4 +1,5 @@
 #include "sem.h"
+#include "thread.h"
 #include "debug.h"
 
 void block(s_TCB **qp, int thread);
