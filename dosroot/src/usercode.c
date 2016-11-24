@@ -31,7 +31,7 @@ int far usermain() {
 }
 
 int far fp1() {
-    int i = 200;
+    int i = 600;
     int j = 1;
     while(--i) {
         putchar('a');
@@ -43,7 +43,7 @@ int far fp1() {
 }
 
 int far fp2() {
-    int i = 200;
+    int i = 600;
     int j = 1;
     while(--i) {
         // lprintf(PROMPT, "b");
@@ -56,7 +56,7 @@ int far fp2() {
 }
 
 int far fp1_sem() {
-    int i = 200;
+    int i = 600;
     int j = 1;
     P(s);
     while(--i) {
@@ -69,7 +69,7 @@ int far fp1_sem() {
 }
 
 int far fp2_sem() {
-    int i = 200;
+    int i = 600;
     int j = 1;
     P(s);
     while(--i) {
