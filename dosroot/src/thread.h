@@ -17,6 +17,7 @@ typedef enum THREAD_STATUS {FINISHED, RUNNING, READY, BLOCKED, INIT_BLOCKED} THR
 
 /* thread control block */
 typedef struct TCB {
+    int uid;
     void far *stack;       /* thread stack start ptr */
     unsigned ss;                /* stack segment */
     unsigned sp;                /* thread in-stack offset */
@@ -46,6 +47,9 @@ void far block_myself();
 /* variables */
 extern s_TCB far tcb[MAX_THREAD_COUNT];
 extern int far tcb_count;
+extern int schedule_reent;
+extern int in_kernel;
+extern int uid;
 
 #define tconvert(X) \
         { \
@@ -59,6 +63,7 @@ extern int far tcb_count;
                 tcb[tcb_count].sp = _SP; \
                 tcb[tcb_count].state = RUNNING; \
                 tcb[tcb_count].stack = 0; \
+                tcb[tcb_count].uid = uid++; \
                 strcpy(tcb[tcb_count].name, (X)); \
                 ++tcb_count; \
                 lprintf(INFO, "Converting thread %s finished.\n", (X)); \

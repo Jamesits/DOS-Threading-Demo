@@ -6,8 +6,9 @@
 
 s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;
-char schedule_reent = 0;
-char in_kernel = 0;
+int uid = 0;
+int schedule_reent = 0;
+int in_kernel = 0;
 
 int far get_last_running_thread_id() {
     int i;
@@ -87,6 +88,7 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     tcb[tcb_count].ss = FP_SEG(regs);
     tcb[tcb_count].sp = FP_OFF(regs);
     tcb[tcb_count].state = READY;
+    tcb[tcb_count].uid = uid++;
     strcpy(tcb[tcb_count].name, (char *)name);
     lprintf(INFO, "TCB: %d\t%s\t0x%Fp\t0x%Np:0x%Np\t%d\n", tcb_count, tcb[tcb_count].name, tcb[tcb_count].stack, tcb[tcb_count].ss, tcb[tcb_count].sp, tcb[tcb_count].state);
     regs->cs = FP_SEG(thread_function);
@@ -138,12 +140,16 @@ void interrupt timeslicehandler(void) {
         return;
     }
     begin_transaction();
-    in_kernel = 1;
     lprintf(INFO, "Time slice reached.\n");
     if(schedule_reent) {
         lprintf(WARNING, "Re-entering scheduler, cancelling...\n");
         goto exit_scheduler;
     }
+    if (in_kernel) {
+        lprintf(WARNING, "In kernel, cancelling...\n");
+        goto exit_scheduler;
+    }
+    in_kernel = 1;
     schedule_reent = 1;
     print_tcb();
     last_running_thread = get_last_running_thread_id();
