@@ -46,6 +46,7 @@ void far block_myself();
 /* variables */
 extern s_TCB far tcb[MAX_THREAD_COUNT];
 extern int far tcb_count;
+extern char in_kernel;
 
 #define tconvert(X) \
         { \

@@ -22,21 +22,27 @@ void far cleanup() {
 
 int main() {
     init_dbg();
+
     lprintf(INFO, "Starting main()...\n");
     PrintRegs();
+
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
-    lprintf(INFO, "Getting INT08h...\n");
+
     begin_transaction();
+    
+    lprintf(INFO, "Starting user program (early)...\n");
+    //usermain();
+    create("shell", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
+
+    lprintf(INFO, "Getting INT08h...\n");
     oldtimeslicehandler = getvect(TIME_INT);
     lprintf(INFO, "System interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", getvect(TIME_INT), oldtimeslicehandler);
     setvect(TIME_INT, timeslicehandler);
     lprintf(INFO, "Object interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", timeslicehandler, getvect(TIME_INT));
-    // tconvert("init");
-    lprintf(INFO, "Starting user program...\n");
-    //usermain();
-    create("shell", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
-    lprintf(INFO, "main() init part finished.\n");
+
     end_transaction();
+    // tconvert("init");
+    lprintf(INFO, "main() init part finished.\n");
     while(1);
 }

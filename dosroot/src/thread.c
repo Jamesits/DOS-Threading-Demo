@@ -110,20 +110,20 @@ int far destroy(int id) {
     int i;
     begin_transaction();
     in_kernel = 1;
-    if (id >= MAX_THREAD_COUNT) {
+    if (id >= tcb_count) {
         lprintf(CRITICAL, "Cannot destroy thread #%d", id);
-        end_transaction();
-        return -1;
+        goto exit_destroy;
     }
     lprintf(DEBUG, "Destroing thread %s\n", tcb[id].name);
-    tcb[id].state = FINISHED;
+    // tcb[id].state = FINISHED;
     free(tcb[id].stack);
     for (i = id + 1; i < MAX_THREAD_COUNT - id; ++i) {
         memcpy(tcb + i - 1, tcb + i, sizeof(s_TCB));
     }
     --tcb_count;
-    lprintf(INFO, "Thread destroied.\n", tcb[id].name);
+    lprintf(INFO, "Thread destroied.\n");
     print_tcb();
+exit_destroy:
     in_kernel = 0;
     end_transaction();
     return 0;
@@ -135,9 +135,9 @@ void interrupt timeslicehandler(void) {
 
     oldtimeslicehandler();
     if (DosBusy() || in_kernel) {
-        // lprintf(INFO, "Time slice reached and DOS busy, skipping.\n");
         return;
     }
+
     begin_transaction();
     in_kernel = 1;
     lprintf(INFO, "Time slice reached.\n");
@@ -146,10 +146,10 @@ void interrupt timeslicehandler(void) {
         goto exit_scheduler;
     }
     schedule_reent = 1;
-    print_tcb();
-    last_running_thread = get_last_running_thread_id();
-    next_running_thread = get_next_running_thread_id();
     if (!DosBusy()) {
+        print_tcb();
+        last_running_thread = get_last_running_thread_id();
+        next_running_thread = get_next_running_thread_id();
         /* context switching */
         if (last_running_thread >= 0) {
             lprintf(INFO, "Saving state of thread #%d:%s\n", last_running_thread, tcb[last_running_thread].name);
@@ -192,6 +192,6 @@ void far set_thread_state(int id, THREAD_STATUS new_state) {
 }
 
 void far block_myself() {
-    lprintf(WARNING, "Blocking current thread");
+    lprintf(WARNING, "Blocking current thread\n");
     set_thread_state(get_last_running_thread_id(), BLOCKED);
 }

@@ -31,7 +31,7 @@ int far usermain() {
     create("FP1_SEM", (func)fp1_sem, DEFAULT_THREAD_STACK_SIZE);
     create("FP2_SEM", (func)fp2_sem, DEFAULT_THREAD_STACK_SIZE);
     wait_tasks();
-    // return 0;
+    return 0;
 }
 
 int far fp1() {

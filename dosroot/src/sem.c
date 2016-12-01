@@ -15,12 +15,14 @@ void init_semaphore(semaphore *s, int count) {
 void wait(semaphore *sem) {
     s_TCB **qp;
     begin_transaction();
+    in_kernel = 1;
     (sem -> status) -= 1;
     if ( (sem -> status) < 0 ) {
         qp = &( sem -> wait_queue );
         block(qp, get_last_running_thread_id());
     }
     lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
+    in_kernel = 0;
     end_transaction();
     timeslicehandler();
 }
@@ -46,7 +48,7 @@ void block(s_TCB **qp, int thread) {
         tcb[thread].next = NULL;
     } else {
         while (ptr -> next) {
-            // ptr -> state = BLOCKED;
+            ptr -> state = BLOCKED;
             ptr = ptr -> next;
         }
         ptr -> next = &(tcb[thread]);
