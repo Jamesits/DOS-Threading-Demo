@@ -22,7 +22,6 @@ int far sem_wait(semaphore far *sem) {
          qp = &( sem -> wait_queue );
          sem_block(qp, get_last_running_thread_id());
          lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
-
          ret = 1;
     } else {
          (sem -> status) -= 1;
@@ -40,7 +39,7 @@ void far sem_signal(semaphore far *sem)
     in_kernel = 1;
     qp = &( sem -> wait_queue );
     (sem -> status) += 1;
-    if( (sem -> status) <=0 ) {
+    if( (sem -> status) >=0 ) {
         sem_wakeup_head(qp);
     }
     lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);

@@ -131,8 +131,7 @@ exit_destroy:
 void interrupt timeslicehandler(void) {
     int last_running_thread;
     int next_running_thread;
-
-    oldtimeslicehandler();
+    (*oldtimeslicehandler)();
     if (DosBusy() || in_kernel || on_thread_death) {
         return;
     }
@@ -145,43 +144,43 @@ void interrupt timeslicehandler(void) {
         goto exit_scheduler;
     }
     schedule_reent = 1;
-    if (!DosBusy()) {
-        print_tcb();
-        last_running_thread = get_last_running_thread_id();
-        next_running_thread = get_next_running_thread_id();
-        /* context switching */
-        if (last_running_thread >= 0) {
-            lprintf(INFO, "Saving state of thread #%d:%s\n", last_running_thread, tcb[last_running_thread].name);
-            tcb[last_running_thread].state = READY;
-            lprintf(DEBUG, "SS:SP in TCB: %Np:%Np; Current: %Np:%Np; Diff: %d:%d\n",
-                tcb[last_running_thread].ss,
-                tcb[last_running_thread].sp,
-                _SS,
-                _SP,
-                tcb[last_running_thread].ss - _SS,
-                tcb[last_running_thread].sp - _SP
-            );
-            tcb[last_running_thread].ss = _SS;
-            tcb[last_running_thread].sp = _SP;
-        } else { /* when threads start */
-        }
-        if (next_running_thread >= 0) {
-            lprintf(INFO, "Switching to thread #%d:%s\n", next_running_thread, tcb[next_running_thread].name);
-            tcb[next_running_thread].state = RUNNING;
-            _SS = tcb[next_running_thread].ss;
-            _SP = tcb[next_running_thread].sp;
-        } else { /* when threads end */
-            lprintf(INFO, "All threads have an end.\n");
-            tcb_count = 0;
-            end_transaction();
-            cleanup();
-        }
+    // thread switching
+    print_tcb();
+    last_running_thread = get_last_running_thread_id();
+    next_running_thread = get_next_running_thread_id();
+    /* context switching */
+    if (last_running_thread >= 0) {
+        lprintf(INFO, "Saving state of thread #%d:%s\n", last_running_thread, tcb[last_running_thread].name);
+        tcb[last_running_thread].state = READY;
+        lprintf(DEBUG, "SS:SP in TCB: %Np:%Np; Current: %Np:%Np; Diff: %d:%d\n",
+            tcb[last_running_thread].ss,
+            tcb[last_running_thread].sp,
+            _SS,
+            _SP,
+            tcb[last_running_thread].ss - _SS,
+            tcb[last_running_thread].sp - _SP
+        );
+        tcb[last_running_thread].ss = _SS;
+        tcb[last_running_thread].sp = _SP;
+    } else { /* when threads start */
+    }
+    if (next_running_thread >= 0) {
+        lprintf(INFO, "Switching to thread #%d:%s\n", next_running_thread, tcb[next_running_thread].name);
+        tcb[next_running_thread].state = RUNNING;
+        _SS = tcb[next_running_thread].ss;
+        _SP = tcb[next_running_thread].sp;
+    } else { /* when threads end */
+        lprintf(INFO, "All threads have an end.\n");
+        tcb_count = 0;
+        end_transaction();
+        cleanup();
     }
     print_tcb();
+    // thread switching end
     lprintf(INFO, "Time slice handler finished.\n");
     schedule_reent = 0;
-    in_kernel = 0;
 exit_scheduler:
+    in_kernel = 0;
     end_transaction();
 }
 
