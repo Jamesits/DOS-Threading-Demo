@@ -21,8 +21,11 @@ export DOS_BUILD_SCRIPT
 
 all: build
 
-exec: build
+exec: $(DOS_BUILD_SCRIPT) $(EXE)
+	./dos.sh pause
 	./dos.sh $(EXE)
+	./dos.sh mem
+	$(DOSBOX) $(DOS_BUILD_SCRIPT)
 
 build: $(DOS_BUILD_SCRIPT) $(EXE)
 	# Launch DOSBox
