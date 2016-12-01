@@ -3,8 +3,8 @@
 #include "debug.h"
 #include "dosutil.h"
 
-void block(s_TCB **qp, int thread);
-void wakeup_head(s_TCB **qp);
+void sem_block(s_TCB **qp, int thread);
+void sem_wakeup_head(s_TCB **qp);
 
 void init_semaphore(semaphore *s, int count) {
     lprintf(DEBUG, "Initializing semaphore with count %d\n", count);
@@ -19,7 +19,7 @@ void wait(semaphore *sem) {
     (sem -> status) -= 1;
     if ( (sem -> status) < 0 ) {
         qp = &( sem -> wait_queue );
-        block(qp, get_last_running_thread_id());
+        sem_block(qp, get_last_running_thread_id());
     }
     lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
     in_kernel = 0;
@@ -35,30 +35,30 @@ void signal(semaphore *sem)
     qp = &( sem -> wait_queue );
     (sem -> status) += 1;
     if( (sem -> status) <=0 ) {
-        wakeup_head(qp);
+        sem_wakeup_head(qp);
     }
     lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);
     in_kernel = 0;
     end_transaction();
 }
 
-void block(s_TCB **qp, int thread) {
+void sem_block(s_TCB **qp, int thread) {
     s_TCB *ptr = *qp;
     if (!ptr) {
         *qp = &(tcb[thread]);
-        tcb[thread].state = BLOCKED;
+        set_thread_state(thread, BLOCKED);
         tcb[thread].next = NULL;
     } else {
         while (ptr -> next) {
-            ptr -> state = BLOCKED;
             ptr = ptr -> next;
         }
         ptr -> next = &(tcb[thread]);
-        tcb[thread].state = BLOCKED;
+        tcb[thread].next = NULL;
+        set_thread_state(thread, BLOCKED);
     }
 }
 
-void wakeup_head(s_TCB **qp) {
+void sem_wakeup_head(s_TCB **qp) {
     if (*qp) {
         (*qp) -> state = READY;
         (*qp) = (*qp) -> next;
