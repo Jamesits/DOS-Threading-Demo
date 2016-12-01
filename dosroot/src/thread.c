@@ -28,15 +28,13 @@ int far get_next_running_thread_id() {
         if (tcb_count == 0) { /* no threads waiting */
             lprintf(WARNING, "System idle.\n");
             return -1;
-        } else if (tcb_count == 1 && tcb[0].state == INIT_BLOCKED) { /* only one thread */
-            return 0;
         } else {
             for (i = 0; i < tcb_count; ++i) {
                 if (tcb[i].state == READY) {
                     return i;
                 }
             }
-            lprintf(WARNING, "All threads blocked at pos 0.\n");
+            lprintf(CRITICAL, "DEADLOCK DETECTED!\n");
             return -1;
         }
     } else { /* context switching */
@@ -50,8 +48,8 @@ int far get_next_running_thread_id() {
                 return i;
             }
         }
-        lprintf(WARNING, "All threads blocked at pos 1.\n");
-        return -1;
+        lprintf(WARNING, "Cannot find next ready thread.\n");
+        return last;
     }
 }
 

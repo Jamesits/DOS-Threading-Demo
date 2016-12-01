@@ -26,10 +26,11 @@ int far usermain() {
     // cleanup();
     // pause();
     lprintf(PROMPT, "DEMO multi-threading with semaphore: \n");
-    init_semaphore(&s, 0);
+    while(1);
+    //init_semaphore(&s, 0);
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
-    create("FP1_SEM", (func)fp1_sem, DEFAULT_THREAD_STACK_SIZE);
-    create("FP2_SEM", (func)fp2_sem, DEFAULT_THREAD_STACK_SIZE);
+    //create("FP1_SEM", (func)fp1_sem, DEFAULT_THREAD_STACK_SIZE);
+    //create("FP2_SEM", (func)fp2_sem, DEFAULT_THREAD_STACK_SIZE);
     wait_tasks();
     return 0;
 }

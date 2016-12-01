@@ -30,7 +30,7 @@ int main() {
     InitDos();
 
     begin_transaction();
-    
+
     lprintf(INFO, "Starting user program (early)...\n");
     //usermain();
     create("shell", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
