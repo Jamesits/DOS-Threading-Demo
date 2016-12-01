@@ -52,7 +52,7 @@ void far end_transaction() {
         lprintf(DEBUG, "Releasing interrupt lock...\n");
         enable();
     }
-    lprintf(INFO, "Transaction commited, current level %d\n", atomic_operation_level);
+    lprintf(INFO, "Transaction committed, current level %d\n", atomic_operation_level);
 }
 
 unsigned far get_transaction_level() {

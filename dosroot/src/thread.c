@@ -155,7 +155,7 @@ void interrupt timeslicehandler(void) {
         if (last_running_thread >= 0) {
             lprintf(INFO, "Saving state of thread #%d:%s\n", last_running_thread, tcb[last_running_thread].name);
             tcb[last_running_thread].state = READY;
-            lprintf(DEBUG, "SS:SP in TCB: %Np:%Np;Current: %Np:%Np Diff: %d:%d\n",
+            lprintf(DEBUG, "SS:SP in TCB: %Np:%Np; Current: %Np:%Np; Diff: %d:%d\n",
                 tcb[last_running_thread].ss,
                 tcb[last_running_thread].sp,
                 _SS,

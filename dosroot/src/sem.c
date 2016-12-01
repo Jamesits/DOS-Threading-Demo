@@ -31,12 +31,14 @@ void signal(semaphore *sem)
 {
     s_TCB **qp;
     begin_transaction();
+    in_kernel = 1;
     qp = &( sem -> wait_queue );
     (sem -> status) += 1;
     if( (sem -> status) <=0 ) {
         wakeup_head(qp);
     }
     lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);
+    in_kernel = 0;
     end_transaction();
 }
 
