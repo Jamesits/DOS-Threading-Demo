@@ -186,11 +186,11 @@ exit_scheduler:
 }
 
 void far set_thread_state(int id, THREAD_STATUS new_state) {
-    lprintf(INFO, "Setting thread #%d to new state %d\n", id, new_state);
+    // lprintf(INFO, "Setting thread #%d to new state %d\n", id, new_state);
     tcb[id].state = new_state;
 }
 
 void far block_myself() {
-    lprintf(WARNING, "Blocking current thread\n");
+    // lprintf(WARNING, "Blocking current thread\n");
     set_thread_state(get_last_running_thread_id(), BLOCKED);
 }

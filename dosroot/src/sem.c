@@ -1,10 +1,11 @@
+#include <DOS.h>
 #include "sem.h"
 #include "thread.h"
 #include "debug.h"
 #include "dosutil.h"
 
-void sem_block(s_TCB **qp, int thread);
-void sem_wakeup_head(s_TCB **qp);
+void far sem_block(s_TCB far **qp, int thread);
+void far sem_wakeup_head(s_TCB far **qp);
 
 void far init_semaphore(semaphore far *s, int count) {
     lprintf(DEBUG, "Initializing semaphore with count %d\n", count);
@@ -16,54 +17,18 @@ int far sem_wait(semaphore far *sem) {
     s_TCB far **qp;
     int ret = 0;
     begin_transaction();
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-         asm nop;
-    // // in_kernel = 1;
-    // if ( (sem -> status) < 0 ) {
-    //      qp = &( sem -> wait_queue );
-    //      //sem_block(qp, get_last_running_thread_id());
-    //      //lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
+    in_kernel = 1;
+    if ( (sem -> status) < 0 ) {
+         qp = &( sem -> wait_queue );
+         sem_block(qp, get_last_running_thread_id());
+         lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
 
-    //      ret = 1;
-    // } else {
-    //      (sem -> status) -= 1;
-    //      lprintf(DEBUG, "Semaphore got, count left %d\n", sem -> status);
-    // }
-    // // in_kernel = 0;
+         ret = 1;
+    } else {
+         (sem -> status) -= 1;
+         lprintf(DEBUG, "Semaphore got, count left %d\n", sem -> status);
+    }
+    in_kernel = 0;
     end_transaction();
     return ret;
 }
@@ -83,7 +48,7 @@ void far sem_signal(semaphore far *sem)
     end_transaction();
 }
 
-void sem_block(s_TCB **qp, int thread) {
+void far sem_block(s_TCB **qp, int thread) {
     s_TCB *ptr = *qp;
     if (!ptr) {
         *qp = &(tcb[thread]);
@@ -99,7 +64,7 @@ void sem_block(s_TCB **qp, int thread) {
     }
 }
 
-void sem_wakeup_head(s_TCB **qp) {
+void far sem_wakeup_head(s_TCB **qp) {
     if (*qp) {
         (*qp) -> state = READY;
         (*qp) = (*qp) -> next;
