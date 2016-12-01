@@ -24,7 +24,7 @@ void wait(semaphore *sem) {
     lprintf(DEBUG, "Semaphore waited, count left %d\n", sem -> status);
     in_kernel = 0;
     end_transaction();
-    timeslicehandler();
+    geninterrupt(TIME_INT);
 }
 
 void signal(semaphore *sem)

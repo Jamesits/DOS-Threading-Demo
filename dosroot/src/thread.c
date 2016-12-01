@@ -9,6 +9,7 @@ s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;
 char schedule_reent = 0;
 char in_kernel = 0;
+char on_thread_death = 0;
 
 int far get_last_running_thread_id() {
     int i;
@@ -57,15 +58,15 @@ int far get_next_running_thread_id() {
 int far thread_end_trigger() {
     int last;
     begin_transaction();
-    in_kernel = 1;
+    on_thread_death = 1;
     last = get_last_running_thread_id();
     lprintf(DEBUG, "Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
     lprintf(INFO, "Thread end trigger finished.\n");
     print_tcb();
-    geninterrupt(TIME_INT);
-    in_kernel = 0;
+    on_thread_death = 0;
     end_transaction();
+    geninterrupt(TIME_INT);
     return 0;
 }
 
@@ -134,7 +135,7 @@ void interrupt timeslicehandler(void) {
     int next_running_thread;
 
     oldtimeslicehandler();
-    if (DosBusy() || in_kernel) {
+    if (DosBusy() || in_kernel || on_thread_death) {
         return;
     }
 
@@ -154,7 +155,7 @@ void interrupt timeslicehandler(void) {
         if (last_running_thread >= 0) {
             lprintf(INFO, "Saving state of thread #%d:%s\n", last_running_thread, tcb[last_running_thread].name);
             tcb[last_running_thread].state = READY;
-            lprintf(DEBUG, "SS:SP:\n\tin TCB: %Np:%Np;\n\tCurrent: %Np:%Np\n\tDiff: %d:%d\n",
+            lprintf(DEBUG, "SS:SP in TCB: %Np:%Np;Current: %Np:%Np Diff: %d:%d\n",
                 tcb[last_running_thread].ss,
                 tcb[last_running_thread].sp,
                 _SS,
