@@ -1,4 +1,4 @@
-SRCS=$(wildcard $(SRCDIR)/*.c)
+SRCS=$(shell find $(SRCDIR) -name '*.c')
 OBJS=$(SRCS:.c=.OBJ)
 EXE=THREAD
 
@@ -14,7 +14,7 @@ export BUILD_SYSTEM_QEMU_IMAGE_TEMPLATE=$(BUILD_SYSTEM_QEMU_ROOT)/template.img
 
 SRCDIR=$(DOSROOT)/src
 CC=TCC /ml
-INCLUDES=/I\\TC\\INCLUDE
+INCLUDES=/I\\TC\\INCLUDE /I\\SRC\\INCLUDE
 LINKER=TLINK
 LIBS=/L\\TC\\LIB\\
 
@@ -40,10 +40,10 @@ $(EXE): copy-sources
 	rm -f $(DOS_BUILD_SCRIPT)
 	@$(BATCH_MAKER) C:
 	@$(BATCH_MAKER) cd src
-	@$(BATCH_MAKER) set PATH=%PATH%\;C:\\TC\;C:\\TC\\BIN\;Z:\\\;
-	@$(BATCH_MAKER) set CLASSPATH=%CLASSPATH%\;C:\\TC\\LIB\;
-	@$(BATCH_MAKER) set LIB=%LIB%\;C:\\TC\\LIB\;
-	@$(BATCH_MAKER) set INCLUDE=%INCLUDE%\;C:\\TC\\INCLUDE\;
+	@$(BATCH_MAKER) set PATH=C:\\TC\;C:\\TC\\BIN\;Z:\\\;%PATH%\;
+	@$(BATCH_MAKER) set CLASSPATH=C:\\TC\\LIB\;%CLASSPATH%\;
+	@$(BATCH_MAKER) set LIB=C:\\TC\\LIB\;%LIB%\;
+	@$(BATCH_MAKER) set INCLUDE=C:\\SRC\\INCLUDE\;C:\\TC\\INCLUDE\;%INCLUDE%\;
 	$(BATCH_MAKER) $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(notdir $(SRCS))
 
 run:
