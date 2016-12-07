@@ -40,7 +40,7 @@ int far fp1() {
     while(--i) {
         putchar('a');
         j += 1;
-        //delay(1);
+        delay(1);
     }
     lprintf(INFO, "FP1 finished\n");
     return 0;
@@ -53,7 +53,7 @@ int far fp2() {
         // lprintf(PROMPT, "b");
         putchar('b');
         j -= 1;
-        //delay(1);
+        delay(1);
     }
     lprintf(INFO, "FP2 finished\n");
     return 0;
@@ -66,6 +66,7 @@ int far fp1_sem() {
     while(--i) {
         putchar('a');
         j += 1;
+        delay(1);
     }
     V(s);
     lprintf(INFO, "FP1_sem finished\n");
@@ -79,6 +80,7 @@ int far fp2_sem() {
     while(--i) {
         putchar('b');
         j -= 1;
+        delay(1);
     }
     V(s);
     lprintf(INFO, "FP2_sem finished\n");

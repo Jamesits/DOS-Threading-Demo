@@ -7,7 +7,7 @@ cp ${BUILD_SYSTEM_QEMU_IMAGE_TEMPLATE} ${BUILD_TEMP}/system.img
 
 if [[ "`uname`" == 'Darwin' ]]; then
     # mount image
-    DEVICE=`hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount build/system.img | grep s1 | cut -f1 -d" "`
+    DEVICE=`hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount ${BUILD_TEMP}/system.img | grep s1 | cut -f1 -d" "`
     echo "Disk image mounted at ${DEVICE}"
     mount -t msdos ${DEVICE} ${BUILD_TEMP}/mnt
 
@@ -20,7 +20,7 @@ if [[ "`uname`" == 'Darwin' ]]; then
     hdiutil detach `echo ${DEVICE} | grep -oE "/dev/disk\d+"`
 
     # run system
-    qemu-system-x86_64 -localtime ${BUILD_TEMP}/system.img
+    qemu-system-x86_64 -localtime -drive format=raw,file=${BUILD_TEMP}/system.img
 
 elif [[ $OSTYPE == 'linux-gnu' ]]; then
     #mount image
@@ -34,7 +34,7 @@ elif [[ $OSTYPE == 'linux-gnu' ]]; then
     umount ${BUILD_TEMP}/mnt
 
     # run system
-    qemu -localtime ${BUILD_TEMP}/system.img
+    qemu -localtime -drive format=raw,file=${BUILD_TEMP}/system.img
 else
     echo "Unsupported system!"
 fi
