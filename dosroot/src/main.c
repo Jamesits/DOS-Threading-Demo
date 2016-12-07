@@ -34,7 +34,7 @@ int main() {
     lprintf(INFO, "Starting user program (early)...\n");
     //usermain();
     create("shell", (func)usermain, DEFAULT_THREAD_STACK_SIZE);
-
+    // breakpoint();
     lprintf(INFO, "Getting INT08h...\n");
     oldtimeslicehandler = getvect(TIME_INT);
     lprintf(INFO, "System interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", getvect(TIME_INT), oldtimeslicehandler);

@@ -1,5 +1,6 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
+#include <DOS.h>
 
 #define DEBUG_PERROR
 #define DEBUG_PRINT_TCB
@@ -22,5 +23,7 @@ void far end_dbg();
     _CS, _DS, _SS, _ES, \
     _SP, _BP, _DI, _SI); \
 }
+
+#define breakpoint() asm int 3;
 
 #endif

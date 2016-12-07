@@ -4,8 +4,8 @@
 #include "debug.h"
 #include "dosutil.h"
 
-void far sem_block(s_TCB far **qp, int thread);
-void far sem_wakeup_head(s_TCB far **qp);
+void far sem_block(s_TCB **qp, int thread);
+void far sem_wakeup_head(s_TCB **qp);
 
 void far init_semaphore(semaphore far *s, int count) {
     lprintf(DEBUG, "Initializing semaphore with count %d\n", count);

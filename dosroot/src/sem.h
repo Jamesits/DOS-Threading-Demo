@@ -14,7 +14,7 @@ void far init_semaphore(semaphore far *s, int count);
 int far sem_wait(semaphore far *s);
 void far sem_signal(semaphore far *s);
 
-#define P(X) while (sem_wait(&(X))) lprintf(INFO, "sem waiting\n");//{pswitch();}
+#define P(X) if (sem_wait(&(X))) asm int 3; //return 0; // lprintf(INFO, "sem waiting\n");//{pswitch();}
 #define V(X) sem_signal(&(X));
 
 #endif

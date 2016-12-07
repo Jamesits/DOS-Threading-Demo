@@ -2,11 +2,15 @@ SRCS=$(wildcard $(SRCDIR)/*.c)
 OBJS=$(SRCS:.c=.OBJ)
 EXE=THREAD
 
-DOSBOX_APP=./DOSBox.app
-DOSBOX=$(DOSBOX_APP)/Contents/MacOS/DOSBox
-DOSROOT=dosroot
-DOS_BUILD_SCRIPT=$(DOSROOT)/BUILD.BAT
-BATCH_MAKER=dos.sh
+export BUILD_TEMP=build
+export DOSROOT=dosroot
+export BUILD_DOSROOT=$(BUILD_TEMP)/dosroot
+export DOS_BUILD_SCRIPT=$(BUILD_DOSROOT)/BUILD.BAT
+export BATCH_MAKER=buildsystem/dos.sh
+export BUILD_SYSTEM_ROOT=buildsystem
+export BUILD_SYSTEM_DOSBOX_ROOT=$(BUILD_SYSTEM_ROOT)/dosbox
+export BUILD_SYSTEM_QEMU_ROOT=$(BUILD_SYSTEM_ROOT)/qemu
+export BUILD_SYSTEM_QEMU_IMAGE_TEMPLATE=$(BUILD_SYSTEM_QEMU_ROOT)/template.img
 
 SRCDIR=$(DOSROOT)/src
 CC=TCC /ml
@@ -14,48 +18,42 @@ INCLUDES=/I\\TC\\INCLUDE
 LINKER=TLINK
 LIBS=/L\\TC\\LIB\\
 
-export DOS_BUILD_SCRIPT
+: build
+.PHONY: clean build
 
-: exec
-.PHONY: clean
+build: build-dosbox
 
-all: build
+build-dosbox: $(EXE)
+	@echo "Starting DOSBox..."
+	$(BUILD_SYSTEM_DOSBOX_ROOT)/dosbox.sh $(DOS_BUILD_SCRIPT)
 
-exec: $(DOS_BUILD_SCRIPT) $(EXE)
-	./dos.sh pause
-	./dos.sh $(EXE)
-	./dos.sh mem
-	$(DOSBOX) $(DOS_BUILD_SCRIPT)
+build-qemu: $(EXE)
+	@echo "Starting QEMU..."
+	$(BUILD_SYSTEM_QEMU_ROOT)/qemu.sh $(DOS_BUILD_SCRIPT)
 
-build: $(DOS_BUILD_SCRIPT) $(EXE)
-	# Launch DOSBox
-	$(DOSBOX) $(DOS_BUILD_SCRIPT)
+run-dosbox: | $(EXE) run build-dosbox
 
-$(BATCH_MAKER):
-	echo "#!/bin/bash" > $(BATCH_MAKER)
-	echo 'echo "$$@" >> $$DOS_BUILD_SCRIPT' >> $(BATCH_MAKER)
-	chmod +x $(BATCH_MAKER)
+run-qemu: | $(EXE) run build-qemu
 
-$(EXE): batch-prepare $(BATCH_MAKER)
-	./dos.sh $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(notdir $(SRCS))
-
-$(DOS_BUILD_SCRIPT): batch-reset batch-prepare $(SRCS)
-
-batch-reset:
+$(EXE): copy-sources
+	@echo "Resetting DOS build script..."
 	rm -f $(DOS_BUILD_SCRIPT)
+	@$(BATCH_MAKER) C:
+	@$(BATCH_MAKER) cd src
+	@$(BATCH_MAKER) set PATH=%PATH%\;C:\\TC\;C:\\TC\\BIN\;Z:\\\;
+	@$(BATCH_MAKER) set CLASSPATH=%CLASSPATH%\;C:\\TC\\LIB\;
+	@$(BATCH_MAKER) set LIB=%LIB%\;C:\\TC\\LIB\;
+	@$(BATCH_MAKER) set INCLUDE=%INCLUDE%\;C:\\TC\\INCLUDE\;
+	$(BATCH_MAKER) $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(notdir $(SRCS))
 
-batch-prepare: batch-reset $(BATCH_MAKER)
-	./dos.sh C:
-	./dos.sh cd src
-	./dos.sh set PATH=C:\\TC\;C:\\TC\\BIN\;Z:\\\;
-	./dos.sh set CLASSPATH=C:\\TC\\LIB\;
-	./dos.sh set LIB=C:\\TC\\LIB\;
-	./dos.sh set INCLUDE=C:\\TC\\INCLUDE\;
+run:
+	$(BATCH_MAKER) $(EXE)
 
-batch-clean: $(BATCH_MAKER)
-	./dos.sh del *.EXE
-	./dos.sh del *.OBJ
-	./dos.sh del *.MAP
+copy-sources:
+	@echo "Preparing program sources..."
+	rm -rf $(BUILD_DOSROOT)
+	cp -rf $(DOSROOT) $(BUILD_DOSROOT)
 
-clean: batch-reset
-	rm -f $(SRCS:.c=.MAP) $(SRCDIR)/$(EXE).EXE $(BATCH_MAKER) $(SRCDIR)/*.LOG $(SRCDIR)/*.OBJ
+clean:
+	@echo "Deleting temporary files..."
+	rm -rf $(BUILD_TEMP)

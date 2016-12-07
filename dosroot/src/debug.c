@@ -14,7 +14,7 @@ FILE *debug_file;
 
 void far init_dbg() {
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
-    debug_file = fopen(DEBUG_FILE, "w+");
+    debug_file = fopen(DEBUG_FILE, "w");
     if (!debug_file) {
         fprintf(stderr, "Error opening file %s\n", DEBUG_FILE);
         exit(-1);
