@@ -23,8 +23,9 @@ int far usermain() {
     create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
     create("FP2", (func)fp2, DEFAULT_THREAD_STACK_SIZE);
     wait_tasks();
-    // cleanup();
     // pause();
+    // cleanup();
+    // breakpoint();
     lprintf(PROMPT, "DEMO multi-threading with semaphore: \n");
     init_semaphore(&s, 0);
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
@@ -40,7 +41,7 @@ int far fp1() {
     while(--i) {
         putchar('a');
         j += 1;
-        delay(1);
+        // delay(1);
     }
     lprintf(INFO, "FP1 finished\n");
     return 0;
@@ -53,7 +54,7 @@ int far fp2() {
         // lprintf(PROMPT, "b");
         putchar('b');
         j -= 1;
-        delay(1);
+        // delay(1);
     }
     lprintf(INFO, "FP2 finished\n");
     return 0;
