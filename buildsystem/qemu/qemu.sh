@@ -20,7 +20,7 @@ if [[ "`uname`" == 'Darwin' ]]; then
     hdiutil detach `echo ${DEVICE} | grep -oE "/dev/disk\d+"`
 
     # run system
-    qemu-system-x86_64 -localtime -drive format=raw,file=${BUILD_TEMP}/system.img
+    qemu-system-x86_64 -localtime -serial file:"${BUILD_TEMP}/DEBUG.LOG" ${BUILD_TEMP}/system.img
 
 elif [[ $OSTYPE == 'linux-gnu' ]]; then
     #mount image
@@ -34,7 +34,7 @@ elif [[ $OSTYPE == 'linux-gnu' ]]; then
     umount ${BUILD_TEMP}/mnt
 
     # run system
-    qemu -localtime -drive format=raw,file=${BUILD_TEMP}/system.img
+    qemu -localtime -serial file:"${BUILD_TEMP}/DEBUG.LOG" ${BUILD_TEMP}/system.img
 else
     echo "Unsupported system!"
 fi
