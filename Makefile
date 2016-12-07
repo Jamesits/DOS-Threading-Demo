@@ -1,4 +1,4 @@
-SRCS=$(shell find $(SRCDIR) -name '*.c')
+SRCS=$(shell  )
 OBJS=$(SRCS:.c=.OBJ)
 EXE=THREAD
 
@@ -44,7 +44,7 @@ $(EXE): copy-sources
 	@$(BATCH_MAKER) set CLASSPATH=C:\\TC\\LIB\;%CLASSPATH%\;
 	@$(BATCH_MAKER) set LIB=C:\\TC\\LIB\;%LIB%\;
 	@$(BATCH_MAKER) set INCLUDE=C:\\SRC\\INCLUDE\;C:\\TC\\INCLUDE\;%INCLUDE%\;
-	$(BATCH_MAKER) $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(notdir $(SRCS))
+	$(BATCH_MAKER) $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(SRCS)
 
 run:
 	$(BATCH_MAKER) $(EXE)
