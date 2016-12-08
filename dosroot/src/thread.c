@@ -8,7 +8,7 @@
 s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;
 char schedule_reent = 0;
-char in_kernel = 0;
+char in_kernel--;
 char on_thread_death = 0;
 
 int far get_last_running_thread_id() {
@@ -71,7 +71,7 @@ int far thread_end_trigger() {
 int far create(char far *name, func thread_function, size_t stacklen) {
     int_regs far *regs;
     begin_transaction();
-    in_kernel = 1;
+    in_kernel++;
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(ERROR, "TCB stack full!");
@@ -100,7 +100,7 @@ int far create(char far *name, func thread_function, size_t stacklen) {
     lprintf(INFO, "Creating thread %s finished.\n", name);
 exit_create:
     print_tcb();
-    in_kernel = 0;
+    in_kernel--;
     end_transaction();
     return tcb_count;
 };
@@ -108,7 +108,7 @@ exit_create:
 int far destroy(int id) {
     int i;
     begin_transaction();
-    in_kernel = 1;
+    in_kernel++;
     if (id >= tcb_count) {
         lprintf(CRITICAL, "Cannot destroy thread #%d", id);
         goto exit_destroy;
@@ -123,7 +123,7 @@ int far destroy(int id) {
     lprintf(INFO, "Thread destroied.\n");
     print_tcb();
 exit_destroy:
-    in_kernel = 0;
+    in_kernel--;
     end_transaction();
     return 0;
 };
@@ -137,7 +137,7 @@ void interrupt timeslicehandler(void) {
     }
 
     begin_transaction();
-    in_kernel = 1;
+    in_kernel++;
     lprintf(INFO, "Time slice reached.\n");
     if(schedule_reent) {
         lprintf(WARNING, "Re-entering scheduler, cancelling...\n");
@@ -180,7 +180,7 @@ void interrupt timeslicehandler(void) {
     lprintf(INFO, "Time slice handler finished.\n");
     schedule_reent = 0;
 exit_scheduler:
-    in_kernel = 0;
+    in_kernel--;
     end_transaction();
 }
 

@@ -17,7 +17,7 @@ int far sem_wait(semaphore far *sem) {
     s_TCB far **qp;
     int ret = 0;
     begin_transaction();
-    in_kernel = 1;
+    in_kernel++;
     if ( (sem -> status) < 0 ) {
          qp = &( sem -> wait_queue );
          sem_block(qp, get_last_running_thread_id());
@@ -27,7 +27,7 @@ int far sem_wait(semaphore far *sem) {
          (sem -> status) -= 1;
          lprintf(DEBUG, "Semaphore got, count left %d\n", sem -> status);
     }
-    in_kernel = 0;
+    in_kernel--;
     end_transaction();
     return ret;
 }
@@ -36,14 +36,14 @@ void far sem_signal(semaphore far *sem)
 {
     s_TCB far **qp;
     begin_transaction();
-    in_kernel = 1;
+    in_kernel++;
     qp = &( sem -> wait_queue );
     (sem -> status) += 1;
     if( (sem -> status) >=0 ) {
         sem_wakeup_head(qp);
     }
     lprintf(DEBUG, "Semaphore signaled, count left %d\n", sem -> status);
-    in_kernel = 0;
+    in_kernel--;
     end_transaction();
 }
 
