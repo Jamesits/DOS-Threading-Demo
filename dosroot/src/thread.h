@@ -42,28 +42,9 @@ int far get_last_running_thread_id();
 int far get_next_running_thread_id();
 void far set_thread_state(int id, THREAD_STATUS new_state);
 void far block_myself();
+int far tconvert(char *name);
 
 /* variables */
 extern s_TCB far tcb[MAX_THREAD_COUNT];
 extern int far tcb_count;
 extern char in_kernel;
-
-#define tconvert(X) \
-        { \
-                begin_transaction(); \
-                lprintf(DEBUG, "Converting current process to thread #%d:%s\n", tcb_count, (X)); \
-                if (tcb_count >= MAX_THREAD_COUNT) { \
-                    lprintf(CRITICAL, "TCB stack full"); \
-                    return -1; \
-                } \
-                tcb[tcb_count].ss = _SS; \
-                tcb[tcb_count].sp = _SP; \
-                tcb[tcb_count].state = RUNNING; \
-                tcb[tcb_count].stack = 0; \
-                strcpy(tcb[tcb_count].name, (X)); \
-                ++tcb_count; \
-                lprintf(INFO, "Converting thread %s finished.\n", (X)); \
-                print_tcb(); \
-                end_transaction(); \
-        }
-#endif

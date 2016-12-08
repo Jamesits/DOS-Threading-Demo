@@ -193,3 +193,22 @@ void far block_myself() {
     // lprintf(WARNING, "Blocking current thread\n");
     set_thread_state(get_last_running_thread_id(), BLOCKED);
 }
+
+void tconvert(char *X)
+{
+    begin_transaction();
+    lprintf(DEBUG, "Converting current process to thread #%d:%s\n", tcb_count, (X));
+    if (tcb_count >= MAX_THREAD_COUNT) {
+        lprintf(CRITICAL, "TCB stack full");
+        return -1;
+    }
+    tcb[tcb_count].ss = _SS;
+    tcb[tcb_count].sp = _SP;
+    tcb[tcb_count].state = RUNNING;
+    tcb[tcb_count].stack = 0;
+    strcpy(tcb[tcb_count].name, (X));
+    ++tcb_count;
+    lprintf(INFO, "Converting thread %s finished.\n", (X));
+    print_tcb();
+    end_transaction();
+}
