@@ -37,21 +37,20 @@ int far DosBusy(void) {
 }
 
 void far begin_transaction() {
-    // printf("%u ", atomic_operation_level);
-    if (!atomic_operation_level) {
+    ++atomic_operation_level;
+    lprintf(INFO, "Transaction started, current level %d\n", atomic_operation_level);
+    if (atomic_operation_level == 1) {
         lprintf(DEBUG, "Acquiring interrupt lock...\n");
         disable();
     }
-    ++atomic_operation_level;
-    lprintf(INFO, "Transaction started, current level %d\n", atomic_operation_level);
 }
 
 void far end_transaction() {
-    --atomic_operation_level;
-    if (!atomic_operation_level) {
-        lprintf(DEBUG, "Releasing interrupt lock...\n");
+    if (atomic_operation_level == 1) {
         enable();
+        lprintf(DEBUG, "Releasing interrupt lock...\n");
     }
+    --atomic_operation_level;
     lprintf(INFO, "Transaction committed, current level %d\n", atomic_operation_level);
 }
 

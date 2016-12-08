@@ -29,7 +29,6 @@ int main() {
     lprintf(INFO, "Initializing DOS critical pointers...\n");
     InitDos();
 
-    begin_transaction();
 
     lprintf(INFO, "Starting user program (early)...\n");
     //usermain();
@@ -41,7 +40,6 @@ int main() {
     setvect(TIME_INT, timeslicehandler);
     lprintf(INFO, "Object interrupt: 0x%Fp, Current interrupt: 0x%Fp\n", timeslicehandler, getvect(TIME_INT));
 
-    end_transaction();
     // tconvert("init");
     lprintf(INFO, "main() init part finished.\n");
     while(1) asm hlt;

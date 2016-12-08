@@ -8,8 +8,7 @@
 s_TCB far tcb[MAX_THREAD_COUNT];
 int far tcb_count = 0;
 char schedule_reent = 0;
-char in_kernel--;
-char on_thread_death = 0;
+char in_kernel = 0;
 
 int far get_last_running_thread_id() {
     int i;
@@ -55,22 +54,19 @@ int far get_next_running_thread_id() {
 
 int far thread_end_trigger() {
     int last;
-    begin_transaction();
-    on_thread_death = 1;
+    in_kernel++;
     last = get_last_running_thread_id();
     lprintf(DEBUG, "Thread #%d end.\n", last);
     if (last >= 0) destroy(last);
     lprintf(INFO, "Thread end trigger finished.\n");
     print_tcb();
-    on_thread_death = 0;
-    end_transaction();
+    in_kernel--;
     geninterrupt(TIME_INT);
     return 0;
 }
 
 int far create(char far *name, func thread_function, size_t stacklen) {
     int_regs far *regs;
-    begin_transaction();
     in_kernel++;
     lprintf(DEBUG, "Creating thread #%d:%s\n", tcb_count, name);
     if (tcb_count >= MAX_THREAD_COUNT) {
@@ -82,8 +78,7 @@ int far create(char far *name, func thread_function, size_t stacklen) {
             lprintf(ERROR, "Thread stack memory allocation failed!\n");
             goto exit_create;
     }
-    regs = (int_regs far *)((unsigned far *)tcb[tcb_count].stack + stacklen);
-    regs--;
+    regs = (int_regs far *)((unsigned far *)tcb[tcb_count].stack + stacklen) - 1;
     tcb[tcb_count].ss = FP_SEG(regs);
     tcb[tcb_count].sp = FP_OFF(regs);
     tcb[tcb_count].state = READY;
@@ -101,20 +96,17 @@ int far create(char far *name, func thread_function, size_t stacklen) {
 exit_create:
     print_tcb();
     in_kernel--;
-    end_transaction();
     return tcb_count;
 };
 
 int far destroy(int id) {
     int i;
-    begin_transaction();
     in_kernel++;
     if (id >= tcb_count) {
         lprintf(CRITICAL, "Cannot destroy thread #%d", id);
         goto exit_destroy;
     }
     lprintf(DEBUG, "Destroing thread %s\n", tcb[id].name);
-    // tcb[id].state = FINISHED;
     free(tcb[id].stack);
     for (i = id + 1; i < MAX_THREAD_COUNT - id; ++i) {
         memcpy(tcb + i - 1, tcb + i, sizeof(s_TCB));
@@ -124,7 +116,6 @@ int far destroy(int id) {
     print_tcb();
 exit_destroy:
     in_kernel--;
-    end_transaction();
     return 0;
 };
 
@@ -132,7 +123,7 @@ void interrupt timeslicehandler(void) {
     int last_running_thread;
     int next_running_thread;
     (*oldtimeslicehandler)();
-    if (DosBusy() || in_kernel || on_thread_death) {
+    if (DosBusy() || in_kernel) {
         return;
     }
 
@@ -185,18 +176,18 @@ exit_scheduler:
 }
 
 void far set_thread_state(int id, THREAD_STATUS new_state) {
-    // lprintf(INFO, "Setting thread #%d to new state %d\n", id, new_state);
+    lprintf(INFO, "Setting thread #%d to new state %d\n", id, new_state);
     tcb[id].state = new_state;
 }
 
 void far block_myself() {
-    // lprintf(WARNING, "Blocking current thread\n");
+    lprintf(WARNING, "Blocking current thread\n");
     set_thread_state(get_last_running_thread_id(), BLOCKED);
 }
 
 void tconvert(char *X)
 {
-    begin_transaction();
+    in_kernel++;
     lprintf(DEBUG, "Converting current process to thread #%d:%s\n", tcb_count, (X));
     if (tcb_count >= MAX_THREAD_COUNT) {
         lprintf(CRITICAL, "TCB stack full");
@@ -209,6 +200,6 @@ void tconvert(char *X)
     strcpy(tcb[tcb_count].name, (X));
     ++tcb_count;
     lprintf(INFO, "Converting thread %s finished.\n", (X));
+    in_kernel--;
     print_tcb();
-    end_transaction();
 }
