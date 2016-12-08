@@ -185,7 +185,7 @@ void far block_myself() {
     set_thread_state(get_last_running_thread_id(), BLOCKED);
 }
 
-void tconvert(char *X)
+int tconvert(char *X)
 {
     in_kernel++;
     lprintf(DEBUG, "Converting current process to thread #%d:%s\n", tcb_count, (X));
@@ -202,4 +202,5 @@ void tconvert(char *X)
     lprintf(INFO, "Converting thread %s finished.\n", (X));
     in_kernel--;
     print_tcb();
+    return 0;
 }

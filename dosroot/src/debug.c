@@ -8,21 +8,20 @@
 
 const char *tcb_status_text[] = {"FINISHED", "RUNNING", "READY", "BLOCKED", "INIT_BLOCKED", "ERROR"};
 const char *loglevel_text[] = {"INFO", "DEBUG", "WARNING", "ERROR", "CRITICAL", 0};
-#ifdef DEBUG_ENABLE_FILE_REDIRECTION
-FILE *debug_file;
-#endif
+FILE *debug_file = 0;
 
 void far init_dbg() {
-#ifdef DEBUG_ENABLE_FILE_REDIRECTION
 #ifdef DEBUG_SERIAL
     debug_file = stdaux;
-#else
-    debug_file = fopen(DEBUG_FILE, "w");
+#endif
+#ifdef DEBUG_ENABLE_FILE_REDIRECTION
+    if (!debug_file) {
+        debug_file = fopen(DEBUG_FILE, "w");
+    }
     if (!debug_file) {
         fprintf(stderr, "Error opening file %s\n", DEBUG_FILE);
         exit(-1);
     }
-#endif
 #endif
     lprintf(INFO, "Compiled time: %s %s\n", __DATE__, __TIME__);
     lprintf(INFO, "Current OS version: %u.%u\n", _osmajor, _osminor);

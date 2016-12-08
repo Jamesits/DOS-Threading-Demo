@@ -48,3 +48,5 @@ int far tconvert(char *name);
 extern s_TCB far tcb[MAX_THREAD_COUNT];
 extern int far tcb_count;
 extern char in_kernel;
+
+#endif
