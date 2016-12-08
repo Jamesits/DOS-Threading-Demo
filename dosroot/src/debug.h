@@ -5,7 +5,8 @@
 #define DEBUG_PERROR
 #define DEBUG_PRINT_TCB
 #define DEBUG_ENABLE_FILE_REDIRECTION
-// #define DEBUG_FILE stdaux
+#define DEBUG_FILE "DEBUG.LOG"
+// #define DEBUG_SERIAL
 #define DEBUG_LOG_LEVEL ERROR
 #define DEBUG_OUTPUT_FILE stderr
 #define DEBUG_FLUSH_BUFFER

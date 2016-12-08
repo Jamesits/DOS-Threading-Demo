@@ -14,13 +14,15 @@ FILE *debug_file;
 
 void far init_dbg() {
 #ifdef DEBUG_ENABLE_FILE_REDIRECTION
-
+#ifdef DEBUG_SERIAL
     debug_file = stdaux;
-    // debug_file = fopen(DEBUG_FILE, "w");
-    // if (!debug_file) {
-    //     fprintf(stderr, "Error opening file %s\n", DEBUG_FILE);
-    //     exit(-1);
-    // }
+#else
+    debug_file = fopen(DEBUG_FILE, "w");
+    if (!debug_file) {
+        fprintf(stderr, "Error opening file %s\n", DEBUG_FILE);
+        exit(-1);
+    }
+#endif
 #endif
     lprintf(INFO, "Compiled time: %s %s\n", __DATE__, __TIME__);
     lprintf(INFO, "Current OS version: %u.%u\n", _osmajor, _osminor);
