@@ -1,6 +1,7 @@
 #include <DOS.h>
 #include "dosutil.h"
 #include "debug.h"
+#include "thread.h"
 
 char far *indos_ptr = 0;
 char far *crit_err_ptr = 0;
@@ -37,21 +38,26 @@ int far DosBusy(void) {
 }
 
 void far begin_transaction() {
+    ++in_kernel;
     ++atomic_operation_level;
     lprintf(INFO, "Transaction started, current level %d\n", atomic_operation_level);
     if (atomic_operation_level == 1) {
         lprintf(DEBUG, "Acquiring interrupt lock...\n");
+        end_dbg(); // for flush
         disable();
     }
+    --in_kernel;
 }
 
 void far end_transaction() {
+    ++in_kernel;
     if (atomic_operation_level == 1) {
         enable();
         lprintf(DEBUG, "Releasing interrupt lock...\n");
     }
-    --atomic_operation_level;
     lprintf(INFO, "Transaction committed, current level %d\n", atomic_operation_level);
+    --atomic_operation_level;
+    --in_kernel;
 }
 
 unsigned far get_transaction_level() {
@@ -64,4 +70,8 @@ void far clrscr() {
 
 void far pause() {
     system("pause");
+}
+
+void far halt() {
+    asm hlt;
 }

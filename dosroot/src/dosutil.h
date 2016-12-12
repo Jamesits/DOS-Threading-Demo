@@ -13,5 +13,5 @@ void far end_transaction();
 unsigned far get_transaction_level();
 void far clrscr();
 void far pause();
-
+void far halt();
 #endif

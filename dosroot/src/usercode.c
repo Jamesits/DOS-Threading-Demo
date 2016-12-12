@@ -17,7 +17,7 @@ int far forever() {
 
 int far usermain() {
     int current_tcb_count = tcb_count;
-    clrscr();
+    // clrscr();
     lprintf(PROMPT, "DEMO multi-threading: \n");
     // create("NULL", (func)forever, DEFAULT_THREAD_STACK_SIZE);
     create("FP1", (func)fp1, DEFAULT_THREAD_STACK_SIZE);
