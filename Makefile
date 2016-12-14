@@ -1,5 +1,7 @@
 SRCS=$(wildcard $(SRCDIR)/*.c)
 OBJS=$(SRCS:.c=.OBJ)
+ASMS=$(wildcard $(SRCDIR)/*.asm)
+ASMOBJS=$(SRCS:.asm=.OBJ)
 EXE=THREAD
 
 export BUILD_TEMP=build
@@ -13,10 +15,24 @@ export BUILD_SYSTEM_QEMU_ROOT=$(BUILD_SYSTEM_ROOT)/qemu
 export BUILD_SYSTEM_QEMU_IMAGE_TEMPLATE=$(BUILD_SYSTEM_QEMU_ROOT)/template.img
 
 SRCDIR=$(DOSROOT)/src
-CC=TCC /ml
-INCLUDES=/I\\TC\\INCLUDE
-LINKER=TLINK
-LIBS=/L\\TC\\LIB\\
+HEADERS=\\TC\\INCLUDE
+LIBS=\\TC\\LIB\\
+MDL = l
+CC = tcc -m$(MDL) -w- -DTURBOC
+CFLAGS = -I$(HEADERS) -I$(SRCDIR) -L$(LIBS)
+ASM = tasm /MX /I$(HEADERS)
+LINK = tlink
+LIB = tlib
+LIBFLAGS = /c
+
+.c.OBJ: prep
+	$(BATCH_MAKER) $(CC) -c $(CFLAGS) $*
+
+.asm.OBJ: prep
+	$(BATCH_MAKER) $(ASM) $*;
+
+$(EXE): $(SRCS) $(ASMS)
+	$(BATCH_MAKER) $(LINK) /v /l /m $(OBJS) $(ASMOBJS) $(EXE)
 
 : build
 .PHONY: clean build
@@ -35,7 +51,7 @@ run-dosbox: | $(EXE) run build-dosbox
 
 run-qemu: | $(EXE) run build-qemu
 
-$(EXE): copy-sources
+prep: copy-sources
 	@echo "Resetting DOS build script..."
 	rm -f $(DOS_BUILD_SCRIPT)
 	@$(BATCH_MAKER) C:
@@ -44,7 +60,7 @@ $(EXE): copy-sources
 	@$(BATCH_MAKER) set CLASSPATH=%CLASSPATH%\;C:\\TC\\LIB\;
 	@$(BATCH_MAKER) set LIB=%LIB%\;C:\\TC\\LIB\;
 	@$(BATCH_MAKER) set INCLUDE=%INCLUDE%\;C:\\TC\\INCLUDE\;
-	$(BATCH_MAKER) $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(notdir $(SRCS))
+	// $(BATCH_MAKER) $(CC) /v $(INCLUDES) $(LIBS) /e$@ $(notdir $(SRCS))
 
 run:
 	$(BATCH_MAKER) $(EXE)

@@ -1,20 +1,20 @@
-#ifndef __SEM_H__
-#define __SEM_H__
-#include <DOS.h>
-#include "thread.h"
-#include "dosutil.h"
-#include "debug.h"
+/* sem.h - isbadsem */
 
-typedef struct semaphore{
-    int status;
-    s_TCB far *wait_queue;
-} semaphore;
-
-void far init_semaphore(semaphore far *s, int count);
-int far sem_wait(semaphore far *s);
-void far sem_signal(semaphore far *s);
-
-#define P(X) if (sem_wait(&(X))) asm int 3; //return 0; // lprintf(INFO, "sem waiting\n");//{pswitch();}
-#define V(X) sem_signal(&(X));
-
+#ifndef	NSEM
+#define	NSEM		45	/* number of semaphores, if not defined	*/
 #endif
+
+#define	SFREE	'\01'		/* this semaphore is free		*/
+#define	SUSED	'\02'		/* this semaphore is used		*/
+
+struct	sentry	{		/* semaphore table entry		*/
+	char	sstate;		/* the state SFREE or SUSED		*/
+	short	semcnt;		/* count for this semaphore		*/
+	short	sqhead;		/* q index of head of list		*/
+	short	sqtail;		/* q index of tail of list		*/
+};
+
+extern	struct	sentry	semaph[];
+extern	int	nextsem;
+
+#define	isbadsem(s)	(s<0 || s>=NSEM)
