@@ -1,6 +1,4 @@
 #include <dos.h>
-#include <math.h>
-
 
 #define COLOR_RED "\033[0;31m"
 #define COLOR_BLUE "\033[0;32m"

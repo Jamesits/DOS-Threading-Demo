@@ -123,6 +123,7 @@ int main(void)
 
         // reset
         setvect(8, old_int8);
+		free_all();
     }
 }
 

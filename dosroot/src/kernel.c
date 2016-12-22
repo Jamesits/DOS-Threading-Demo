@@ -21,7 +21,7 @@ int create(char *name, codeptr code, int stck)
 {
     struct int_regs far *r;
     int i, id = -1;
-
+    in_kernel = 1;
     for (i = 0; i < NTCB; i++) {
         if (tcb[i].state == FINISHED) {
             id = i;
@@ -48,6 +48,7 @@ int create(char *name, codeptr code, int stck)
     tcb[id].state       = READY;
     strcpy(tcb[id].name, name);
     enable();
+    in_kernel = 0;
     return id;
 }
 
@@ -96,25 +97,26 @@ void over()
 int finished()
 {
     int i;
-
+    in_kernel = 1;
     for (i = 1; i < NTCB; i++)
         if (tcb[i].state != FINISHED) return 0;
-
+    in_kernel = 0;
     return 1;
 }
 
 void free_all(void)
 {
     int i;
-
-    for (i = 0; i < NTCB; i++) {
+    in_kernel = 1;
+    for (i = 1; i < NTCB; i++) {
         if (tcb[i].stack) {
             tcb[i].name[0]      = '\0';
             tcb[i].state        = FINISHED;
-            free(tcb[i].stack);
+            if (tcb[i].stack) free(tcb[i].stack);
             tcb[i].stack = NULL;
         }
     }
+    in_kernel = 0;
 }
 
 void interrupt new_int8()

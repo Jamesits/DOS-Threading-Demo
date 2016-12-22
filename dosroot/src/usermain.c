@@ -90,18 +90,20 @@ void sender(void)
 {
     int         i, j, size;
     char        a[10];
-
+loop:
     for (i = 0; i < 10; i++) {
         strcpy(a, "message");
-        a[7]    = '0' + n;
+        a[7]    = '0' + i;
         a[8]    = 0;
         send("recv", a, strlen(a));
         printf("[S] Sending: %s\n", a);
         n++;
     }
     printf("[S] send finished\n");
-    while (receive("recv", a) == -1) printf("[S] wait\n");
-    printf("[S] got: %s\n", a);
+    while ((size = receive("recv", a)) == -1);
+    breakpoint();
+    if (!strcmp(a, "ok")) goto loop;
+    printf("[S] got reply: %s\n", a);
 }
 
 void receiver(void)
