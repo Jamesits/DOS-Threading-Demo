@@ -5,7 +5,7 @@ EXE=THREAD
 export BUILD_TEMP=build
 export DOSROOT=dosroot
 export BUILD_DOSROOT=$(BUILD_TEMP)/dosroot
-export DOS_BUILD_SCRIPT=$(BUILD_DOSROOT)/dosroot/BUILD.BAT
+export DOS_BUILD_SCRIPT=$(BUILD_DOSROOT)/BUILD.BAT
 export BATCH_MAKER=buildsystem/dos.sh
 export BUILD_SYSTEM_ROOT=buildsystem
 export BUILD_SYSTEM_DOSBOX_ROOT=$(BUILD_SYSTEM_ROOT)/dosbox
@@ -49,11 +49,10 @@ $(EXE): copy-sources
 run:
 	$(BATCH_MAKER) $(EXE)
 
-copy-sources:
+copy-sources: $(BATCH_MAKER)
 	@echo "Preparing program sources..."
 	rm -rf $(BUILD_DOSROOT)
-	mkdir -p $(BUILD_DOSROOT)
-	cp -rf $(DOSROOT) $(BUILD_DOSROOT)
+	cp -rf $(DOSROOT) $(BUILD_TEMP)
 
 clean:
 	@echo "Deleting temporary files..."
