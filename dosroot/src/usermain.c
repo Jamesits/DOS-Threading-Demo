@@ -51,41 +51,6 @@ void f5()
     }
 }
 
-void producer()
-{
-    int tmp, i;
-
-    for (i = 1; i <= 10; i++)
-    {
-        tmp = i * i;
-        printf("[P] producing: %d\n", tmp);
-        wait(   &empty);
-        wait(   &mutex);
-        intbuf[in]      = tmp;
-        in              = (in + 1) % NBUF;
-
-        signal( &mutex);
-        signal( &full);
-    }
-}
-
-void consumer()
-{
-    int tmp, i;
-
-    for (i = 1; i <= 10; i++)
-    {
-        wait(   &full);
-        wait(   &mutex);
-        tmp     = intbuf[out];
-        out     = (out + 1) % NBUF;
-
-        signal( &mutex);
-        signal( &empty);
-        printf("[C] getting: %d: %d\n", i, tmp);
-    }
-}
-
 void sender(void)
 {
     int         i, j, size;

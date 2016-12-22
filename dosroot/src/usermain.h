@@ -5,7 +5,5 @@ void    f2(void);
 void    f3(void);
 void    f4(void);
 void    f5(void);
-void    producer();
-void    consumer();
 void    sender(void);
 void    receiver(void);
