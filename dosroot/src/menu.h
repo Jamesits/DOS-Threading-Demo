@@ -6,6 +6,12 @@ typedef struct {
 } menuitem;
 
 typedef menuitem
- menu[];
+    menu[];
 
-int dispmenu(menu m, char autoexec);
+int     dispmenu(menu   m,
+                 char   autoexec);
+int     numselection(char       *prompt,
+                     int        initial,
+                     int        low,
+                     int        high,
+                     int        step);

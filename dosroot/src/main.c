@@ -25,12 +25,12 @@ int     intbuf[NBUF], buftemp;
 int     in = 0, out = 0;
 
 void demo_fifo() {
-        create( "f1",   (codeptr)f1,    NSTACK);
-        create( "f2",   (codeptr)f2,    NSTACK);
+    create( "f1",   (codeptr)f1,    NSTACK);
+    create( "f2",   (codeptr)f2,    NSTACK);
     clrscr();
-        printf( "\ncreate f1 and f2\n");
-        printf( "f1 prints 1000 a\n");
-        printf( "f2 prints 100 b\n");
+    printf( "\ncreate f1 and f2\n");
+    printf( "f1 prints 1000 a\n");
+    printf( "f2 prints 100 b\n");
     swtch();
     getch();
 }
@@ -39,32 +39,29 @@ void demo_timeslice() {
     TL = 1;
     printf("Time slice = 1\n\n");
     getch();
-        create( "f1",   (codeptr)f1,    NSTACK);
-        create( "f2",   (codeptr)f2,    NSTACK);
-        create( "f3",   (codeptr)f3,    NSTACK);
+    create( "f1",   (codeptr)f1,    NSTACK);
+    create( "f2",   (codeptr)f2,    NSTACK);
+    create( "f3",   (codeptr)f3,    NSTACK);
     clrscr();
-        printf( "\ncreate f1, f2, f3\n");
-        printf( "f1 prints 1000 a\n");
-        printf( "f2 prints 100 b\n");
-        printf( "f3 prints 1000 c\n");
+    printf( "\ncreate f1, f2, f3\n");
+    printf( "f1 prints 1000 a\n");
+    printf( "f2 prints 100 b\n");
+    printf( "f3 prints 1000 c\n");
     setvect(8, new_int8);
     swtch();
     getch();
 }
 
 void demo_adjslice() {
-    printf("Enter new time slice: ");
-    scanf("%d", &TL);
-    printf("Time slice = %d\n\n", TL);
-    getch();
-        create( "f1",   (codeptr)f1,    NSTACK);
-        create( "f2",   (codeptr)f2,    NSTACK);
-        create( "f3",   (codeptr)f3,    NSTACK);
+    TL = numselection("Set time slice: ", 4, 1, 100, 1);
+    create( "f1",   (codeptr)f1,    NSTACK);
+    create( "f2",   (codeptr)f2,    NSTACK);
+    create( "f3",   (codeptr)f3,    NSTACK);
     clrscr();
-        printf( "\ncreate f1, f2, f3\n");
-        printf( "f1 prints 1000 a\n");
-        printf( "f2 prints 100 b\n");
-        printf( "f3 prints 1000 c\n");
+    printf( "\ncreate f1, f2, f3\n");
+    printf( "f1 prints 1000 a\n");
+    printf( "f2 prints 100 b\n");
+    printf( "f3 prints 1000 c\n");
     setvect(8, new_int8);
     swtch();
     getch();
