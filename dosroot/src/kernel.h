@@ -6,6 +6,8 @@
 #define BLOCKED 3
 
 int in_kernel = 0;
+int timecount = 0;
+int TL;
 
 typedef int (far * codeptr)(void);
 void interrupt (*old_int8)(void);

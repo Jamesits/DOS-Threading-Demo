@@ -16,11 +16,6 @@
 #include "usermain.h"
 #include "menu.h"
 
-int timecount = 0;
-int TL;
-int current     = -1;
-int n           = 0;
-
 int intbuf[NBUF], buftemp;
 int in = 0, out = 0;
 
