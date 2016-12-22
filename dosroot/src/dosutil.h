@@ -8,3 +8,4 @@ char far *crit_err_ptr  = 0;
 
 void    InitDos(void);
 int     DosBusy(void);
+void    pause();

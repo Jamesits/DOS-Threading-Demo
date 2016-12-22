@@ -25,3 +25,8 @@ int DosBusy(void)
     if (indos_ptr && crit_err_ptr) return *indos_ptr || *crit_err_ptr;
     else return -1;
 }
+
+void pause(void) {
+    printf( "Press any key to start...\n");
+    getch();
+}
