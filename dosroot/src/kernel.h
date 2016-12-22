@@ -5,6 +5,8 @@
 #define READY   2
 #define BLOCKED 3
 
+int in_kernel = 0;
+
 typedef int (far * codeptr)(void);
 void interrupt (*old_int8)(void);
 

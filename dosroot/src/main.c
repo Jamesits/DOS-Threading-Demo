@@ -66,8 +66,8 @@ void demo_buffer() {
 	initBuf();
 	TL = numselection("Set time slice: ", 1, 1, 100, 1);
 	pause();
-    create( "sender",       (codeptr)sender,        NSTACK);
-    create( "receiver",     (codeptr)receiver,      NSTACK);
+    create( "send",       (codeptr)sender,        NSTACK);
+    create( "recv",     (codeptr)receiver,      NSTACK);
     setvect(8, new_int8);
     swtch();
     pause();

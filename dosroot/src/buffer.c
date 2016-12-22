@@ -42,8 +42,7 @@ void send(char *receiver, char *a, int size)
 {
     struct buffer *buff;
     int i, id = -1;
-
-    disable();
+    in_kernel = 1;
 
     for (i = 0; i < NTCB; i++) {
         if (strcmp(receiver, tcb[i].name) == 0) {
@@ -54,11 +53,10 @@ void send(char *receiver, char *a, int size)
 
     if (id == -1) {
         printf("FATAL: receiver not found.\n");
-        enable();
         return;
     }
-        wait(   &sfb);
-        wait(   &mutexfb);
+    wait(   &sfb);
+    wait(   &mutexfb);
     buff = getbuf();
     signal(&mutexfb);
 
@@ -69,10 +67,10 @@ void send(char *receiver, char *a, int size)
 
     wait(&tcb[id].mutex);
     insert(&tcb[id].mq, buff);
-        signal( &tcb[id].mutex);
+    signal( &tcb[id].mutex);
 
-        signal( &tcb[id].sm);
-    enable();
+    signal( &tcb[id].sm);
+    in_kernel = 0;
 }
 
 struct buffer* remov(struct buffer **mq, int sender)
@@ -104,8 +102,7 @@ int receive(char *sender, char *b)
 {
     int i, id = -1;
     struct buffer *buff;
-
-    disable();
+    in_kernel = 1;
 
     for (i = 0; i < NBUF; i++)
     {
@@ -117,7 +114,7 @@ int receive(char *sender, char *b)
 
     if (id == -1)
     {
-        enable();
+        // printf("FATAL: sender not found.\n");
         return -1;
     }
         wait(   &tcb[current].sm);
@@ -136,7 +133,6 @@ int receive(char *sender, char *b)
         signal( &mutexfb);
         signal( &sfb);
 
-    enable();
-
+    in_kernel = 0;
     return buff->size;
 }

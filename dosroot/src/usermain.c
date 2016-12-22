@@ -88,22 +88,20 @@ void consumer()
 
 void sender(void)
 {
-    int         i, j;
+    int         i, j, size;
     char        a[10];
 
-    do {
-        for (i = 0; i < 10; i++) {
-            strcpy(a, "message");
-            a[7]    = '0' + n;
-            a[8]    = 0;
-            send("receiver", a, strlen(a));
-            printf("[S] Sending: %s\n", a);
-            n++;
-            sleep(10);
-        }
-        receive("receiver", a);
-    } while (!strcmp(a, "ok"));
-    printf("[S] Send succeeded\n");
+    for (i = 0; i < 10; i++) {
+        strcpy(a, "message");
+        a[7]    = '0' + n;
+        a[8]    = 0;
+        send("recv", a, strlen(a));
+        printf("[S] Sending: %s\n", a);
+        n++;
+    }
+    printf("[S] send finished\n");
+    while (receive("recv", a) == -1) printf("[S] wait\n");
+    printf("[S] got: %s\n", a);
 }
 
 void receiver(void)
@@ -115,7 +113,7 @@ void receiver(void)
     for (i = 0; i < 10; i++) {
         b[0] = 0;
 
-        while ((size = receive("sender", b)) != -1) ;
+        while ((size = receive("send", b)) == -1) ;
         printf( "[R] receiving: ");
 
         for (j = 0; j < size; j++) putchar(b[j]);
@@ -123,5 +121,5 @@ void receiver(void)
     }
     printf( "[R] report success\n");
     strcpy(b, "ok");
-    send("sender", b, 3);
+    send("send", b, 3);
 }

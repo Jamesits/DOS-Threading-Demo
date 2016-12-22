@@ -123,9 +123,7 @@ void interrupt new_int8()
     (*old_int8)();
     timecount++;
 
-    if (timecount < TL) return;
-
-    if (DosBusy()) return;
+    if (timecount < TL || DosBusy() || in_kernel) return;
 
     swtch();
 }
