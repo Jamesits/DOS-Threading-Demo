@@ -53,7 +53,7 @@ void send(char *receiver, char *a, int size)
     }
 
     if (id == -1) {
-        printf("Error: Receiver not exist.\n");
+        printf("FATAL: receiver not found.\n");
         enable();
         return;
     }
