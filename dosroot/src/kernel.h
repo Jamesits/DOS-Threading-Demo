@@ -1,3 +1,5 @@
+#include <dos.h>
+
 #define FINISHED        0
 #define RUNNING 1
 #define READY   2

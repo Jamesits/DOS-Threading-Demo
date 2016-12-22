@@ -1,3 +1,5 @@
+#include <dos.h>
+
 void f1(void)
 {
     long i, j, k;

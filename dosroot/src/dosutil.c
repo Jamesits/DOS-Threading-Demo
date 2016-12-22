@@ -1,3 +1,5 @@
+#include <dos.h>
+
 void InitDos(void)
 {
     union REGS          regs;

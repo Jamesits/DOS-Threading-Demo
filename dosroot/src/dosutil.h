@@ -1,3 +1,5 @@
+#include <dos.h>
+
 #define GET_INDOS 0x34
 #define GET_CRIT_ERR 0x5d06
 

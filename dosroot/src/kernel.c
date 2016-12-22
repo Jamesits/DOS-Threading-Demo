@@ -1,3 +1,5 @@
+#include <dos.h>
+
 void initTCB()
 {
     int i;

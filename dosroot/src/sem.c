@@ -1,3 +1,5 @@
+#include <dos.h>
+
 void wait(semaphore *sem)
 {
     struct TCB **qp;

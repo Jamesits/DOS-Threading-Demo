@@ -1,3 +1,5 @@
+#include <dos.h>
+
 struct buffer {
     int                 id;
     int                 size;

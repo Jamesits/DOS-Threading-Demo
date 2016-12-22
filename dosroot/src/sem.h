@@ -1,3 +1,5 @@
+#include <dos.h>
+
 typedef struct {
     int         value;
     struct TCB  *wq;
