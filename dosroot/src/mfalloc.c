@@ -1,8 +1,8 @@
 /* mfalloc.c - mfalloc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfalloc  --  allocate a device table entry for a dos file; return id

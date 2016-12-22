@@ -1,9 +1,9 @@
 /* mfputc.c - mfputc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfputc  --  put a character onto a (buffered) disk file

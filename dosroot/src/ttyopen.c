@@ -1,11 +1,11 @@
 /* ttyopen.c - ttyopen */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <tty.h>
-#include <io.h>
-#include <bios.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "tty.h"
+#include "io.h"
+#include "bios.h"
 
 /*------------------------------------------------------------------------
  *  ttyopen  --  open a window on a tty

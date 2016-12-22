@@ -1,8 +1,8 @@
 /* mfsetup.c - mfsetup */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfsetup  --  set up appropriate data block in memory

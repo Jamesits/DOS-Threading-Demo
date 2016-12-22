@@ -1,7 +1,7 @@
 /* getdev.c - getdev */
 
-#include <conf.h>
-#include <kernel.h>
+#include "conf.h"
+#include "kernel.h"
 
 /*------------------------------------------------------------------------
  *  getdev  --  get the device number from a character string name

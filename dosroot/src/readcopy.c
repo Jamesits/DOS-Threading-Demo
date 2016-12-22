@@ -1,9 +1,9 @@
 /* readcopy.c - readcopy */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  readcopy  --  high speed copy from tty buffer into user's buffer

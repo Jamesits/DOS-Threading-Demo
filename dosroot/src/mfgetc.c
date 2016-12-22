@@ -1,9 +1,9 @@
 /* mfgetc.c - mfgetc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfgetc  --  get next character from (buffered) disk file

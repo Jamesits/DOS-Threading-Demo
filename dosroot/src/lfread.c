@@ -1,9 +1,9 @@
 /* lfread.c - lfread */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  lfread  --  read from a previously opened disk file

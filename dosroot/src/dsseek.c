@@ -1,11 +1,11 @@
 /* dsseek.c - dsseek */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <disk.h>
-#include <mark.h>
-#include <bufpool.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "disk.h"
+#include "mark.h"
+#include "bufpool.h"
 
 /*------------------------------------------------------------------------
  *  dsseek  --  schedule a request to move the disk arm

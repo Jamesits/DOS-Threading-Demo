@@ -1,8 +1,8 @@
 /* wputcsr.c - wputcsr */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
 
 /*------------------------------------------------------------------------
  *  wputcsr  --  cursor position routine

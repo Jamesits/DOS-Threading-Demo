@@ -1,9 +1,9 @@
 /* lwwrite.c - lwwrite */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  lwwrite  --  write one or more characters to a console window

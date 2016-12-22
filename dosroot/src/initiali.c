@@ -1,30 +1,30 @@
 /* initialize.c - main, sysinit */
 
-#include <dos.h>
-#include <conf.h>
-#include <kernel.h>
-#include <io.h>
-#include <proc.h>
-#include <sem.h>
-#include <mem.h>
-#include <q.h>
-#include <mark.h>
-#include <butler.h>
-#include <bios.h>
-#include <kbdio.h>
+#include "dos.h"
+#include "conf.h"
+#include "kernel.h"
+#include "io.h"
+#include "proc.h"
+#include "sem.h"
+#include "mem.h"
+#include "q.h"
+#include "mark.h"
+#include "butler.h"
+#include "bios.h"
+#include "kbdio.h"
 
 #ifdef	Ntty
-#include <tty.h>
+#include "tty.h"
 int	winofcur;		/* define the current input window	*/
 struct tty	tty[Ntty];	/* window buffers and mode control	*/
 #endif
 
 #ifdef	Ndsk
-#include <disk.h>
+#include "disk.h"
 #endif
 
 #ifdef 	Nmf
-#include <mffile.h>
+#include "mffile.h"
 struct mfblk	mftab[Nmf];
 #endif
 

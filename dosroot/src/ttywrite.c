@@ -1,9 +1,9 @@
 /* ttywrite.c - ttywrite */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  ttywrite  --  write one or more characters to a tty device

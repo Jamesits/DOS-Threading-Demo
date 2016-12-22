@@ -1,8 +1,8 @@
 /* butler.c - butler */
 
-#include <conf.h>
-#include <kernel.h>
-#include <butler.h>
+#include "conf.h"
+#include "kernel.h"
+#include "butler.h"
 
 /*------------------------------------------------------------------------
  *  butler  --  general housekeeping process.  Responds to messages and

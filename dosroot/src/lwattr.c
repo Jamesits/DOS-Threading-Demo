@@ -1,9 +1,9 @@
 /* lwattr.c - lwattr */
 
-	#include <ctype.h>
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
+	#include "ctype.h"
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
 
 #define	ATTR_NOBLINK		0x3f
 #define	ATTR_BLINK		0x80

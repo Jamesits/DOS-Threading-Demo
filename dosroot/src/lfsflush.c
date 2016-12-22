@@ -1,9 +1,9 @@
 /* lfsflush.c - lfsflush */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  lfsflush  --  flush data and i-block for a file

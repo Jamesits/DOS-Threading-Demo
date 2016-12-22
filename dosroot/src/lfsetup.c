@@ -1,9 +1,9 @@
 /* lfsetup.c - lfsetup */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  lfsetup  --  set up appropriate iblock and data block in memory

@@ -1,11 +1,11 @@
 /* dsread.c - dsread */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <disk.h>
-#include <mark.h>
-#include <bufpool.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "disk.h"
+#include "mark.h"
+#include "bufpool.h"
 
 /*------------------------------------------------------------------------
  *  dsread  --  read a block from a disk device

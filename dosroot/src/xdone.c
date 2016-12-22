@@ -1,11 +1,11 @@
 /* xdone.c - xdone */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <io.h>
-#include <disk.h>
-#include <tty.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "io.h"
+#include "disk.h"
+#include "tty.h"
 
 /*------------------------------------------------------------------------
  *  xdone  --  print system termination message and terminate PC-Xinu

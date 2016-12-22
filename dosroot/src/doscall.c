@@ -1,9 +1,9 @@
 /* doscall.c - doscall, dos_creat, dos_open, dos_close, dos_read,	*/
 /*		dos_write,dos_lseek					*/
 
-#include <dos.h>
-#include <conf.h>
-#include <kernel.h>
+#include "dos.h"
+#include "conf.h"
+#include "kernel.h"
 
 #define AX(r)		((r).x.ax)
 #define BX(r)		((r).x.bx)

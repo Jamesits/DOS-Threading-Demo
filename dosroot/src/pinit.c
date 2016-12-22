@@ -1,10 +1,10 @@
 /* pinit.c - pinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mem.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mem.h"
+#include "mark.h"
+#include "ports.h"
 
 #ifdef	MEMMARK
 MARKER	ptmark;

@@ -1,9 +1,9 @@
 /* writcopy.c - writcopy */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  writcopy  --  high-speed copy from user's buffer into tty buffer

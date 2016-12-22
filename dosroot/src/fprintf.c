@@ -1,7 +1,7 @@
 /* fprintf.c - fprintf */
 
-#include <conf.h>
-#include <kernel.h>
+#include "conf.h"
+#include "kernel.h"
 
 /*------------------------------------------------------------------------
  *  fprintf  --  write formatted output on a specified device

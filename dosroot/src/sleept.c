@@ -1,10 +1,10 @@
 /* sleept.c - sleept */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <q.h>
-#include <sleep.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "q.h"
+#include "sleep.h"
 
 /*------------------------------------------------------------------------
  *  sleept  --  delay the caller for a time specified in system ticks

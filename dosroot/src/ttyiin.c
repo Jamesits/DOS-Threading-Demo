@@ -1,8 +1,8 @@
 /* ttyiin.c - ttyiin */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
 
 /*------------------------------------------------------------------------
  *  ttyiin  --  lower-half tty device driver for input interrupts

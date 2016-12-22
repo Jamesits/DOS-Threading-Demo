@@ -1,8 +1,8 @@
 /* mark.c - _mkinit, mark */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
 
 #ifdef MEMMARK
 int		*marks[MAXMARK];

@@ -1,10 +1,10 @@
 /* pcscreen.c - putcsrpos, scrollup, putchr */
 
-#include <dos.h>
-#include <conf.h>
-#include <kernel.h>
-#include <window.h>
-#include <vidio.h>
+#include "dos.h"
+#include "conf.h"
+#include "kernel.h"
+#include "window.h"
+#include "vidio.h"
 
 #define INT10H(r)	vidint(&(r))
 

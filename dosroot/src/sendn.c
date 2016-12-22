@@ -1,8 +1,8 @@
 /* sendn.c - sendn */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
 
 /*------------------------------------------------------------------------
  *  sendn  --  send a message to another process, but do not reschedule

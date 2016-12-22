@@ -1,8 +1,8 @@
 /* mfseek.c - mfseek */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfseek  --  seek to a specified position of a file

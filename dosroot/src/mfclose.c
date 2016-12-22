@@ -1,9 +1,9 @@
 /* mfclose.c - mfclose */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfclose  --  close a file by flushing output and freeing device slot

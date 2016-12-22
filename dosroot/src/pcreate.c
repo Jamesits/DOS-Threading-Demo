@@ -1,9 +1,9 @@
 /* pcreate.c - pcreate */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  pcreate  --  create a port that allows "count" outstanding messages

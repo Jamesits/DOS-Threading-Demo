@@ -1,8 +1,8 @@
 /* mfinit.c - mfinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfinit  --  mark disk file 'device' available at system startup

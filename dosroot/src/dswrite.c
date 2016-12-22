@@ -1,11 +1,11 @@
 /* dswrite.c - dswrite */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <disk.h>
-#include <mark.h>
-#include <bufpool.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "disk.h"
+#include "mark.h"
+#include "bufpool.h"
 
 /*------------------------------------------------------------------------
  *  dswrite  --  write a block (system buffer) onto a disk device

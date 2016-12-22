@@ -1,7 +1,7 @@
 /* dio.c - dread, dwrite */
 
-#include <kernel.h>
-#include <dskio.h>
+#include "kernel.h"
+#include "dskio.h"
 
 LOCAL int dio();
 

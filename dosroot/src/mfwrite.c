@@ -1,7 +1,7 @@
 /* mfwrite.c - mfwrite */
 
-#include <conf.h>
-#include <kernel.h>
+#include "conf.h"
+#include "kernel.h"
 
 /*------------------------------------------------------------------------
  *  mfwrite  --  write 'count' bytes onto a local disk file

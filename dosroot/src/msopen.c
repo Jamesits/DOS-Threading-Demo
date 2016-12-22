@@ -1,8 +1,8 @@
 /* msopen.c - msopen */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  msopen  --  open/create a dos file

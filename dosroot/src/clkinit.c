@@ -1,9 +1,9 @@
 /* clkinit.c - clkinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <q.h>
-#include <sleep.h>
+#include "conf.h"
+#include "kernel.h"
+#include "q.h"
+#include "sleep.h"
 
 /*------------------------------------------------------------------------
  *  clkinit  --  initialize the clock and sleep queue (called at startup)

@@ -1,10 +1,10 @@
 /* lwoproc.c - lwoproc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
-#include <bios.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
+#include "bios.h"
 
 /*------------------------------------------------------------------------
  *  lwoproc  --  lower-half tty device driver process for window output

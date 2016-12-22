@@ -1,10 +1,10 @@
 /* mkpool.c - mkpool */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <mem.h>
-#include <bufpool.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "mem.h"
+#include "bufpool.h"
 
 /*------------------------------------------------------------------------
  *  mkpool  --  allocates buffers for a buffer pool

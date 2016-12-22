@@ -1,8 +1,8 @@
 /* dskqopt.c - dskqopt */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
 
 /*------------------------------------------------------------------------
  *  dskqopt  --  optimize requests to read/write/seek to the same block

@@ -1,9 +1,9 @@
 /* ttyputc.c - ttyputc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  ttyputc  --  write one character to a tty device

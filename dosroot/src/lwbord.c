@@ -1,9 +1,9 @@
 /* lwbord.c - lwbord */
 
-	#include <ctype.h>
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
+	#include "ctype.h"
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
 
 /*------------------------------------------------------------------------
  *  lwbord  --  parse window border attribute string

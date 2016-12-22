@@ -1,11 +1,11 @@
 /* ttyinit.c - ttyinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
-#include <bios.h>
-#include <kbdio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
+#include "bios.h"
+#include "kbdio.h"
 
 /*------------------------------------------------------------------------
  *  ttyinit  --  initialize buffers and modes for a tty line

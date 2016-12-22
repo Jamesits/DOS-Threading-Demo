@@ -1,9 +1,9 @@
 /* dsinter.c - dsinter */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <dskio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "dskio.h"
 
 /*------------------------------------------------------------------------
  *  dsinter  --  process to handle disk requests

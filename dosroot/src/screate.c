@@ -1,10 +1,10 @@
 /* screate.c - screate, newsem */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <q.h>
-#include <sem.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "q.h"
+#include "sem.h"
 
 /*------------------------------------------------------------------------
  *  screate  --  create and initialize a semaphore, returning its id

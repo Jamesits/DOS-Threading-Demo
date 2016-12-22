@@ -1,7 +1,7 @@
 /* printf.c - printf */
 
-#include <conf.h>
-#include <kernel.h>
+#include "conf.h"
+#include "kernel.h"
 
 /*------------------------------------------------------------------------
  *  printf  --  write formatted output to CONSOLE

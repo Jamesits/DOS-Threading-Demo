@@ -1,8 +1,8 @@
 /* mfdsrch.c - mfdsrch */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 #define MSREAD	0
 #define MSWRITE	1

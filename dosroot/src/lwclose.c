@@ -1,9 +1,9 @@
 /* lwclose.c - lwclose */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <tty.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "tty.h"
 
 /*------------------------------------------------------------------------
  *  lwclose  --  routine to close a window device

@@ -1,9 +1,9 @@
 /* lfsdfree.c - lfsdfree */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  lfsdfree  --  free a data block given its address

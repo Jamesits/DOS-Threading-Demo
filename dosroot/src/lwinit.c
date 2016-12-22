@@ -1,10 +1,10 @@
 /* lwinit.c - lwinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
-#include <bios.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
+#include "bios.h"
 
 /*------------------------------------------------------------------------
  *  lwinit  --  initialize console window

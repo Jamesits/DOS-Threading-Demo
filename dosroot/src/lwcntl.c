@@ -1,9 +1,9 @@
 /* lwcntl.c - lwcntl */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <tty.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "tty.h"
 
 /*------------------------------------------------------------------------
  *  lwcntl  --  do misc. tty control functions

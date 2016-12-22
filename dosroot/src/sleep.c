@@ -1,8 +1,8 @@
 /* sleep.c - sleep */
 
-#include <conf.h>
-#include <kernel.h>
-#include <sleep.h>
+#include "conf.h"
+#include "kernel.h"
+#include "sleep.h"
 
 /*------------------------------------------------------------------------
  *  sleep  --  delay the calling process n seconds

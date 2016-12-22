@@ -1,9 +1,9 @@
 /* kgetc.c - kgetc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <kbdio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "kbdio.h"
 
 /*------------------------------------------------------------------------
  *  kgetc  --  get the next character from the keyboard

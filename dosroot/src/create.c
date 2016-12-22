@@ -1,9 +1,9 @@
 /* create.c - create, newpid */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <mem.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "mem.h"
 
 #define	INITF	0x0200	/* initial flag register - set interrupt flag,	*/
 			/* clear direction and trap flags		*/

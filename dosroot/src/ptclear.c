@@ -1,9 +1,9 @@
 /* ptclear.c - _ptclear */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  _ptclear  --  used by pdelete and preset to clear a port

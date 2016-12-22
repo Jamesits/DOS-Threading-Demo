@@ -1,9 +1,9 @@
 /* lwread.c - lwread */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  lwread  --  read one or more characters from a logical window

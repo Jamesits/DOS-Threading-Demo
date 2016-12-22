@@ -5,10 +5,10 @@
  *------------------------------------------------------------------------
  */
 
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <q.h>
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "q.h"
 
 #define CTRLC	3			/* ASCII code for control-C	*/
 

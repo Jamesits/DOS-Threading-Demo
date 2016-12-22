@@ -1,10 +1,10 @@
 /* dskbcpy.c - dskbcpy */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <mark.h>
-#include <bufpool.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "mark.h"
+#include "bufpool.h"
 
 /*------------------------------------------------------------------------
  *  dskbcpy  --  copy data into a new disk buffer and return its address

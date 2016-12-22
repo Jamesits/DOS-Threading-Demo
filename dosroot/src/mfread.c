@@ -1,8 +1,8 @@
 /* mfread.c - mfread */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfread  --  read from a previously opened disk file

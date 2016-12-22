@@ -1,6 +1,6 @@
 /* tty.h */
 
-#include <window.h>			/* window definitions		*/
+#include "window.h"			/* window definitions		*/
 
 #define	OBMINSP		20		/* min space in buffer before	*/
 #define	EBUFLEN		32		/* size of echo queue		*/

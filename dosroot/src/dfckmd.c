@@ -1,9 +1,9 @@
 /* dfckmd.c - dfckmd */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  dfckmd  --  parse file mode argument and generate actual mode bits

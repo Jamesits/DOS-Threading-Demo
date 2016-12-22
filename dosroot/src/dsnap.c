@@ -1,8 +1,8 @@
 /* dsnap.c - dsnap */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
 
 /*------------------------------------------------------------------------
  *  dsnap  --  print a snapshot of disk requests

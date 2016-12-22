@@ -1,9 +1,9 @@
 /* pcount.c - pcount */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  pcount  --  return the count of current messages in a port

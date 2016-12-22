@@ -1,9 +1,9 @@
 /* lfseek.c - lfseek */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  lfseek  --  seek to a specified position of a file

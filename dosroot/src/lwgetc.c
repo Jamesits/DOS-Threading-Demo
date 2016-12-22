@@ -1,10 +1,10 @@
 /* lwgetc.c - lwgetc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
-#include <proc.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
+#include "proc.h"
 
 /*------------------------------------------------------------------------
  *  lwgetc  --  read one character from a window device

@@ -1,8 +1,8 @@
 /* conf.c */
 /* (GENERATED FILE: DO NOT EDIT) */
 
-#include <conf.h>
-#include <bios.h>
+#include "conf.h"
+#include "bios.h"
 
 /* device independent I/O switch */
 

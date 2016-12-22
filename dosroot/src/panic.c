@@ -1,12 +1,12 @@
 /* panic.c - panic, _panic */
 
-#include <dos.h>
-#include <conf.h>
-#include <kernel.h>
-#include <proc.h>
-#include <io.h>
-#include <tty.h>
-#include <bios.h>
+#include "dos.h"
+#include "conf.h"
+#include "kernel.h"
+#include "proc.h"
+#include "io.h"
+#include "tty.h"
+#include "bios.h"
 
 /*------------------------------------------------------------------------
  *  panic  --  print error message and terminate PC-Xinu

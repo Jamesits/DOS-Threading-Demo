@@ -1,12 +1,12 @@
 /* ttyiproc.c - ttyiproc, erase1, eputc, echoch */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
-#include <bios.h>
-#include <butler.h>
-#include <kbdio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
+#include "bios.h"
+#include "butler.h"
+#include "kbdio.h"
 
 /*------------------------------------------------------------------------
  *  ttyiproc  --  lower-half tty device process for input characters

@@ -1,9 +1,9 @@
 /* preset.c - preset */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  preset  --  reset a port, freeing waiting processes and messages

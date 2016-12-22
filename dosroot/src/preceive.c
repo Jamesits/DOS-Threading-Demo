@@ -1,9 +1,9 @@
 /* preceive.c - preceive */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  preceive  --  receive a message from a port, blocking if port empty

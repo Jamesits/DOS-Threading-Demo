@@ -1,9 +1,9 @@
 /* ttyread.c - ttyread */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  ttyread  --  read one or more characters from a tty device

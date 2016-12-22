@@ -1,9 +1,9 @@
 /* clkint.c - clkint */
 
-#include <conf.h>
-#include <kernel.h>
-#include <sleep.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "sleep.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  clkint  --  clock service routine

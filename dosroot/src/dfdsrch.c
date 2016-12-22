@@ -1,9 +1,9 @@
 /* dfdsrch.c - dfdsrch */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <file.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "file.h"
 
 /*------------------------------------------------------------------------
  *  dfdsrch  --  search disk directory for position of given file name

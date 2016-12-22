@@ -3,8 +3,8 @@
 typedef	unsigned int	DBADDR;		/* disk data block addresses	*/
 #define	DBNULL		(DBADDR)0177777	/* null disk block address	*/
 
-#include <iblock.h>
-#include <dir.h>
+#include "iblock.h"
+#include "dir.h"
 
 struct	dsblk	{			/* disk driver control block	*/
 	struct	dreq	*dreqlst;	/* list of pending requests	*/

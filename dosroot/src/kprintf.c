@@ -1,10 +1,10 @@
 /* kprintf.c - kprintf */
 
-#include <conf.h>
-#include <kernel.h>
-#include <io.h>
-#include <tty.h>
-#include <vidio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "io.h"
+#include "tty.h"
+#include "vidio.h"
 
 /*------------------------------------------------------------------------
  *  kprintf  --  kernel printf: formatted, unbuffered output to the screen

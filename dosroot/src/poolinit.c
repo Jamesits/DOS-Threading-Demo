@@ -1,9 +1,9 @@
 /* poolinit.c - poolinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <bufpool.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "bufpool.h"
 
 struct bpool bptab[NBPOOLS];
 int    nbpools;

@@ -1,9 +1,9 @@
 /* lwputc.c - lwputc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <proc.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "proc.h"
 
 /*------------------------------------------------------------------------
  *  lwputc  --  put a character into a logical window

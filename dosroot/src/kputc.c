@@ -1,9 +1,9 @@
 /* kputc.c - kputc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <vidio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "vidio.h"
 
 /*------------------------------------------------------------------------
  *  kputc  --  put a character to the video display

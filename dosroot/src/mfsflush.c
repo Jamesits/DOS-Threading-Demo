@@ -1,8 +1,8 @@
 /* mfsflush.c - mfsflush */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mffile.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mffile.h"
 
 /*------------------------------------------------------------------------
  *  mfsflush  --  flush data block for an MS-DOS file

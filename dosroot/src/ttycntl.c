@@ -1,9 +1,9 @@
 /* ttycntl.c - ttycntl */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  ttycntl  --  control a tty device by setting modes

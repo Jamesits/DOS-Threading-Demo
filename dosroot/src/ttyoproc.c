@@ -1,10 +1,10 @@
 /* ttyoproc.c - ttyoproc */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <io.h>
-#include <vidio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "io.h"
+#include "vidio.h"
 
 /*------------------------------------------------------------------------
  *  ttyoproc  --  lower-half tty device driver process for console output

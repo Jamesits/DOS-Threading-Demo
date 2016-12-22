@@ -1,9 +1,9 @@
 /* psend.c - psend */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  psend  --  send a message to a port by enqueuing it

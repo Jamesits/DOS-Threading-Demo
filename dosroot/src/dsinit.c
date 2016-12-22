@@ -1,11 +1,11 @@
 /* dsinit.c - dsinit */
 
-#include <conf.h>
-#include <kernel.h>
-#include <disk.h>
-#include <mark.h>
-#include <bufpool.h>
-#include <dskio.h>
+#include "conf.h"
+#include "kernel.h"
+#include "disk.h"
+#include "mark.h"
+#include "bufpool.h"
+#include "dskio.h"
 
 #ifdef	Ndsk
 struct	dsblk	dstab[Ndsk];

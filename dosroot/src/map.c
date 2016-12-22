@@ -1,9 +1,9 @@
 /* map.c - mapinit, maprestore */
 
-#include <dos.h>
-#include <conf.h>
-#include <kernel.h>
-#include <io.h>
+#include "dos.h"
+#include "conf.h"
+#include "kernel.h"
+#include "io.h"
 
 /*------------------------------------------------------------------------
  *  mapinit  --  fill in an intmap table entry

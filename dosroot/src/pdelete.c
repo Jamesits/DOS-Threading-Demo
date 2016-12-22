@@ -1,9 +1,9 @@
 /* pdelete.c - pdelete */
 
-#include <conf.h>
-#include <kernel.h>
-#include <mark.h>
-#include <ports.h>
+#include "conf.h"
+#include "kernel.h"
+#include "mark.h"
+#include "ports.h"
 
 /*------------------------------------------------------------------------
  *  pdelete  --  delete a port, freeing waiting processes and messages

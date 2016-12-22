@@ -5,10 +5,10 @@
  *------------------------------------------------------------------------
  */
 
-#include <conf.h>
-#include <kernel.h>
-#include <tty.h>
-#include <sem.h>
+#include "conf.h"
+#include "kernel.h"
+#include "tty.h"
+#include "sem.h"
 
 static struct	tsnap {
 	int	ihead;			/* input queue head		*/
