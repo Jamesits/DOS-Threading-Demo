@@ -14,6 +14,7 @@
 #include "buffer.h"
 #include "kernel.h"
 #include "usermain.h"
+#include "menu.h"
 
 int timecount = 0;
 int TL;
@@ -23,7 +24,17 @@ int n           = 0;
 int intbuf[NBUF], buftemp;
 int in = 0, out = 0;
 
-void main()
+menuitem mainmenu[] = {
+	{ 1, "FIFO" },
+	{ 2, "Time" },
+	{ 3, "Dynamic slice" },
+	{ 4, "mutex" },
+	{ 5, "Proc/cusm" },
+	{ 6, "buffer" },
+	{ NULL, "Select: " },
+};
+
+int main(void)
 {
     int select = -1;
 
@@ -36,17 +47,7 @@ void main()
     current             = 0;
 
     while (select != 0) {
-        do {
-            clrscr();
-                printf( "0. Exit\n");
-                printf( "1. First come first serve\n");
-                printf( "2. Time slice\n");
-                printf( "3. Change TL, see what would change\n");
-                printf( "4. Exclusively assess\n");
-                printf( "5. Producer and consumer SYNC problem\n");
-                printf( "6. Message buffer communication\n");
-            scanf("%d", &select);
-        } while (select < 0 || select > 7);
+        select = dispmenu(mainmenu);
 
         switch (select) {
         case 1:
@@ -145,8 +146,9 @@ void main()
     tcb[0].name[0]      = '\0';
     tcb[0].state        = FINISHED;
 
-    printf("\nMulti task system terminated.\n");
+    printf("\nFinished, press any key to quit...\n");
     getch();
+	return 0;
 }
 
 #include "dosutil.c"
@@ -154,3 +156,4 @@ void main()
 #include "sem.c"
 #include "buffer.c"
 #include "usermain.c"
+#include "menu.c"
