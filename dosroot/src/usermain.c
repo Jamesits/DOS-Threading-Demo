@@ -100,8 +100,7 @@ loop:
         n++;
     }
     printf("[S] send finished\n");
-    while ((size = receive("recv", a)) == -1);
-    breakpoint();
+    receive("recv", a);
     if (!strcmp(a, "ok")) goto loop;
     printf("[S] got reply: %s\n", a);
 }

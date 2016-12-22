@@ -53,7 +53,7 @@ void demo_mutex() {
     getch();
 }
 
-void demu_proc() {
+void demo_proc() {
 	TL = numselection("Set time slice: ", 4, 1, 100, 1);
     create( "producer", (codeptr)producer,  NSTACK);
     create( "consumer", (codeptr)consumer,  NSTACK);
@@ -65,8 +65,7 @@ void demu_proc() {
 void demo_buffer() {
 	initBuf();
 	TL = numselection("Set time slice: ", 1, 1, 100, 1);
-	pause();
-    create( "send",       (codeptr)sender,        NSTACK);
+    create( "send",       (codeptr)sender,      NSTACK);
     create( "recv",     (codeptr)receiver,      NSTACK);
     setvect(8, new_int8);
     swtch();
@@ -88,7 +87,7 @@ menu mainmenu = {
     { demo_fifo,     "FIFO"                                             },
     { demo_adjslice, "Time slice"                                       },
     { demo_mutex,    "Mutex"                                            },
-    { demu_proc,     "Producer / consumer"                              },
+    { demo_proc,     "Producer / consumer"                              },
     { demo_buffer,   "Messaging"                                        },
     { menu_quit,     "quit"                                             },
     { NULL,          "Press number key to select:"                      },

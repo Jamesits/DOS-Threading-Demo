@@ -12,6 +12,7 @@ void wait(semaphore *sem)
         block(qp);
     }
     enable();
+    swtch();
 }
 
 void signal(semaphore *sem)
@@ -45,7 +46,7 @@ void block(struct TCB **qp)
     }
 
     tcb[id].next = NULL;
-    swtch();
+
 }
 
 void wakeupFirst(struct TCB **qp)
