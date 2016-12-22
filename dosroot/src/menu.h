@@ -5,6 +5,7 @@ typedef struct {
     char *description;
 } menuitem;
 
-typedef menuitem *menu;
+typedef menuitem
+ menu[];
 
-int dispmenu(menu m);
+int dispmenu(menu m, char autoexec);
