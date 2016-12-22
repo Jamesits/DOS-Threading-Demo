@@ -22,7 +22,7 @@ int dispmenu(menu m, char autoexec) {
     printf("\n");
     printf(COLOR_RED "%s" COLOR_NULL, m[i].description);
 
-    while (c = getch() - '0', c <= 0 || c >= i) ;
+    while (c = getch() - '0', c <= 0 || c > i) ;
 
     if (autoexec) m[i].func();
     return c - 1;

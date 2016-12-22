@@ -48,6 +48,7 @@ int create(char *name, codeptr code, int stck)
     tcb[id].state       = READY;
     strcpy(tcb[id].name, name);
     enable();
+    return id;
 }
 
 void interrupt swtch()

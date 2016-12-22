@@ -62,14 +62,14 @@ void f5()
     }
 }
 
-void prdc()
+void producer()
 {
     int tmp, i;
 
     for (i = 1; i <= 10; i++)
     {
         tmp = i * i;
-        printf("prdc %d\n", tmp);
+        printf("[P] producing: %d\n", tmp);
         wait(   &empty);
         wait(   &mutex);
         intbuf[in]      = tmp;
@@ -80,7 +80,7 @@ void prdc()
     }
 }
 
-void cnsm()
+void consumer()
 {
     int tmp, i;
 
@@ -93,8 +93,7 @@ void cnsm()
 
         signal( &mutex);
         signal( &empty);
-        printf("Out %d: %d\n", i, tmp);
-        sleep(2);
+        printf("[C] getting: %d: %d\n", i, tmp);
     }
 }
 
@@ -110,15 +109,15 @@ loop:
         a[7]    = '0' + n;
         a[8]    = 0;
         send("receiver", a, strlen(a));
-        printf("sender:Message \"%s\"  has been sent\n", a);
+        printf("[S] Send: %s\n", a);
         n++;
     }
     receive("receiver", a);
 
     if (strcmp(a, "ok") != 0) {
-        printf("Not be committed,Message should be resended!\n");
+        printf("[S] Sending failed, retrying...\n");
         goto loop;
-    } else printf("Committed,Communication is finished!\n");
+    } else printf("[S] Sending succeeded\n");
 }
 
 void receiver(void)
@@ -130,8 +129,8 @@ void receiver(void)
     for (i = 0; i < 10; i++) {
         b[0] = 0;
 
-        while ((size = receive("sender", b)) == -1) ;
-        printf( "receiver: Message is received--");
+        while ((size = receive("sender", b)) != -1) ;
+        printf( "[R] got: ");
 
         for (j = 0; j < size; j++) putchar(b[j]);
         printf( "\n");

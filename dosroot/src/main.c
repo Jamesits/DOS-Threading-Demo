@@ -55,16 +55,17 @@ void demo_mutex() {
 
 void demu_proc() {
 	TL = numselection("Set time slice: ", 4, 1, 100, 1);
-    create( "prdc", (codeptr)prdc,  NSTACK);
-    create( "cnsm", (codeptr)cnsm,  NSTACK);
+    create( "producer", (codeptr)producer,  NSTACK);
+    create( "consumer", (codeptr)consumer,  NSTACK);
     setvect(8, new_int8);
     swtch();
     pause();
 }
 
 void demo_buffer() {
-	TL = numselection("Set time slice: ", 1, 1, 100, 1);
-    initBuf();
+	initBuf();
+	TL = 1;
+	pause();
     create( "sender",       (codeptr)sender,        NSTACK);
     create( "receiver",     (codeptr)receiver,      NSTACK);
     setvect(8, new_int8);
@@ -72,7 +73,15 @@ void demo_buffer() {
     pause();
 }
 
-void menu_quit() {}
+void menu_quit() {
+	free_all();
+
+    tcb[0].name[0]      = '\0';
+    tcb[0].state        = FINISHED;
+
+	clrscr();
+    exit(0);
+}
 
 menu mainmenu = {
     { demo_fifo,     "FIFO"                                             },
@@ -100,7 +109,9 @@ int main(void)
 
 	// main menu
 	clrscr();
-    while ((selection = dispmenu(mainmenu, 0)) != 7) {
+    while (1) {
+		selection = dispmenu(mainmenu, 0);
+
         clrscr();
         printf( "Current demo: %s\n", mainmenu[selection].description);
 
@@ -112,15 +123,6 @@ int main(void)
         // reset
         setvect(8, old_int8);
     }
-
-    free_all();
-
-    tcb[0].name[0]      = '\0';
-    tcb[0].state        = FINISHED;
-
-    printf("\nFinished, press any key to quit...\n");
-    getch();
-    return 0;
 }
 
 #include "dosutil.c"

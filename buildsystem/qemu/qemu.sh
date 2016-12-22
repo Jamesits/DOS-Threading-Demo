@@ -20,7 +20,7 @@ if [[ "`uname`" == 'Darwin' ]]; then
     hdiutil detach `echo ${DEVICE} | grep -oE "/dev/disk\d+"`
 
     # run system
-    qemu-system-x86_64 -localtime -s -serial file:"${BUILD_TEMP}/DEBUG.LOG" -curses ${BUILD_TEMP}/system.img
+    qemu-system-x86_64 -localtime -s -serial file:"${BUILD_TEMP}/DEBUG.LOG" ${BUILD_TEMP}/system.img
 
 elif [[ $OSTYPE == 'linux-gnu' ]]; then
     #mount image
