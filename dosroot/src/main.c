@@ -17,7 +17,7 @@
 #include "menu.h"
 
 int intbuf[NBUF], buftemp;
-int in = 0, out = 0;
+int n = 0;
 
 void demo_fifo() {
 	pause();

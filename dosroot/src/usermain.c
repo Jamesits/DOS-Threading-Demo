@@ -55,7 +55,6 @@ void sender(void)
 {
     int         i, j, size;
     char        a[10];
-loop:
     for (i = 0; i < 10; i++) {
         strcpy(a, "message");
         a[7]    = '0' + i;
@@ -65,9 +64,6 @@ loop:
         n++;
     }
     printf("[S] send finished\n");
-    receive("recv", a);
-    if (!strcmp(a, "ok")) goto loop;
-    printf("[S] got reply: %s\n", a);
 }
 
 void receiver(void)
@@ -85,7 +81,4 @@ void receiver(void)
         for (j = 0; j < size; j++) putchar(b[j]);
         printf( "\n");
     }
-    printf( "[R] report success\n");
-    strcpy(b, "ok");
-    send("send", b, 3);
 }

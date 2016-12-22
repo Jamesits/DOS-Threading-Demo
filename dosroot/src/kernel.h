@@ -5,6 +5,7 @@ enum TSTATUS { FINISHED, RUNNING, READY, BLOCKED };
 int in_kernel = 0;
 int timecount = 0;
 int TL;
+int current;
 
 typedef int (far * codeptr)(void);
 void interrupt (*old_int8)(void);
