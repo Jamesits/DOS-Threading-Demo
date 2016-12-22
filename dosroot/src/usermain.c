@@ -6,9 +6,6 @@ void f1(void)
 
     for (i = 0; i < 1000; i++) {
         putchar('a');
-
-        for (j = 0; j < 1000; j++)
-            for (k = 0; k < 100; k++) ;
     }
 }
 
@@ -18,9 +15,6 @@ void f2(void)
 
     for (i = 0; i < 100; i++) {
         putchar('b');
-
-        for (j = 0; j < 1000; j++)
-            for (k = 0; k < 100; k++) ;
     }
 }
 
@@ -30,9 +24,6 @@ void f3(void)
 
     for (i = 0; i < 1000; i++) {
         putchar('c');
-
-        for (j = 0; j < 1000; j++)
-            for (k = 0; k < 100; k++) ;
     }
 }
 
@@ -45,7 +36,6 @@ void f4()
         n++;
         printf(" %d", n);
         signal(&mutex);
-        sleep(1);
     }
 }
 
@@ -58,7 +48,6 @@ void f5()
         n--;
         printf(" %d ", n);
         signal(&mutex);
-        sleep(1);
     }
 }
 
@@ -102,22 +91,19 @@ void sender(void)
     int         i, j;
     char        a[10];
 
-loop:
-
-    for (i = 0; i < 10; i++) {
-        strcpy(a, "message");
-        a[7]    = '0' + n;
-        a[8]    = 0;
-        send("receiver", a, strlen(a));
-        printf("[S] Send: %s\n", a);
-        n++;
-    }
-    receive("receiver", a);
-
-    if (strcmp(a, "ok") != 0) {
-        printf("[S] Sending failed, retrying...\n");
-        goto loop;
-    } else printf("[S] Sending succeeded\n");
+    do {
+        for (i = 0; i < 10; i++) {
+            strcpy(a, "message");
+            a[7]    = '0' + n;
+            a[8]    = 0;
+            send("receiver", a, strlen(a));
+            printf("[S] Sending: %s\n", a);
+            n++;
+            sleep(10);
+        }
+        receive("receiver", a);
+    } while (!strcmp(a, "ok"));
+    printf("[S] Send succeeded\n");
 }
 
 void receiver(void)
@@ -130,11 +116,12 @@ void receiver(void)
         b[0] = 0;
 
         while ((size = receive("sender", b)) != -1) ;
-        printf( "[R] got: ");
+        printf( "[R] receiving: ");
 
         for (j = 0; j < size; j++) putchar(b[j]);
         printf( "\n");
     }
+    printf( "[R] report success\n");
     strcpy(b, "ok");
     send("sender", b, 3);
 }

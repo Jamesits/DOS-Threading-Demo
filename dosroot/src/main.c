@@ -64,7 +64,7 @@ void demu_proc() {
 
 void demo_buffer() {
 	initBuf();
-	TL = 1;
+	TL = numselection("Set time slice: ", 1, 1, 100, 1);
 	pause();
     create( "sender",       (codeptr)sender,        NSTACK);
     create( "receiver",     (codeptr)receiver,      NSTACK);
@@ -74,6 +74,7 @@ void demo_buffer() {
 }
 
 void menu_quit() {
+	setvect(8, old_int8);
 	free_all();
 
     tcb[0].name[0]      = '\0';
@@ -108,8 +109,8 @@ int main(void)
     current             = 0;
 
 	// main menu
-	clrscr();
     while (1) {
+		clrscr();
 		selection = dispmenu(mainmenu, 0);
 
         clrscr();

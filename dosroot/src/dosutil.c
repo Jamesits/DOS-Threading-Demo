@@ -27,6 +27,6 @@ int DosBusy(void)
 }
 
 void pause(void) {
-    printf( "Press any key to start...\n");
+    printf( "Press any key to continue...\n");
     getch();
 }
