@@ -1,4 +1,4 @@
-SRCS=$(wildcard $(SRCDIR)/*.c)
+SRCS=main.c
 OBJS=$(SRCS:.c=.OBJ)
 EXE=THREAD
 
