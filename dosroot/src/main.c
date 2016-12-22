@@ -33,7 +33,7 @@ void demo_adjslice() {
     create( "f2",   (codeptr)f2,    NSTACK);
     create( "f3",   (codeptr)f3,    NSTACK);
     clrscr();
-    setvect(8, new_int8);
+    setvect(INT_TIMER, new_int8);
     swtch();
     getch();
 }
@@ -43,7 +43,7 @@ void demo_mutex() {
 	TL = numselection("Set time slice: ", 1, 1, 100, 1);
     create( "f4",   (codeptr)f4,    NSTACK);
     create( "f5",   (codeptr)f5,    NSTACK);
-    setvect(8, new_int8);
+    setvect(INT_TIMER, new_int8);
     swtch();
     getch();
 }
@@ -53,13 +53,13 @@ void demo_buffer() {
 	TL = numselection("Set time slice: ", 1, 1, 100, 1);
     create( "send",       (codeptr)sender,      NSTACK);
     create( "recv",     (codeptr)receiver,      NSTACK);
-    setvect(8, new_int8);
+    setvect(INT_TIMER, new_int8);
     swtch();
     pause();
 }
 
 void menu_quit() {
-	setvect(8, old_int8);
+	setvect(INT_TIMER, old_int8);
 	free_all();
 
     tcb[0].name[0]      = '\0';
@@ -106,7 +106,7 @@ int main(void)
         while (!finished()) ;
 
         // reset
-        setvect(8, old_int8);
+        setvect(INT_TIMER, old_int8);
 		free_all();
     }
 }

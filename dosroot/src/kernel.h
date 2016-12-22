@@ -1,9 +1,6 @@
 #include <dos.h>
 
-#define FINISHED        0
-#define RUNNING 1
-#define READY   2
-#define BLOCKED 3
+enum TSTATUS { FINISHED, RUNNING, READY, BLOCKED };
 
 int in_kernel = 0;
 int timecount = 0;
