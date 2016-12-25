@@ -29,7 +29,7 @@ void demo_fifo() {
 }
 
 void demo_adjslice() {
-    TL = numselection("Set time slice: ", 1, 1, 100, 1);
+    TL = numselection("Set time slice: ", 1, 1, 100, 2);
     create( "f1",   (codeptr)f1,    NSTACK);
     create( "f2",   (codeptr)f2,    NSTACK);
     create( "f3",   (codeptr)f3,    NSTACK);
@@ -40,7 +40,7 @@ void demo_adjslice() {
 
 void demo_mutex() {
     n   = 0;
-	TL = numselection("Set time slice: ", 1, 1, 100, 1);
+	TL = numselection("Set time slice: ", 1, 1, 100, 2);
     create( "f4",   (codeptr)f4,    NSTACK);
     create( "f5",   (codeptr)f5,    NSTACK);
     setvect(INT_TIMER, new_int8);
@@ -50,7 +50,7 @@ void demo_mutex() {
 
 void demo_buffer() {
 	initBuf();
-	TL = numselection("Set time slice: ", 1, 1, 100, 1);
+	TL = numselection("Set time slice: ", 1, 1, 100, 2);
     create( "send",       (codeptr)sender,      NSTACK);
     create( "recv",     (codeptr)receiver,      NSTACK);
     setvect(INT_TIMER, new_int8);
