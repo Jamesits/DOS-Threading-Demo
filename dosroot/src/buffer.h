@@ -18,3 +18,8 @@ struct buffer   * remov(struct buffer   **mq,
                         int             sender);
 int             receive(char    *sender,
                         char    *b);
+
+semaphore mutexfb = { 1, NULL };
+semaphore sfb = { NBUF, NULL };
+semaphore empty = { NBUF, NULL };
+semaphore full = { 0, NULL };

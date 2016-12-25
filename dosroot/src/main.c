@@ -23,6 +23,7 @@ void demo_fifo() {
 	pause();
     create( "f1",   (codeptr)f1,    NSTACK);
     create( "f2",   (codeptr)f2,    NSTACK);
+	create( "f3",   (codeptr)f3,    NSTACK);
     swtch();
     pause();
 }
@@ -32,10 +33,9 @@ void demo_adjslice() {
     create( "f1",   (codeptr)f1,    NSTACK);
     create( "f2",   (codeptr)f2,    NSTACK);
     create( "f3",   (codeptr)f3,    NSTACK);
-    clrscr();
     setvect(INT_TIMER, new_int8);
     swtch();
-    getch();
+    pause();
 }
 
 void demo_mutex() {
@@ -45,7 +45,7 @@ void demo_mutex() {
     create( "f5",   (codeptr)f5,    NSTACK);
     setvect(INT_TIMER, new_int8);
     swtch();
-    getch();
+    pause();
 }
 
 void demo_buffer() {

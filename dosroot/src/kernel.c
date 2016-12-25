@@ -3,7 +3,7 @@
 void initTCB()
 {
     int i;
-
+    in_kernel = 1;
     for (i = 0; i < NTCB; i++) {
         tcb[i].name[0]          = '\0';
         tcb[i].stack            = NULL;
@@ -15,6 +15,7 @@ void initTCB()
         tcb[i].sm.wq            = NULL;
         tcb[i].next             = NULL;
     }
+    in_kernel = 0;
 }
 
 int create(char *name, codeptr code, int stck)
@@ -31,8 +32,6 @@ int create(char *name, codeptr code, int stck)
 
     if (id == -1) return -1;
 
-    disable();
-
     tcb[id].stack       = (unsigned char *)malloc(stck);
     r                   = (struct int_regs *)(tcb[id].stack + stck);
     r--;
@@ -47,7 +46,7 @@ int create(char *name, codeptr code, int stck)
     r->off              = FP_OFF(over);
     tcb[id].state       = READY;
     strcpy(tcb[id].name, name);
-    enable();
+
     in_kernel = 0;
     return id;
 }
@@ -55,37 +54,40 @@ int create(char *name, codeptr code, int stck)
 void interrupt swtch()
 {
     int loop = 0;
+    int last = current;
 
-    disable();
-
-    tcb[current].ss     = _SS;
-    tcb[current].sp     = _SP;
-
+    if (in_kernel) return;
+    in_kernel = 1;
+    timecount = 0;
     if (tcb[current].state == RUNNING) tcb[current].state = READY;
 
     while (tcb[++current].state != READY && loop++ < NTCB - 1)
         if (current == NTCB) current = 0;
 
     if (tcb[current].state != READY) current = 0;
+    tcb[current].state = RUNNING;
+
+    disable();
+
+    tcb[last].ss     = _SS;
+    tcb[last].sp     = _SP;
+
     _SS = tcb[current].ss;
     _SP = tcb[current].sp;
 
-    tcb[current].state = RUNNING;
-
-    timecount = 0;
-
     enable();
+    in_kernel = 0;
 }
 
 void destroy(int id)
 {
-    disable();
+    in_kernel = 1;
+    tcb[id].state       = FINISHED;
     free(tcb[id].stack);
     tcb[id].stack       = NULL;
-    tcb[id].state       = FINISHED;
     printf("\nProcess %s terminated\n", tcb[id].name);
     tcb[id].name[0] = '\0';
-    enable();
+    in_kernel = 0;
 }
 
 void over()

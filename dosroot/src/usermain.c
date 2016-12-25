@@ -4,8 +4,9 @@ void f1(void)
 {
     long i, j, k;
 
-    for (i = 0; i < 1000; i++) {
+    for (i = 0; i < 100; i++) {
         putchar('a');
+        delay(5);
     }
 }
 
@@ -15,6 +16,7 @@ void f2(void)
 
     for (i = 0; i < 100; i++) {
         putchar('b');
+        delay(5);
     }
 }
 
@@ -22,8 +24,9 @@ void f3(void)
 {
     long i, j, k;
 
-    for (i = 0; i < 1000; i++) {
+    for (i = 0; i < 100; i++) {
         putchar('c');
+        delay(5);
     }
 }
 
@@ -53,32 +56,31 @@ void f5()
 
 void sender(void)
 {
-    int         i, j, size;
-    char        a[10];
+    int         i;
+    char        a[10] = "message ";
     for (i = 0; i < 10; i++) {
-        strcpy(a, "message");
         a[7]    = '0' + i;
-        a[8]    = 0;
-        send("recv", a, strlen(a));
+        send("recv", a, strlen(a) + 1);
         printf("[S] Sending: %s\n", a);
         n++;
     }
     printf("[S] send finished\n");
+    receive("recv", a);
+    printf("[S] got reply: %s\n", a);
 }
 
 void receiver(void)
 
 {
-    int         i, j, size;
+    int         i;
     char        b[10];
 
     for (i = 0; i < 10; i++) {
         b[0] = 0;
 
-        while ((size = receive("send", b)) == -1) ;
-        printf( "[R] receiving: ");
+        receive("send", b);
+        printf( "[R] receiving: %s\n", b);
 
-        for (j = 0; j < size; j++) putchar(b[j]);
-        printf( "\n");
     }
+    send("send", "OK", 3);
 }
