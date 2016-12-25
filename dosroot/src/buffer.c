@@ -123,7 +123,6 @@ int receive(char *sender, char *b)
 
     if (buff == NULL) {
         signal(&tcb[current].sm);
-        enable();
         return -1;
     }
     strcpy(b, buff->text);
