@@ -4,29 +4,31 @@ void wait(semaphore *sem)
 {
     struct TCB **qp;
 
-    disable();
+    in_kernel = 1;
     sem->value--;
 
     if (sem->value < 0) {
         qp = &(sem->wq);
         block(qp);
+        in_kernel = 0;
+        swtch();
+    } else {
+        in_kernel = 0;
     }
-    enable();
-    swtch();
 }
 
 void signal(semaphore *sem)
 {
     struct TCB **qp;
 
-    disable();
+    in_kernel = 1;
     qp = &(sem->wq);
     sem->value++;
 
     if (sem->value <= 0) {
         wakeupFirst(qp);
     }
-    enable();
+    in_kernel = 0;
 }
 
 void block(struct TCB **qp)
