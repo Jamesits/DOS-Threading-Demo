@@ -62,8 +62,8 @@ void menu_quit() {
 	setvect(INT_TIMER, old_int8);
 	free_all();
 
-    tcb[0].name[0]      = '\0';
-    tcb[0].state        = FINISHED;
+    // tcb[0].name[0]      = '\0';
+    // tcb[0].state        = FINISHED;
 
 	clrscr();
     exit(0);
