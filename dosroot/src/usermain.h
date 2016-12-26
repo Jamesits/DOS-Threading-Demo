@@ -3,8 +3,8 @@
 void    f1(void);
 void    f2(void);
 void    f3(void);
-void    f4(void);
-void    f5(void);
+void    mutex1(void);
+void    mutex2(void);
 void    sender(void);
 void    receiver(void);
 

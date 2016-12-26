@@ -30,7 +30,7 @@ void f3(void)
     }
 }
 
-void f4()
+void mutex1()
 {
     int i;
 
@@ -42,7 +42,7 @@ void f4()
     }
 }
 
-void f5()
+void mutex2()
 {
     int i;
 

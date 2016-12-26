@@ -96,6 +96,7 @@ void over()
     swtch();
 }
 
+// if all threads are finished
 int finished()
 {
     int i;
@@ -103,6 +104,7 @@ int finished()
     for (i = 1; i < NTCB; i++)
         if (tcb[i].state != FINISHED) return 0;
     in_kernel = 0;
+    swtch();
     return 1;
 }
 
@@ -127,7 +129,7 @@ void interrupt new_int8()
     (*old_int8)();
     timecount++;
 
-    if (timecount < TL || DosBusy() || in_kernel) return;
+    if (timecount < timeslice || DosBusy() || in_kernel) return;
 
     swtch();
 }

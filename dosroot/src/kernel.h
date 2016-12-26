@@ -4,7 +4,7 @@ enum TSTATUS { FINISHED, RUNNING, READY, BLOCKED };
 
 int in_kernel = 0;
 int timecount = 0;
-int TL;
+int timeslice;
 int current;
 
 typedef int (far * codeptr)(void);
