@@ -14,7 +14,7 @@ struct TCB {
     unsigned char       *stack;
     unsigned            ss;
     unsigned            sp;
-    char                state;
+    enum TSTATUS        state;
     char                name[NTEXT];
     struct buffer       *mq;
     semaphore           mutex;
