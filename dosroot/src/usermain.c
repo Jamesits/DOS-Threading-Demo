@@ -37,7 +37,8 @@ void mutex1()
     for (i = 0; i < 10; i++) {
         wait(&mutex);
         n++;
-        printf(" %d", n);
+        printf("%d ", n);
+        delay(5);
         signal(&mutex);
     }
 }
@@ -49,7 +50,8 @@ void mutex2()
     for (i = 0; i < 5; i++) {
         wait(&mutex);
         n--;
-        printf(" %d ", n);
+        printf("%d ", n);
+        delay(5);
         signal(&mutex);
     }
 }

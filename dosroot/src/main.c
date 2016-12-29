@@ -5,7 +5,7 @@
 #include <dos.h>
 
 #define NTCB    10
-#define NTEXT   20
+#define NTEXT   16
 #define NBUF    5
 #define NSTACK 1024
 
