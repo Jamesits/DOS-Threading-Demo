@@ -103,7 +103,7 @@ int receive(char *sender, char *b)
     struct buffer *buff;
     // in_kernel = 1;
 
-    for (i = 0; i < NBUF; i++)
+    for (i = 0; i < NTCB; i++)
     {
         if (strcmp(sender, tcb[i].name) == 0) {
             id = i;
