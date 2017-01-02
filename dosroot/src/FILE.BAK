@@ -1,0 +1,4 @@
+Row *ReadFile(char *filename, Event *readerr);
+/* Read all content from a file, and format all the data to a struct */
+
+void ShowFile(Row *row);

@@ -1,0 +1,13 @@
+struct _event
+{
+    void (*func)(void *) = NULL;
+    void *data;
+    struct _event *next;
+};
+typedef struct _event Event;
+
+void RegEvent(Event *e, void (*func)(void *));
+/* Register a new func as event */
+
+void DoEvent(Event *e, void *data);
+/* Do a event */

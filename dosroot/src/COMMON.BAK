@@ -1,0 +1,52 @@
+#include "common.h"
+#include "event.h"
+
+void DoNothing(void *null)
+{
+    ;
+}
+
+void InitGraph(void *null)
+/* Function to init graphics driver */
+{
+    int gd = DETECT, gm;
+    initgraph(&gd, &gm, "");
+    cleardevice();
+}
+
+void ClearGraph(void *null)
+/* Function to clear screen */
+{
+    cleardevice();
+}
+
+void FreeRow(Row *row)
+{
+    Row *next;
+    do
+    {
+        next = row -> next;
+        FreeChar(row -> ch);
+        free(row);
+        row = next;
+    }while(next != NULL);
+}
+
+void FreeChar(Char *ch)
+{
+    Char *next;
+    do
+    {
+        next = ch -> next;
+        free(ch);
+        ch = next;
+    }while(next != NULL);
+}
+
+void Exit(void *n)
+{
+    State *s;
+    s = (State *)n;
+    s -> exit = 1;
+}
+

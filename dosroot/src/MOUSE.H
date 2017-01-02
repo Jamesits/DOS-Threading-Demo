@@ -1,0 +1,14 @@
+int InitMouse();
+void ShowMouse();
+void HideMouse();
+void GetMouseXY(int *x,int *y);
+void SetMouseXY(int x,int y);
+int GetPressInfo(int button);
+int GetReleaseInfo(int button);
+void SetXRange(int min,int max);
+void SetYRange(int min,int max);
+void DrawMouse(int x,int y);
+int PinRA(int x, int y, int x1, int y1, int x2, int y2);
+void LoadMouse(void *null);
+void RedrawMouse(void *n);
+void MouseAway(void *n);

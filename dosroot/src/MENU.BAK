@@ -1,0 +1,454 @@
+#include "menu.h"
+#include "mouse.h"
+#include "common.h"
+
+void InitFormMenuItem(FormMenu *menu)
+/* Initialize a form menu item, give default values */
+{
+    menu -> text = NULL;
+    menu -> next = NULL;
+    menu -> pressed = 0;
+    menu -> moveover = 0;
+}
+
+void AddFormMenu(FormMenu *menu, char *title)
+/* Add an form menu item to an existing chain */
+{
+    FormMenu *menutmp, *menunew;
+    char *s;
+    menutmp = menu;
+    while(menutmp -> next != NULL)
+        menutmp = menutmp -> next;
+    if(menutmp -> text == NULL)
+    {
+        InitFormMenuItem(menutmp);
+        s=(char *)malloc((strlen(title) + 1) * sizeof(char));
+        strcpy(s, title);
+        menutmp -> text = s;
+    }
+    else
+    {
+        menunew = malloc(sizeof(FormMenu));
+        InitFormMenuItem(menunew);
+        s=(char *)malloc((strlen(title) + 1) * sizeof(char));
+        strcpy(s, title);
+        menunew -> text = s;
+        menutmp -> next = menunew;
+    }
+}
+    
+void DrawFormMenu(void *n)
+{
+    State *s;
+    FormMenu *menu;
+    int x = 6;
+    s = (State *)n;
+    menu = s -> menu;
+    setwritemode(1);
+    setcolor(0);
+    setfillstyle(SOLID_FILL, 7);
+    while(menu -> text != NULL)
+    {
+        bar(x - 3, 21, x + 183, 43);
+        OutTextxy(x, 24, menu -> text, 0);
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+        x += 80;
+    }
+}
+
+void IsMoveOverFormMenu(void *n)
+{
+    State *s;
+    int x = 6;
+    FormMenu *menu;
+    s = (State *)n;
+    menu = s -> menu;
+    setcolor(0);
+    setwritemode(1);
+    while(menu -> text != NULL)
+    {
+        if(MouseInRectAngle(
+                  s -> mouse . x, s -> mouse . y, x, 24, x + 70 , 44))
+            menu -> moveover = 1;
+        else
+            menu -> moveover = 0;
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+        x += 80;
+    }
+}
+    
+void DrawMoveOverFormMenu(void *n)
+{
+    State *s;
+    int x = 6, y = 24, k = 0;
+    FormMenu *menu;
+    static char moveover[10]={0};
+    s = (State *)n;
+    menu = s -> menu;
+    setwritemode(1);
+    while(menu -> text != NULL)
+    {
+        if(menu -> moveover == 2 || menu -> moveover != moveover[k] && !menu -> pressed)
+        {
+            setcolor(8);
+            line(x-3,y-2,x-3,y+17);
+            line(x-2,y-2,x+71,y-2);
+            setcolor(15);
+            line(x-3,y+17,x+71,y+17);
+            line(x+71,y-2,x+71,y+16);
+            menu -> moveover = menu -> moveover ? 1 : 0;
+        }
+        moveover[k++] = menu -> moveover;
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+        x += 80;
+    }
+}
+
+void IsClickFormMenu(void *n)
+{
+    State *s;
+    int x = 6;
+    FormMenu *menu;
+    s = (State *)n;
+    menu = s -> menu;
+    setcolor(0);
+    while(menu -> text != NULL)
+    {
+        if(menu -> moveover && s -> mouse . key)
+            menu -> pressed = ! menu -> pressed;
+        else if(!menu -> moveover && s -> mouse . key)
+            menu -> pressed = 0;
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+        x += 80;
+    }
+}
+
+void DoubleOver(void *n)
+{
+    State *s;
+    FormMenu *menu;
+    s = (State *)n;
+    menu = s -> menu;
+    while(menu -> text != NULL)
+    {
+        menu -> moveover *= 2;
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+    }
+}
+
+void DrawClickFormMenu(void *n)
+{
+    State *s;
+    int x = 6, y = 24, k = 0;
+    static char pressed[10]={0};
+    FormMenu *menu;
+    s = (State *)n;
+    menu = s -> menu;
+    setwritemode(1);
+    while(menu -> text != NULL)
+    {
+        if(menu -> pressed != pressed[k] && menu -> pressed == 0)
+        {
+            MouseAway(n);
+            DoEvent(s -> redraw, n);
+            DoubleOver(n);
+            DrawMoveOverFormMenu(n);
+            OutTextxy(x + 1, 25, menu -> text, 7);
+            OutTextxy(x, 24, menu -> text, 0);
+            MouseAway(n);
+            pressed[k++] = menu -> pressed;
+        }
+        else
+            k++;
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+        x += 80;
+    }
+    menu = s -> menu;
+    x = 6;
+    k = 0;
+    while(menu -> text != NULL)
+    {
+        if(menu -> pressed != pressed[k] && menu -> pressed)
+        {
+            DoubleOver(n);
+            DrawMoveOverFormMenu(n);
+            setcolor(15);
+            line(x-3,y-2,x-3,y+17);
+            line(x-2,y-2,x+71,y-2);
+            setcolor(8);
+            line(x-3,y+17,x+71,y+17);
+            line(x+71,y-2,x+71,y+16);
+            MouseAway(n);
+            OutTextxy(x + 1 - menu -> pressed, 24 + 1 - menu -> pressed, menu -> text, 7);
+            OutTextxy(x + menu -> pressed, 24 + menu -> pressed, menu -> text, 0);
+            if(menu -> pressed)
+                DrawMenu(menu -> menu, x, y + 18);
+            MouseAway(n);
+        }
+        pressed[k++] = menu -> pressed;
+        if(menu -> next == NULL)
+            break;
+        menu = menu -> next;
+        x += 80;
+    }
+}
+
+void InitMenuItem(Menu *menu)
+{
+    menu -> text = NULL;
+    menu -> next = NULL;
+    menu -> moveover = 0;
+    menu -> enabled = 1;
+    menu -> func = NULL;
+}
+
+void AddMenu(Menu *menu, char enabled, char *title, Event *func)
+{
+    Menu *menutmp, *menunew;
+    char *s;
+    menutmp = menu;
+    while(menutmp -> next != NULL)
+        menutmp = menutmp -> next;
+    if(menutmp -> text == NULL)
+    {
+        InitMenuItem(menutmp);
+        s=(char *)malloc((strlen(title) + 1) * sizeof(char));
+        strcpy(s, title);
+        menutmp -> text = s;
+        menutmp -> func = func;
+        menutmp -> enabled = enabled;
+    }
+    else
+    {
+        menunew = malloc(sizeof(Menu));
+        InitMenuItem(menunew);
+        s=(char *)malloc((strlen(title) + 1) * sizeof(char));
+        strcpy(s, title);
+        menunew -> text = s;
+        menunew -> func = func;
+        menunew -> enabled = enabled;
+        menutmp -> next = menunew;
+    }
+}
+
+void DrawMenu(Menu *menu, int x, int y)
+{
+    Menu *menutmp;
+    menutmp = menu;
+    setwritemode(0);
+    setfillstyle(SOLID_FILL, 7);
+    bar(x, y, x + 180, y + 5);
+    setcolor(7);
+    line(x, y, x + 180, y);
+    line(x, y, x, y + 5);
+    setcolor(15);
+    line(x + 1, y + 1, x + 179 , y + 1);
+    line(x + 1, y + 1, x + 1 , y + 4);
+    setcolor(8);
+    line(x + 179, y + 1, x + 179, y + 4);
+    setcolor(0);
+    line(x + 180, y, x + 180, y + 5);
+    while(menutmp -> text != NULL)
+    {
+        bar(x, y + 5, x + 180, y + 30);
+        setcolor(7);
+        line(x, y + 5, x, y + 30);
+        setcolor(15);
+        line(x + 1, y + 5, x + 1, y + 30);
+        setcolor(8);
+        line(x + 179, y + 5, x + 179, y + 30);
+        setcolor(0);
+        line(x + 180, y + 5, x + 180, y + 30);
+        if(menutmp -> text[0] == '-')
+        {
+            setcolor(8);
+            line(x + 6, y + 5, x + 172, y + 5);
+            setcolor(15);
+            line(x + 6, y + 6, x + 172, y + 6);
+            y -= 20;
+        }
+        else
+            OutTextxy(x + 6, y + 6, menutmp -> text, 0);
+        if(menutmp -> next == NULL)
+        {
+            y += 25;
+            break;
+        }
+        menutmp = menutmp -> next;
+        y += 25;
+    }
+    setcolor(8);
+    line(x + 1, y + 5, x + 179, y + 5);
+    setcolor(0);
+    line(x, y + 6, x + 180, y + 6);
+}
+
+void IsMoveOverMenu(void *n)
+{
+    State *s;
+    int x = 6, y = 42;
+    FormMenu *formmenu;
+    Menu *menu;
+    s = (State *)n;
+    formmenu = s -> menu;
+    while(formmenu -> next != NULL && !formmenu -> pressed)
+    {
+        formmenu = formmenu -> next;
+        x += 80;
+    }
+    if(formmenu -> pressed)
+    {
+        menu = formmenu -> menu;
+        while(menu -> text != NULL)
+        {
+            if(MouseInRectAngle(s -> mouse . x, s -> mouse . y,
+               x + 1, y + 5, x + 179, y + 25) && menu -> text[0] != '-')
+            {
+                menu -> moveover = 1;
+                if(s -> mouse -> key)
+                    DoEvent(menu -> func, n);
+            else
+                menu -> moveover = 0;
+            menu = menu -> next;
+            if(menu -> text[0] == '-')
+                y -= 20;
+            y += 25;
+        }
+    }
+}
+
+void DrawMoveOverMenu(void *n)
+{
+    State *s;
+    int x = 6, y = 42, k1 = 0, k2 = 0, i, j;
+    FormMenu *formmenu;
+    Menu *menu;
+    static char moveover[10][20]={0};
+    s = (State *)n;
+    formmenu = s -> menu;
+    setwritemode(1);
+    while(formmenu -> next != NULL && !formmenu -> pressed)
+    {
+        formmenu = formmenu -> next;
+        x += 80;
+        k1 ++;
+    }
+    if(formmenu -> pressed)
+    {
+        menu = formmenu -> menu;
+        while(menu -> text != NULL)
+        {
+            if(menu -> moveover != moveover[k1][k2])
+            {
+                setcolor(15);
+                for(i = y + 5; i < y + 25; i ++)
+                    line(x + 3, i, x + 177, i);
+                //menu -> moveover = menu -> moveover ? 1 : 0;
+            }
+            moveover[k1][k2++] = menu -> moveover;
+            if(menu -> next == NULL)
+                break;
+            menu = menu -> next;
+            k2 ++;
+            if(menu -> text[0] == '-')
+                y -= 20;
+            y += 25;
+        }
+    }
+    else
+    {
+        for(i = 0; i < 10; i ++)
+            for(j = 0; j < 20; j ++)
+                moveover[i][j] = 0;
+    }
+}
+
+void ClearMenuMoveOver(void *n)
+{
+    State *s;
+    FormMenu *formmenu;
+    Menu *menu;
+    s = (State *)n;
+    formmenu = s -> menu;
+    while(formmenu -> next != NULL)
+    {
+        menu = formmenu -> menu;
+        while(menu -> next != NULL)
+        {
+            menu -> moveover = 0;
+            menu = menu -> next;
+        }
+        formmenu = formmenu -> next;
+    }
+}
+
+void AddMenuToFormMenu(Menu *menu, FormMenu *formmenu)
+{
+    FormMenu *tmp;
+    tmp = formmenu;
+    while(tmp -> next != NULL)
+        tmp = tmp -> next;
+    tmp -> menu = menu;
+}
+
+void OpenMenu(FormMenu *menu, int n)
+{
+    int i;
+    FormMenu *menutmp;
+    menutmp = menu;
+    for(i = 0; i < 5; i++)
+    {
+        if(i == n)
+            menutmp -> pressed = !menutmp -> pressed;
+        else
+            menutmp -> pressed = 0;
+        menutmp = menutmp -> next;
+    }
+}
+
+void OpenMenu0(void *n)
+{
+    State *s;
+    s = (State *)n;
+    OpenMenu(s -> menu, 0);
+}
+
+void OpenMenu1(void *n)
+{
+    State *s;
+    s = (State *)n;
+    OpenMenu(s -> menu, 1);
+}
+
+void OpenMenu2(void *n)
+{
+    State *s;
+    s = (State *)n;
+    OpenMenu(s -> menu, 2);
+}
+
+void OpenMenu3(void *n)
+{
+    State *s;
+    s = (State *)n;
+    OpenMenu(s -> menu, 3);
+}
+
+void OpenMenu4(void *n)
+{
+    State *s;
+    s = (State *)n;
+    OpenMenu(s -> menu, 4);
+}

@@ -1,0 +1,287 @@
+#include "common.h"
+#include "logo.h"
+#include "event.h"
+#include "file.h"
+#include "menu.h"
+#include "mouse.h"
+#include "ui.h"
+
+void MainLoop(void);
+
+int main(void)
+{
+    MainLoop();
+    return 0;
+}
+
+void InitAllKeyBinding(void huge *n)
+{
+    Event huge *func;
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &Exit);
+    AddKeyBinding(n, KBState(ESC, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &ClearGraph);
+    RegEvent(func, &DrawLogo);
+    RegEvent(func, &Exit);
+    AddKeyBinding(n, KBState(F7, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &OpenMenu0);
+    AddKeyBinding(n, KBState(F1, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &OpenMenu1);
+    AddKeyBinding(n, KBState(F2, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &OpenMenu2);
+    AddKeyBinding(n, KBState(F3, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &OpenMenu3);
+    AddKeyBinding(n, KBState(F4, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &OpenMenu4);
+    AddKeyBinding(n, KBState(F5, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &MenuUp);
+    AddKeyBinding(n, KBState(UP, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &MenuDown);
+    AddKeyBinding(n, KBState(DOWN, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &FormMenuLeft);
+    AddKeyBinding(n, KBState(LEFT, NOMOD), func);
+    
+    func = farmalloc(sizeof(Event));
+    InitEvent(func);
+    RegEvent(func, &FormMenuRight);
+    AddKeyBinding(n, KBState(RIGHT, NOMOD), func);
+}
+
+void InitFormMenu(void huge *n)
+/* Initialize form menus */
+{
+    FormMenu huge *formmenu;
+    Menu huge *menu;
+    State huge *s;
+    Event huge *func;
+    s = (State huge *)n;
+    formmenu = farmalloc(sizeof(FormMenu));
+    InitFormMenuItem(formmenu);
+    
+    AddFormMenu(formmenu, "文件(F1)");
+        menu = farmalloc(sizeof(Menu));
+        InitMenuItem(menu);
+        AddMenuToFormMenu(menu, formmenu);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "新建(N)      Ctrl+N", func);
+            
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "打开(O)...   Ctrl+O", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "另存为...", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "-", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &Exit);
+        AddMenu(menu, 1, "退出(Q)      Esc", func);
+        
+    AddFormMenu(formmenu, "编辑(F2)");
+        menu = farmalloc(sizeof(Menu));
+        InitMenuItem(menu);
+        AddMenuToFormMenu(menu, formmenu);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "撤销(U)      Ctrl+Z", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "-", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "剪切(T)      Ctrl+X", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "复制(C)      Ctrl+C", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "粘贴(P)      Ctrl+V", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "删除(L)      Del", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "-", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "查找(F)...   Ctrl+F", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "查找下一个   F6", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "替换(R)...   Ctrl+H", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "-", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "全选(A)      Ctrl+A", func);
+        
+    AddFormMenu(formmenu, "格式(F3)");
+        menu = farmalloc(sizeof(Menu));
+        InitMenuItem(menu);
+        AddMenuToFormMenu(menu, formmenu);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "字体(F)...", func);
+    
+    AddFormMenu(formmenu, "工具(F4)");
+        menu = farmalloc(sizeof(Menu));
+        InitMenuItem(menu);
+        AddMenuToFormMenu(menu, formmenu);
+        
+    AddFormMenu(formmenu, "帮助(F5)");
+        menu = farmalloc(sizeof(Menu));
+        InitMenuItem(menu);
+        AddMenuToFormMenu(menu, formmenu);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 1, "帮助(H)...", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &DoNothing);
+        AddMenu(menu, 0, "-", func);
+        
+        func = farmalloc(sizeof(Event));
+        InitEvent(func);
+        RegEvent(func, &ClearGraph);
+        RegEvent(func, &DrawLogo);
+        RegEvent(func, &DrawMainWindow);
+        RegEvent(func, &DrawFormMenu);
+        RegEvent(func, &DrawTextBox);
+        RegEvent(func, &DrawStatusBox);
+        AddMenu(menu, 1, "关于(A)...", func);
+    
+    s -> menu = formmenu;
+}
+
+void MainLoop(void)
+{
+    Event OnLoad, OnUnload, OnMainLoop, Redraw, Readerr;
+    State s;
+    
+    InitEvent(&Readerr);
+    RegEvent(&Readerr, &ReadErr);
+    
+    ShowFile((void huge *)ReadFile("MAIN.C", &Readerr));getch();//exit(1);
+
+    InitEvent(&OnLoad);
+    InitEvent(&OnMainLoop);
+    InitEvent(&OnUnload);
+    InitEvent(&Redraw);
+
+    /* Add customed functions here to register events
+     * Example:
+     *     RegEvent(&OnLoad, &custom_function);        */
+
+    RegEvent(&OnLoad, &LoadKeyMap);
+    RegEvent(&OnLoad, &LoadKeyBinding);
+    RegEvent(&OnLoad, &InitAllKeyBinding);
+    RegEvent(&OnLoad, &DrawMainWindow);
+    RegEvent(&OnLoad, &InitFormMenu);
+    RegEvent(&OnLoad, &DrawFormMenu);
+    RegEvent(&OnLoad, &DrawTextBox);
+    RegEvent(&OnLoad, &DrawStatusBox);
+    RegEvent(&OnLoad, &LoadMouse);
+    
+    RegEvent(&OnMainLoop, &CheckKeyboard);
+    RegEvent(&OnMainLoop, &CheckKeyBinding);
+    RegEvent(&OnMainLoop, &RedrawMouse);
+    RegEvent(&OnMainLoop, &IsExit);
+    RegEvent(&OnMainLoop, &IsMoveOverMenu);
+    RegEvent(&OnMainLoop, &DrawMoveOverMenu);
+    RegEvent(&OnMainLoop, &IsClickFormMenu);
+    RegEvent(&OnMainLoop, &IsMoveOverFormMenu);
+    RegEvent(&OnMainLoop, &DrawMoveOverFormMenu);
+    RegEvent(&OnMainLoop, &DrawClickFormMenu);
+    
+    RegEvent(&Redraw, &DrawFormMenu);
+    RegEvent(&Redraw, &DrawTextBox);
+    RegEvent(&Redraw, &ClearMenuMoveOver);
+    
+    s . redraw = &Redraw;
+    s . isexit = 0;
+    s . isclearmenu = 0;
+    srand(time(0));
+    InitGraph(NULL);
+    
+    DoEvent(&OnLoad, (void huge *)&s);
+
+    while(!s . isexit)
+        DoEvent(&OnMainLoop, (void huge *)&s);
+    
+    DoEvent(&OnUnload, NULL);
+    //getch();
+    closegraph();
+}
+

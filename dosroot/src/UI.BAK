@@ -1,0 +1,603 @@
+#include "common.h"
+#include "ui.h"
+#include "mouse.h"
+#include "han.h"
+
+void DrawButton(void huge *n, int x1, int y1, int x2, int y2, char huge *title)
+/* Draw a button on a specific place */
+{
+    setfillstyle(SOLID_FILL, 7);
+    setwritemode(0);
+    bar(x1, y1, x2, y2);
+    /* Main background */
+    
+    setcolor(7);
+    rectangle(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+    line(x1, y1, x2, y1);
+    line(x1, y1, x1, y2);
+    setcolor(8);
+    line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
+    line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
+    setcolor(0);
+    line(x2, y1, x2, y2);
+    line(x1, y2, x2, y2);
+    setcolor(15);
+    line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
+    line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
+    /* Draw four borders */
+    
+    OutTextxy(n, x1 + 4, y1 + 4, title, 0);
+    /* Output the title text */
+}
+
+void DrawWindow(void huge *n, int x1, int y1, int x2, int y2, char huge *title)
+/* Draw an interface similar to Win9x */
+{
+    setfillstyle(SOLID_FILL, 7);
+    setwritemode(0);
+    bar(x1, y1, x2, y2);
+    /* Main background, same as button */
+    
+    setcolor(7);
+    rectangle(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+    line(x1, y1, x2, y1);
+    line(x1, y1, x1, y2);
+    setcolor(8);
+    line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
+    line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
+    setcolor(0);
+    line(x2, y1, x2, y2);
+    line(x1, y2, x2, y2);
+    setcolor(15);
+    line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
+    line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
+    setfillstyle(SOLID_FILL, 1);
+    bar(x1 + 3, y1 + 3, x2 - 3, y1 + 20);
+    /* Draw four borders, same as button, too */
+    
+    setfillstyle(SOLID_FILL, 7);
+    bar(x2 - 22, y1 + 5, x2 - 7, y1 + 17);
+    setcolor(15);
+    line(x2 - 22, y1 + 5, x2 - 22, y1 + 16);
+    line(x2 - 22, y1 + 5, x2 - 8, y1 + 5);
+    setcolor(8);
+    line(x2 - 8, y1 + 6, x2 - 8, y1 + 16);
+    line(x2 - 21, y1 + 16, x2 - 8, y1 + 16);
+    setcolor(0);
+    line(x2 - 7, y1 + 5, x2 - 7, y1 + 17);
+    line(x2 - 22, y1 + 17, x2 - 7, y1 + 17);
+    line(x2 - 18, y1 + 8, x2 - 12, y1 + 13);
+    line(x2 - 17, y1 + 8, x2 - 11, y1 + 13);
+    line(x2 - 18, y1 + 13, x2 - 12, y1 + 8);
+    line(x2 - 17, y1 + 13, x2 - 11, y1 + 8);
+    /* The exit button 'x' on top right */
+    
+    OutTextxy(n, x1 + 4, y1 + 4, title, 15);
+    /* Output the title text, still same as button */
+}
+
+void DrawMainWindow(void huge *n)
+/* Draw main window */
+{    
+    State huge *s;
+    s = (State huge *)n;
+    setbkcolor(0);
+    DrawWindow(n, 0, 0, getmaxx(), getmaxy(), "无标题 - 记事本");
+}
+
+void DrawOpenWindow(void huge *n)
+/* Draw "Open" window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    if(s -> ischildwindow)
+        return;
+        
+    MouseAway(n);
+    /* Hide mouse to solve some bugs */
+    
+    DoEvent(s -> redraw, n);
+    /* Do a redraw before draw it */
+    
+    s -> ischildwindow = 1;
+    s -> childx1 = 120, s -> childy1 = 120;
+    s -> childx2 = 360, s -> childy2 = 200;
+    /* Set the position of the window */
+    
+    DrawWindow(n, s -> childx1, s -> childy1, s -> childx2, s -> childy2, "打开文件...");
+    OutTextxy(n, s -> childx1 + 7, s -> childy1 + 27, "文件名:", 0);
+    DrawTextBox(s -> childx1 + 75, s -> childy1 + 25,
+                s -> childx2 - 7, s -> childy1 + 45);
+    DrawButton(n, s -> childx1 + 5, s -> childy2 - 30,
+                  s -> childx1 + 65, s -> childy2 - 5, "打开(O)");
+    DrawButton(n, s -> childx1 + 70, s -> childy2 - 30,
+                  s -> childx1 + 130, s -> childy2 - 5, "取消(C)");
+    /* Draw all form elements */
+    
+    MouseAway(n);
+    /* Restore the mouse */
+}
+
+void DrawSaveWindow(void huge *n)
+/* Draw "Save" window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    if(s -> ischildwindow)
+        return;
+        
+    MouseAway(n);
+    
+    DoEvent(s -> redraw, n);
+    
+    s -> ischildwindow = 2;
+    s -> childx1 = 120, s -> childy1 = 120;
+    s -> childx2 = 360, s -> childy2 = 200;
+    
+    DrawWindow(n, s -> childx1, s -> childy1, s -> childx2, s -> childy2, "保存文件...");
+    OutTextxy(n, s -> childx1 + 7, s -> childy1 + 27, "文件名:", 0);
+    DrawTextBox(s -> childx1 + 75, s -> childy1 + 25,
+                s -> childx2 - 7, s -> childy1 + 45);
+    DrawButton(n, s -> childx1 + 5, s -> childy2 - 30,
+                  s -> childx1 + 65, s -> childy2 - 5, "保存(S)");
+    DrawButton(n, s -> childx1 + 70, s -> childy2 - 30,
+                  s -> childx1 + 130, s -> childy2 - 5, "取消(C)");
+    
+    MouseAway(n);
+}
+
+void DrawSaveAsWindow(void huge *n)
+/* Draw "Save as" window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    if(s -> ischildwindow)
+        return;
+        
+    MouseAway(n);
+    
+    DoEvent(s -> redraw, n);
+    
+    s -> ischildwindow = 3;
+    s -> childx1 = 120, s -> childy1 = 120;
+    s -> childx2 = 360, s -> childy2 = 200;
+    
+    DrawWindow(n, s -> childx1, s -> childy1, s -> childx2, s -> childy2, "文件另存为...");
+    OutTextxy(n, s -> childx1 + 7, s -> childy1 + 27, "文件名:", 0);
+    DrawTextBox(s -> childx1 + 75, s -> childy1 + 25,
+                s -> childx2 - 7, s -> childy1 + 45);
+    DrawButton(n, s -> childx1 + 5, s -> childy2 - 30,
+                  s -> childx1 + 65, s -> childy2 - 5, "保存(S)");
+    DrawButton(n, s -> childx1 + 70, s -> childy2 - 30,
+                  s -> childx1 + 130, s -> childy2 - 5, "取消(C)");
+    
+    MouseAway(n);
+}
+
+void DrawFindWindow(void huge *n)
+/* Draw "Find" window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    if(s -> ischildwindow)
+        return;
+    
+    MouseAway(n);
+    
+    DoEvent(s -> redraw, n);
+    
+    s -> ischildwindow = 4;
+    s -> childx1 = 120, s -> childy1 = 120;
+    s -> childx2 = 360, s -> childy2 = 200;
+    
+    DrawWindow(n, s -> childx1, s -> childy1, s -> childx2, s -> childy2, "查找...");
+    OutTextxy(n, s -> childx1 + 7, s -> childy1 + 27, "查找内容:", 0);
+    DrawTextBox(s -> childx1 + 90, s -> childy1 + 25,
+                s -> childx2 - 7, s -> childy1 + 45);
+    DrawButton(n, s -> childx1 + 5, s -> childy2 - 30,
+                  s -> childx1 + 65, s -> childy2 - 5, "查找(F)");
+    DrawButton(n, s -> childx1 + 70, s -> childy2 - 30,
+                  s -> childx1 + 130, s -> childy2 - 5, "取消(C)");
+    
+    MouseAway(n);
+}
+
+void DrawReplaceWindow(void huge *n)
+/* Draw "Replace" window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    if(s -> ischildwindow)
+        return;
+    
+    MouseAway(n);
+    
+    DoEvent(s -> redraw, n);
+    
+    s -> ischildwindow = 5;
+    s -> childx1 = 120, s -> childy1 = 120;
+    s -> childx2 = 360, s -> childy2 = 225;
+    
+    DrawWindow(n, s -> childx1, s -> childy1, s -> childx2, s -> childy2, "替换...");
+    OutTextxy(n, s -> childx1 + 7, s -> childy1 + 27, "查找内容:", 0);
+    OutTextxy(n, s -> childx1 + 7, s -> childy1 + 52, "替换为:", 0);
+    DrawTextBox(s -> childx1 + 90, s -> childy1 + 25,
+                s -> childx2 - 7, s -> childy1 + 45);
+    DrawTextBox(s -> childx1 + 90, s -> childy1 + 50,
+                s -> childx2 - 7, s -> childy1 + 70);
+    DrawButton(n, s -> childx1 + 5, s -> childy2 - 30,
+                  s -> childx1 + 65, s -> childy2 - 5, "查找(F)");
+    DrawButton(n, s -> childx1 + 70, s -> childy2 - 30,
+                  s -> childx1 + 130, s -> childy2 - 5, "取消(C)");
+    
+    MouseAway(n);
+}
+
+void IsExit(void huge *n)
+/* Check whether an window should be closed */
+{
+    State huge *s;
+    s = (State huge *)n;
+    
+    if(!s -> ischildwindow && s -> mouse . key && MouseInRectAngle(
+                    s -> mouse . x, s -> mouse . y, 618, 0, 640, 17))
+    /* Clicked the 'x' on main window */
+        Exit(n);
+    
+    if(s -> ischildwindow && s -> mouse . key && MouseInRectAngle(
+                    s -> mouse . x, s -> mouse . y,
+                    s -> childx2 - 22, s -> childy1,
+                    s -> childx2, s -> childy1 + 17))
+    /* Clicked the 'x' on client window */
+        CloseChildWindow(n);
+}
+
+void CloseChildWindow(void huge *n)
+/* Close the child window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    
+    MouseAway(n);
+    
+    s -> ischildwindow = 0;
+    DoEvent(s -> redraw, n);
+    /* Unset the flag and redraw specific area */
+    
+    MouseAway(n);
+}
+
+void CheckChildButton(void huge *n)
+/* Check if clicked an button on child window */
+{
+    State huge *s;
+    s = (State huge *)n;
+    
+    if(!s -> ischildwindow)
+    /* No child window opened, exiting */
+        return;
+        
+    if(s -> mouse . key && MouseInRectAngle(s -> mouse . x, s -> mouse . y,
+                                            s -> childx1 + 70, s -> childy2 - 30,
+                                            s -> childx1 + 130, s -> childy2 - 5))
+        /* Clicked "Cancel", just close the child window */
+        CloseChildWindow(n);
+        
+    if(((s -> keyboard . key & 0xFF00) == s -> map . chs['C'-'A']) &&
+            (s -> keyboard . modifier & ALT))
+        /* Pressed "<ALT>C", just close the child window, too */
+        CloseChildWindow(n);
+}
+
+void MoveChildWindow(void huge *n)
+/* Check and move the child window */
+{
+    State huge *s;
+    static void *buf, *buf2;
+    /* Saving the child window and the contents he covered */
+    
+    static int last_x, last_y;
+    /* Saving the last place of mouse pointer */
+    
+    static int deltax, deltay;
+    /* Saving the margin between the mouse pointer and the window */
+     
+    static origx1, origy1;
+    /* Saving original coordinate for the window */
+    
+    static page = 1;
+    int i, j;
+    
+    int tx, ty;
+    /* Width and Height of the child window */
+    
+    s = (State huge *)n;
+    if(!s -> ischildwindow)
+        return;
+    
+    if((!s -> isdrag) && s -> mouse . key == 1 && MouseInRectAngle(
+                    s -> mouse . x, s -> mouse . y,
+                    s -> childx1, s -> childy1,
+                    s -> childx2 - 23, s -> childy1 + 20))
+    /* Dragging start! */
+    {
+        s -> isdrag = 1;
+        /* Set the flag for dragging */
+        
+        buf = ALLOC(imagesize(s -> childx1, s -> childy1,
+                              s -> childx2, s -> childy2));
+        /* Memory allocation for saving the child window pixels */
+        if(buf == NULL)return;
+        
+        MouseAway(n);
+        
+        getimage(s -> childx1, s -> childy1, s -> childx2, s -> childy2, buf);
+        /* Get the child window pixels */
+        
+        if(s -> childy1 < 20)
+            DrawMainWindow(n);
+        DoEvent(s -> redraw, n);
+        /* Redraw the original main window to save original pixels */
+        
+        if(s -> dotted)
+        {
+            buf2 = ALLOC(imagesize(s -> childx1, s -> childy1,
+                                   s -> childx2, s -> childy2));
+            /* Memory allocation for saving the original main window pixels */
+            if(buf2 == NULL)return;
+        
+            getimage(s -> childx1, s -> childy1, s -> childx2, s -> childy2, buf2);
+            /* Get the original main window pixels */
+        }
+        
+        putimage(s -> childx1, s -> childy1, buf, COPY_PUT);
+        /* Restore the child window */
+        
+        origx1 = s -> childx1, origy1 = s -> childy1;
+        /* Saving original child window coordinate */
+        
+        MouseAway(n);
+        deltax = s -> mouse . x - s -> childx1;
+        deltay = s -> mouse . y - s -> childy1;
+        /* Saving the margin between the mouse pointer and the window */
+        
+        last_x = s -> mouse . x, last_y = s -> mouse . y;
+        /* Saving the last place of mouse pointer */
+        
+        setcolor(15);    
+        setwritemode(1);
+        setlinestyle(1,0,1);
+        rectangle(s -> childx1, s -> childy1, s -> childx2, s -> childy2);
+        /* Draw the dotted line frame */
+        
+        setlinestyle(0,0,1);
+        /* Restore the line style */
+    }
+    
+    if(s -> isdrag && 
+      (s -> mouse . x != last_x || s -> mouse . y != last_y))
+        if(s -> dotted)
+        {
+            setcolor(15);    
+            setwritemode(1);
+            setlinestyle(1,0,1);
+            rectangle(s -> childx1, s -> childy1, s -> childx2, s -> childy2);
+            if(s -> mouse . x - deltax < 0)
+                s -> mouse . x = deltax;
+            if(s -> mouse . y - deltay < 0)
+                s -> mouse . y = deltay;
+            tx = s -> childx2 - s -> childx1;
+            ty = s -> childy2 - s -> childy1;
+            if(s -> mouse . x - deltax + tx >= 640)
+                s -> mouse . x = 639 + deltax - tx;
+            if(s -> mouse . y - deltay + ty >= 480)
+                s -> mouse . y = 479 + deltay - ty;
+            s -> childx1 = s -> mouse . x - deltax;
+            s -> childy1 = s -> mouse . y - deltay;
+            s -> childx2 = s -> childx1 + tx;
+            s -> childy2 = s -> childy1 + ty;
+            rectangle(s -> childx1, s -> childy1, s -> childx2, s -> childy2);
+            last_x = s -> mouse . x, last_y = s -> mouse . y;
+            setlinestyle(0,0,1);
+        }
+        else
+        {
+            MouseAway(n);
+            setvisualpage(page);
+            setactivepage(!page);
+            //clearviewport();
+            //putimage(last_x - deltax, last_y - deltay, buf2, COPY_PUT);
+            
+            if(s -> mouse . x - deltax < 0)
+                s -> mouse . x = deltax;
+            if(s -> mouse . y - deltay < 0)
+                s -> mouse . y = deltay;
+            tx = s -> childx2 - s -> childx1;
+            ty = s -> childy2 - s -> childy1;
+            if(s -> mouse . x - deltax + tx >= getmaxx())
+		s -> mouse . x = getmaxx() - 1 + deltax - tx;
+	    if(s -> mouse . y - deltay + ty >= getmaxy())
+		s -> mouse . y = getmaxy() - 1 + deltay - ty;
+            s -> childx1 = s -> mouse . x - deltax;
+            s -> childy1 = s -> mouse . y - deltay;
+            s -> childx2 = s -> childx1 + tx;
+            s -> childy2 = s -> childy1 + ty;
+            
+            buf2 = ALLOC(imagesize(0, 0, getmaxx() / 4, getmaxy() / 4));
+            for(i = 0; i < 4; i ++)
+                for(j = 0; j < 4; j ++)
+                {
+                    //setactivepage(page);
+                    getimage(i * getmaxx() / 4, j * getmaxy() / 4,
+                            (i + 1) * getmaxx() / 4, (j + 1) * getmaxy() / 4, buf2);
+                    //setactivepage(!page);
+                    putimage(i * getmaxx() / 4, j * getmaxy() / 4, buf2, COPY_PUT);
+                }
+            free(buf2);
+            
+            DrawMainWindow(n);
+            DoEvent(s -> redraw, n);
+            
+            putimage(s -> childx1, s -> childy1, buf, COPY_PUT);
+            
+            last_x = s -> mouse . x, last_y = s -> mouse . y;
+            MouseAway(n);
+            setvisualpage(!page);
+            page = !page;
+            //delay(50);
+        }
+    
+    if(GetReleaseInfo(0) && s -> isdrag)
+    {
+        s -> isdrag = 0;
+        MouseAway(n);
+        /*if(s -> childy1 < 20 || redraw)
+            DrawMainWindow(n);
+        DoEvent(s -> redraw, n);*/
+        if(s -> dotted)
+        {
+            putimage(origx1, origy1, buf2, COPY_PUT);
+            putimage(s -> childx1, s -> childy1, buf, COPY_PUT);
+        }
+        MouseAway(n);
+        free(buf);
+        free(buf2);
+    }
+}
+
+void DrawMainTextBox(void huge *null)
+{
+    DrawTextBox(7, 46, getmaxx() - 7, getmaxy() - 25);
+}
+
+void DrawTextBox(int x1, int y1, int x2, int y2)
+{
+    setwritemode(0);
+    setfillstyle(SOLID_FILL, 15);
+    bar(x1,y1,x2,y2);
+    setcolor(0);
+    line(x1-1,y1-1,x1-1,y2+1);
+    line(x1-1,y1-1,x2+1,y1-1);
+    setcolor(8);
+    line(x1-2,y1-2,x1-2,y2+2);
+    line(x1-2,y1-2,x2+2,y1-2);
+    setcolor(7);
+    line(x1-1,y2+1,x2+1,y2+1);
+    line(x2+1,y1-1,x2+1,y2+1);
+    setcolor(15);
+    line(x1-2,y2+2,x2+2,y2+2);
+    line(x2+2,y1-2,x2+2,y2+2);
+}
+
+void DrawStatusBox(void huge *null)
+{
+    int x1=6,y1=460,x2=634,y2=476;
+    setwritemode(0);
+    setcolor(8);
+    line(x1-1,y1-1,x1-1,y2+1);
+    line(x1-1,y1-1,x2+1,y1-1);
+    setcolor(15);
+    line(x1-1,y2+1,x2+1,y2+1);
+    line(x2+1,y1-1,x2+1,y2+1);
+}
+
+void CheckKeyboard(void huge *n)
+{
+    State huge *s;
+    s = (State huge *)n;
+    if(bioskey(1))
+    {
+        s -> keyboard . key = bioskey(0);// & 0xFF;
+        s -> keyboard . modifier = bioskey(2);
+        s -> iskeyboard = 1;
+    }
+    else
+    {
+        s -> keyboard . key = -1;
+        s -> keyboard . modifier = -1;
+    }
+}
+    
+void LoadKeyBinding(void huge *n)
+{
+    State huge *s;
+    KeyBinding huge *kb;
+    kb = ALLOC(sizeof(KeyBinding));
+    s = (State huge *)n;
+    InitKeyBinding(kb);
+    s -> keybinding = kb;
+}
+
+void InitKeyBinding(KeyBinding huge *kb)
+{
+    kb -> event = ALLOC(sizeof(Event));
+    InitEvent(kb -> event);
+    kb -> key . key = -1;
+    kb -> key . modifier = -1;
+    kb -> next = NULL;
+}
+
+void AddKeyBinding(void huge *n, KeyboardState key, Event huge *event)
+{
+    State huge *s;
+    KeyBinding huge *kb, huge *kbtmp;
+    s = (State huge *)n;
+    kb = s -> keybinding;
+    while(kb -> next != NULL)
+        kb = kb -> next;
+    if(kb -> key . key == -1)
+    {
+        kb -> key . key = key . key;
+        kb -> key . modifier = key . modifier;
+        kb -> event = event;
+    }
+    else
+    {
+        kbtmp = ALLOC(sizeof(KeyBinding));
+        InitKeyBinding(kbtmp);
+        kbtmp -> key . key = key . key;
+        kbtmp -> key . modifier = key . modifier;
+        kbtmp -> event = event;
+        kb -> next = kbtmp;
+    }
+}
+
+KeyboardState KBState(int key, int modifier)
+{
+    KeyboardState kb;
+    kb . key = key;
+    kb . modifier = modifier;
+    return kb;
+}
+
+void CheckKeyBinding(void huge *n)
+{
+    State huge *s;
+    KeyBinding huge *kb;
+    s = (State huge *)n;
+    kb = s -> keybinding;
+    while(kb -> event -> func != NULL)
+    {
+        if(((s -> keyboard . key & 0xFF00) == kb -> key . key) &&
+            (s -> keyboard . modifier & kb -> key . modifier))
+            DoEvent(kb -> event, n);
+        else if(s -> keyboard . key != -1)
+            //printf("%x|%x|%x\n", s -> keyboard . key & 0xFF00, s -> keyboard . key & 0xFF, s -> keyboard . modifier);
+            ;
+        if(kb -> next == NULL)
+            break;
+        kb = kb -> next;
+    }
+}
+
+void LoadKeyMap(void huge *n)
+{
+    State huge *s;
+    int chs[26]={0x1e00, 0x3000, 0x2e00, 0x2000, 0x1200, 0x2100, 0x2200, 0x2300, 0x1700,
+                 0x2400, 0x2500, 0x2600, 0x3200, 0x3100, 0x1800, 0x1900, 0x1000, 0x1300,
+                 0x1f00, 0x1400, 0x1600, 0x2f00, 0x1100, 0x2d00, 0x1500, 0x2c00}; 
+    int i;
+    s = (State huge *)n;
+    for(i = 0; i < 26; i ++)
+        s -> map . chs[i] = chs[i];
+}
